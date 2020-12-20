@@ -1,7 +1,7 @@
 {
   "hosting": {
     "site": "gaming-disorder-test-pl",
-    "public": "public",
+    "public": "web",
     "ignore": [
       "firebase.json",
       "**/.*",
