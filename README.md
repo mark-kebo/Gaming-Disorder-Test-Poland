@@ -1,4 +1,4 @@
-# dashboard
+# myapp
 
 A new Flutter project.
 
