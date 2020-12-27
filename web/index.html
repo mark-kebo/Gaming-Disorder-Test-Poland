@@ -45,10 +45,22 @@
   </script>
   <script src="main.dart.js" type="application/javascript"></script>
 
-  <script src="/__/firebase/8.2.1/firebase-app.js"></script>
-  <script src="/__/firebase/8.2.1/firebase-analytics.js"></script>
-  <script src="/__/firebase/8.2.1/firebase-auth.js"></script>
-  <script src="/__/firebase/8.2.1/firebase-firestore.js"></script>
-  <script src="/__/firebase/init.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-analytics.js"></script>
+
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyDMoGh-RqiFDa7z8zR8US08D3s64jSNwEs",
+      authDomain: "gaming-disorder-test-poland.firebaseapp.com",
+      projectId: "gaming-disorder-test-poland",
+      storageBucket: "gaming-disorder-test-poland.appspot.com",
+      messagingSenderId: "1033420313424",
+      appId: "1:1033420313424:web:d7b0380b31cf073e8e1255",
+      measurementId: "G-60DBFCPEBG"
+    };
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
 </body>
 </html>
