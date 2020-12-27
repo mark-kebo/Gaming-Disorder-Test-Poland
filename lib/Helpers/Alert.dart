@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Alert {
-    void showMessageDialog(BuildContext context, String titleText, String bodyText) {
+class AlertController {
+
+  void showMessageDialog(BuildContext context, String titleText, String bodyText) {
     Widget okButton = FlatButton(
       child: Text("OK"),
-      onPressed: () { Navigator.of(context, rootNavigator: true).pop(); },
+      onPressed: () { 
+        Navigator.of(context, rootNavigator: true).pop(); 
+      },
     );
     AlertDialog alert = AlertDialog(
       title: Text(titleText),

@@ -2,9 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myapp/Helpers/Alert.dart';
 import 'package:myapp/Pages/Dashboard/Dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class Login extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Dashboard - Gaming Disorder Test Poland',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: LoginPage(),
+    );
+  }
+}
 
 class LoginPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,10 +59,11 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  final Alert errorAlert = Alert();
+  final AlertController alertController = AlertController();
 
   double _formPadding = 24.0;
   double _fieldPadding = 8.0;
+  bool _isShowLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -97,14 +111,14 @@ class _LoginFormState extends State<LoginForm> {
             ),
             Padding(
               padding: EdgeInsets.only(top: _formPadding),
-              child: FlatButton(
+              child: _isShowLoading ? CircularProgressIndicator() : FlatButton(
                 color: Colors.blue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
-                    _signInWithEmailAndPassword();
+                    _signInAction();
                   }
                 },
                 child: Padding(
@@ -127,7 +141,8 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-  void _signInWithEmailAndPassword() async {
+  void _signInAction() async {
+    setState((){_isShowLoading = true;});
     final FirebaseAuth _auth = FirebaseAuth.instance;
     print("Sign in");
     try {
@@ -135,15 +150,15 @@ class _LoginFormState extends State<LoginForm> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => DashboardPage()),
-      );
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-        DashboardPage()), 
-        (Route<dynamic> route) => false);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('email', _emailController.text);
+      prefs.setString('password', _passwordController.text);
+      Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext ctx) => Dashboard()));
+      setState((){_isShowLoading = false;});
     } catch (error) {
-      errorAlert.showMessageDialog(context, "Error", error.message);
+      alertController.showMessageDialog(context, "Error", error.message);
+      setState((){_isShowLoading = false;});
     }
   }
 }
