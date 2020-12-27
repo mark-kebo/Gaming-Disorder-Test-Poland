@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/Pages/Login/Login.dart';
 import 'package:myapp/Pages/Dashboard/Dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final FirebaseAuth _auth = FirebaseAuth.instance; 
-    return MaterialApp(
-      title: 'Dashboard - Gaming Disorder Test Poland',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: _auth.currentUser != null ? DashboardPage() : LoginPage(),
-    );
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var email = prefs.getString('email');
+  var password = prefs.getString('password');
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  if (email != null || email != "" || password != null) {
+    try {
+      User user = (await _auth.signInWithEmailAndPassword(email: email, password: password)).user;
+      user != null ? runApp(Dashboard()) : runApp(Login());
+    } catch (error) {
+      runApp(Login());
+    }
+  } else {
+    runApp(Login());
   }
 }
