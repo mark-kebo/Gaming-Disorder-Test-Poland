@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import 'package:myapp/Helpers/Alert.dart';
+import 'package:myapp/Pages/Dashboard/Dashboard.dart';
 
 class LoginPage extends StatelessWidget {
 
@@ -46,11 +46,10 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  final Alert errorAlert = Alert();
+
   double _formPadding = 24.0;
   double _fieldPadding = 8.0;
-
-  bool _success;
-  String _userEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -114,20 +113,6 @@ class _LoginFormState extends State<LoginForm> {
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
               ), 
-            ),
-            Container(
-              alignment: Alignment.center,
-              child: Padding(
-              padding: EdgeInsets.only(top: _success == null ? 0 : _formPadding),
-              child: Text(
-                  _success == null
-                      ? ''
-                      : (_success
-                      ? 'Successfully signed in ' + _userEmail
-                      : 'Sign in failed'),
-                  style: TextStyle(color: Colors.red[300]),
-                )
-              )
             )
           ],
         ),
@@ -142,24 +127,23 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-void _signInWithEmailAndPassword() async {
-  print("Sign in");
-    final User user = (await _auth.signInWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    )).user;
-  
-    if (user != null) {
-      setState(() {
-        _success = true;
-        _userEmail = user.email;
-      });
-    } else {
-      setState(() {
-        _success = false;
-      });
+  void _signInWithEmailAndPassword() async {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    print("Sign in");
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DashboardPage()),
+      );
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+        DashboardPage()), 
+        (Route<dynamic> route) => false);
+    } catch (error) {
+      errorAlert.showMessageDialog(context, "Error", error.message);
     }
-      print("Signed in with: ");
-      print(_success);
   }
 }
