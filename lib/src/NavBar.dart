@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 class NavBar extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => _NavBarState();
+  final Function mainTouched;
+  final Function createFormTouched;
+
+  NavBar({
+    this.mainTouched,
+    this.createFormTouched
+  });
 }
 
 class _NavBarState extends State<NavBar> {
@@ -30,15 +37,17 @@ class _NavBarState extends State<NavBar> {
             touched: () {
               setState(() {
                 select(0);
+                widget.mainTouched();
               });
             },
           ),
           NavBarItem(
             active: selected[1],
-            icon: Icons.folder_open_rounded,
+            icon: Icons.create_new_folder,
             touched: () {
               setState(() {
                 select(1);
+                widget.createFormTouched();
               });
             },
           ),
@@ -48,6 +57,7 @@ class _NavBarState extends State<NavBar> {
             touched: () {
               setState(() {
                 select(2);
+                // widget.touched();
               });
             },
           ),
@@ -57,6 +67,7 @@ class _NavBarState extends State<NavBar> {
             touched: () {
               setState(() {
                 select(3);
+                // widget.touched();
               });
             },
           )
@@ -106,7 +117,7 @@ class _NavBatItemState extends State<NavBarItem> {
                       height: 35.0,
                       width: 5.0,
                       decoration: BoxDecoration(
-                        color: widget.active ? Colors.white : Colors.transparent,
+                        color: widget.active ? Colors.deepPurple[200] : Colors.transparent,
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(10.0),
                           bottomRight: Radius.circular(10.0)
@@ -117,7 +128,7 @@ class _NavBatItemState extends State<NavBarItem> {
                         padding: EdgeInsets.only(left: 30.0),
                       child: Icon(
                         widget.icon,
-                        color: widget.active ? Colors.white: Colors.white70,
+                        color: widget.active ? Colors.deepPurple[200]: Colors.white70,
                         size: 19.0,
                       ),
                     )

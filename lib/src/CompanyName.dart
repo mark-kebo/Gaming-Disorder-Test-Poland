@@ -6,19 +6,14 @@ class CompanyName extends StatelessWidget {
     return Container(
       height: 70.0,
       child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Dashboard',
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-                fontSize: 16.0,
-              )
-            )
-          ],
-        ),
+        child: Text(
+          'Dashboard',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Colors.deepPurple[200],
+            fontSize: 14.0,
+          )
+        )
       ),
     );
   }

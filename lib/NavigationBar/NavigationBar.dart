@@ -9,6 +9,14 @@ import 'package:myapp/Helpers/Alert.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class NavigationBar extends StatefulWidget {
+  final Function mainTouched;
+  final Function createFormTouched;
+
+  NavigationBar({
+    this.mainTouched,
+    this.createFormTouched
+  });
+
   @override
   State<StatefulWidget> createState() => _NavigationBarState();
 }
@@ -23,13 +31,20 @@ class _NavigationBarState extends State<NavigationBar> {
       child: Container(
         height: MediaQuery.of(context).size.height,
         width: 100.0,
-        color: Color(0xff333951),
+        color: Colors.grey[850],
         child: Stack(
         children: [
           CompanyName(),
           Align(
             alignment: Alignment.center,
-            child: NavBar()),
+            child: NavBar(
+              createFormTouched: () {
+                widget.createFormTouched();
+              },
+              mainTouched: () {
+                widget.mainTouched();
+              },)
+            ),
           Align(
             alignment: Alignment.bottomCenter,
             child: NavBarItem(

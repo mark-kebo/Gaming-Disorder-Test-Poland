@@ -10,20 +10,9 @@ class Login extends StatelessWidget {
     return MaterialApp(
       title: 'Dashboard - Gaming Disorder Test Poland',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
       ),
-      home: LoginPage(),
-    );
-  }
-}
-
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: {
-        '/': (context) => LoginScreen(),
-      },
+      home: LoginScreen(),
     );
   }
 }
@@ -74,7 +63,7 @@ class _LoginFormState extends State<LoginForm> {
         child: Column (
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Welcome', style: Theme
+            Text('Gaming Disorder Test', style: Theme
               .of(context)
               .textTheme
               .headline4),
@@ -112,7 +101,7 @@ class _LoginFormState extends State<LoginForm> {
             Padding(
               padding: EdgeInsets.only(top: _formPadding),
               child: _isShowLoading ? CircularProgressIndicator() : FlatButton(
-                color: Colors.blue,
+                color: Colors.deepPurple,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
