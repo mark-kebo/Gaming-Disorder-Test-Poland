@@ -24,7 +24,7 @@ class AlertController {
     );
   }
 
-    void showMessageDialogWithAction(BuildContext context, String titleText, String bodyText, Function okAction) {
+  void showMessageDialogWithAction(BuildContext context, String titleText, String bodyText, Function okAction) {
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () { 

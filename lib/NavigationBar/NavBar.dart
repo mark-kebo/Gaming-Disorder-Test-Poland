@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 
-class NavBar extends StatefulWidget{
+class NavBar extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _NavBarState();
   final Function mainTouched;
-  final Function createFormTouched;
+  final Function formsTouched;
+  final Function statisticsTouched;
+  final Function settingsTouched;
 
-  NavBar({
-    this.mainTouched,
-    this.createFormTouched
-  });
+  NavBar(
+      {this.mainTouched,
+      this.formsTouched,
+      this.settingsTouched,
+      this.statisticsTouched});
 }
 
 class _NavBarState extends State<NavBar> {
   List<bool> selected = [true, false, false, false];
 
   void select(int n) {
-    for(int i=0; i<selected.length; i++) {
-      if(i != n) {
+    for (int i = 0; i < selected.length; i++) {
+      if (i != n) {
         selected[i] = false;
       } else {
         selected[i] = true;
@@ -47,7 +50,7 @@ class _NavBarState extends State<NavBar> {
             touched: () {
               setState(() {
                 select(1);
-                widget.createFormTouched();
+                widget.formsTouched();
               });
             },
           ),
@@ -57,7 +60,7 @@ class _NavBarState extends State<NavBar> {
             touched: () {
               setState(() {
                 select(2);
-                // widget.touched();
+                widget.statisticsTouched();
               });
             },
           ),
@@ -67,7 +70,7 @@ class _NavBarState extends State<NavBar> {
             touched: () {
               setState(() {
                 select(3);
-                // widget.touched();
+                widget.settingsTouched();
               });
             },
           )
@@ -82,11 +85,7 @@ class NavBarItem extends StatefulWidget {
   final Function touched;
   final bool active;
 
-  NavBarItem({
-    this.active,
-    this.icon,
-    this.touched
-  });
+  NavBarItem({this.active, this.icon, this.touched});
 
   @override
   State<StatefulWidget> createState() => _NavBatItemState();
@@ -113,22 +112,24 @@ class _NavBatItemState extends State<NavBarItem> {
                 child: Row(
                   children: [
                     AnimatedContainer(
-                        duration: Duration(microseconds: 475),
+                      duration: Duration(microseconds: 475),
                       height: 35.0,
                       width: 5.0,
                       decoration: BoxDecoration(
-                        color: widget.active ? Colors.deepPurple[200] : Colors.transparent,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10.0),
-                          bottomRight: Radius.circular(10.0)
-                        )
-                      ),
+                          color: widget.active
+                              ? Colors.deepPurple[200]
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10.0),
+                              bottomRight: Radius.circular(10.0))),
                     ),
                     Padding(
-                        padding: EdgeInsets.only(left: 30.0),
+                      padding: EdgeInsets.only(left: 30.0),
                       child: Icon(
                         widget.icon,
-                        color: widget.active ? Colors.deepPurple[200]: Colors.white70,
+                        color: widget.active
+                            ? Colors.deepPurple[200]
+                            : Colors.white70,
                         size: 19.0,
                       ),
                     )

@@ -12,7 +12,9 @@ Future<void> main() async {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   if (email != null || email != "" || password != null) {
     try {
-      User user = (await _auth.signInWithEmailAndPassword(email: email, password: password)).user;
+      User user = (await _auth.signInWithEmailAndPassword(
+              email: email, password: password))
+          .user;
       user != null ? runApp(Dashboard()) : runApp(Login());
     } catch (error) {
       runApp(Login());

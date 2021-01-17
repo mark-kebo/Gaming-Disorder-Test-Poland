@@ -56,66 +56,71 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form (
+    return Form(
       key: _formKey,
       child: Padding(
         padding: EdgeInsets.all(_formPadding),
-        child: Column (
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Gaming Disorder Test', style: Theme
-              .of(context)
-              .textTheme
-              .headline4),
+            Text('Gaming Disorder Test',
+                style: Theme.of(context).textTheme.headline4),
             Padding(
               padding: EdgeInsets.all(_fieldPadding),
               child: TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(hintText: 'Email'),
-                validator: (String value) {
-                  bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
-                  if (!emailValid || value.isEmpty) {
-                    return 'A valid email is required';
-                  }
-                  return null;
-                }
-              ),
+                  controller: _emailController,
+                  decoration: InputDecoration(hintText: 'Email'),
+                  validator: (String value) {
+                    bool emailValid = RegExp(
+                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(value);
+                    if (!emailValid || value.isEmpty) {
+                      return 'A valid email is required';
+                    }
+                    return null;
+                  }),
             ),
             Padding(
               padding: EdgeInsets.all(_fieldPadding),
               child: TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(hintText: 'Password'),
-                validator: (String value) {
-                  if (value.isEmpty) {
-                    return 'A password is required';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-                  return null;
-                },
-                obscureText: true
-              ),
+                  controller: _passwordController,
+                  decoration: InputDecoration(hintText: 'Password'),
+                  validator: (String value) {
+                    if (value.isEmpty) {
+                      return 'A password is required';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                  obscureText: true),
             ),
             Padding(
               padding: EdgeInsets.only(top: _formPadding),
-              child: _isShowLoading ? CircularProgressIndicator() : FlatButton(
-                color: Colors.deepPurple,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32.0),
-                ),
-                onPressed: () async {
-                  if (_formKey.currentState.validate()) {
-                    _signInAction();
-                  }
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left: _formPadding, right: _formPadding, top: _fieldPadding, bottom: _fieldPadding),
-                  child: Text('Sign in', 
-                    style: TextStyle(fontSize: 16, color: Colors.white)),
-                ),
-              ), 
+              child: _isShowLoading
+                  ? CircularProgressIndicator()
+                  : FlatButton(
+                      color: Colors.deepPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          _signInAction();
+                        }
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: _formPadding,
+                            right: _formPadding,
+                            top: _fieldPadding,
+                            bottom: _fieldPadding),
+                        child: Text('Sign in',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.white)),
+                      ),
+                    ),
             )
           ],
         ),
@@ -131,7 +136,9 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _signInAction() async {
-    setState((){_isShowLoading = true;});
+    setState(() {
+      _isShowLoading = true;
+    });
     final FirebaseAuth _auth = FirebaseAuth.instance;
     print("Sign in");
     try {
@@ -143,11 +150,15 @@ class _LoginFormState extends State<LoginForm> {
       prefs.setString('email', _emailController.text);
       prefs.setString('password', _passwordController.text);
       Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (BuildContext ctx) => Dashboard()));
-      setState((){_isShowLoading = false;});
+          MaterialPageRoute(builder: (BuildContext ctx) => Dashboard()));
+      setState(() {
+        _isShowLoading = false;
+      });
     } catch (error) {
       alertController.showMessageDialog(context, "Error", error.message);
-      setState((){_isShowLoading = false;});
+      setState(() {
+        _isShowLoading = false;
+      });
     }
   }
 }

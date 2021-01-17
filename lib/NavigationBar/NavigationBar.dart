@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/src/CompanyName.dart';
-import 'package:myapp/src/NavBar.dart';
+import 'package:myapp/NavigationBar/CompanyName.dart';
+import 'package:myapp/NavigationBar/NavBar.dart';
 import 'package:myapp/Pages/Login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,11 +10,16 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class NavigationBar extends StatefulWidget {
   final Function mainTouched;
-  final Function createFormTouched;
+  final Function formsTouched;
+  final Function statisticsTouched;
+  final Function settingsTouched;
+
 
   NavigationBar({
     this.mainTouched,
-    this.createFormTouched
+    this.formsTouched,
+    this.settingsTouched,
+    this.statisticsTouched
   });
 
   @override
@@ -38,11 +43,17 @@ class _NavigationBarState extends State<NavigationBar> {
           Align(
             alignment: Alignment.center,
             child: NavBar(
-              createFormTouched: () {
-                widget.createFormTouched();
+              formsTouched: () {
+                widget.formsTouched();
               },
               mainTouched: () {
                 widget.mainTouched();
+              },
+              statisticsTouched: () {
+                widget.statisticsTouched();
+              },
+              settingsTouched: () {
+                widget.settingsTouched();
               },)
             ),
           Align(
