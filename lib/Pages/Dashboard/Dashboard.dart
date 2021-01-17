@@ -18,6 +18,12 @@ class _DashboardState extends State<Dashboard> {
         primarySwatch: Colors.deepPurple,
       ),
       home: Scaffold (
+        floatingActionButton: isDashboard ? null : FloatingActionButton(
+          child: Icon(Icons.add),
+          backgroundColor: Colors.deepPurple,
+          onPressed: () {
+            print("add new form action");
+          },),
         body: Stack(
         children: [
           Positioned(
@@ -26,7 +32,7 @@ class _DashboardState extends State<Dashboard> {
             right: contentPadding,
             bottom: contentPadding,
             child: isDashboard ? 
-              Text("Dashboard content",
+              Text("Gaming Disorder Test Poland",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 32,
