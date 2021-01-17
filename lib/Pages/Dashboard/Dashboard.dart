@@ -1,5 +1,8 @@
 import 'package:myapp/NavigationBar/NavigationBar.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class Dashboard extends StatefulWidget {
   @override
@@ -9,6 +12,12 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   bool isDashboard = true; 
   double contentPadding = 32;
+  CollectionReference forms = firestore.collection('forms');
+  TextStyle titleTextStyle = TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                  color: Colors.deepPurple);
+  Radius listElementCornerRadius = const Radius.circular(16.0);
 
   @override
   Widget build(BuildContext context) {
@@ -33,46 +42,68 @@ class _DashboardState extends State<Dashboard> {
             bottom: contentPadding,
             child: isDashboard ? 
               Text("Gaming Disorder Test Poland",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 32,
-                  color: Colors.deepPurple)
+                style: titleTextStyle
               ):
               Stack (children: [
                 Text("All Forms",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 32,
-                    color: Colors.deepPurple)
+                  style: titleTextStyle
                 ),
                 Positioned(
                   top: contentPadding * 2,
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  child: ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return new GestureDetector(
-                        onTap: () {
-                          print("tapped");
-                        },
-                        child: new Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: new Container(
-                            color: Colors.grey,
-                            height: 64.0,
-                          ),
-                        ),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: forms.snapshots(),
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Something went wrong',
+                                  style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red));
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text("Loading",
+                                  style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.deepPurple));
+                      }
+                      return new ListView(
+                        children: snapshot.data.docs.map((DocumentSnapshot document) {
+                          return new GestureDetector(
+                            onTap: () {
+                              print("table element tapped");
+                            },
+                            child: new Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: new Container(
+                                height: 64.0,
+                                decoration: new BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: new BorderRadius.only(
+                                    topLeft: listElementCornerRadius,
+                                    topRight: listElementCornerRadius,
+                                    bottomLeft: listElementCornerRadius,
+                                    bottomRight: listElementCornerRadius
+                                  )
+                                ),
+                                child: ListTile( 
+                                      title: new Text(document.data()['name']),
+                                      subtitle: new Text(document.data()['subname']),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       );
                     },
-                  ),
+                  )
                 ),
               ],)
           ),
           NavigationBar(
             mainTouched: () {
-              setState(() {
+              setState(() { 
                 isDashboard = true;
               });
             },
