@@ -1,6 +1,8 @@
 import 'package:myapp/NavigationBar/NavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/Pages/Dashboard/EditForm.dart';
+import 'package:myapp/Helpers/Alert.dart';
 
 enum DashboardState { main, forms, statistics, settings }
 
@@ -18,6 +20,7 @@ class _DashboardState extends State<Dashboard> {
   TextStyle titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   Radius listElementCornerRadius = const Radius.circular(16.0);
+  final AlertController _alertController = AlertController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,11 @@ class _DashboardState extends State<Dashboard> {
                   child: Icon(Icons.add),
                   backgroundColor: Colors.deepPurple,
                   onPressed: () {
-                    print("add new form action");
+                    print("new form pressed");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext ctx) => EditForm()));
                   },
                 )
               : null,
@@ -111,15 +118,13 @@ class _DashboardState extends State<Dashboard> {
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
-                  return Text('Something went wrong',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.red));
+                  return Center(
+                      child: Text('Something went wrong',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.red)));
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple));
+                  return Center(child: CircularProgressIndicator());
                 }
                 return formsList(snapshot);
               },
@@ -147,13 +152,49 @@ class _DashboardState extends State<Dashboard> {
                       bottomLeft: listElementCornerRadius,
                       bottomRight: listElementCornerRadius)),
               child: ListTile(
-                title: new Text(document.data()['name']),
-                subtitle: new Text(document.data()['subname']),
-              ),
+                  title: new Text(document.data()['name']),
+                  subtitle: new Text(document.data()['description']),
+                  trailing: dropdownCellMenu(document.id)),
             ),
           ),
         );
       }).toList(),
     );
+  }
+
+  Widget dropdownCellMenu(String id) {
+    return DropdownButton<String>(
+      icon: Icon(Icons.more_vert),
+      iconSize: 24,
+      elevation: 16,
+      style: TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.grey[200],
+      ),
+      onChanged: (String newValue) {
+        if (newValue == 'Edit') {
+        } else {
+          _deleteForm(id);
+        }
+      },
+      items: <String>['Edit', 'Delete']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+
+  void _deleteForm(String id) {
+    _alertController.showMessageDialogWithAction(
+        context, "Delete form", "Are you sure you want to delete this form?",
+        () async {
+      forms.doc(id).delete().then((value) => print("User Deleted")).catchError(
+          (error) => _alertController.showMessageDialog(
+              context, "Failed to delete form", error));
+    });
   }
 }

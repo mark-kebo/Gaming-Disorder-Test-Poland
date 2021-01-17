@@ -56,7 +56,7 @@ class _NavBarState extends State<NavBar> {
           ),
           NavBarItem(
             active: selected[2],
-            icon: Icons.account_circle,
+            icon: Icons.bar_chart,
             touched: () {
               setState(() {
                 select(2);
@@ -117,7 +117,7 @@ class _NavBatItemState extends State<NavBarItem> {
                       width: 5.0,
                       decoration: BoxDecoration(
                           color: widget.active
-                              ? Colors.deepPurple[200]
+                              ? Colors.deepPurple[400]
                               : Colors.transparent,
                           borderRadius: BorderRadius.only(
                               topRight: Radius.circular(10.0),

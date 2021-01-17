@@ -15,11 +15,13 @@ Future<void> main() async {
       User user = (await _auth.signInWithEmailAndPassword(
               email: email, password: password))
           .user;
-      user != null ? runApp(Dashboard()) : runApp(Login());
+      user != null
+          ? runApp(MaterialApp(home: Dashboard()))
+          : runApp(MaterialApp(home: Login()));
     } catch (error) {
-      runApp(Login());
+      runApp(MaterialApp(home: Login()));
     }
   } else {
-    runApp(Login());
+    runApp(MaterialApp(home: Login()));
   }
 }
