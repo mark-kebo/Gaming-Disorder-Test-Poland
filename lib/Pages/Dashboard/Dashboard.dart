@@ -1,58 +1,83 @@
+import 'package:myapp/NavigationBar/NavigationBar.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/Pages/Login/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
+class Dashboard extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _DashboardState();
+}
 
-class Dashboard extends StatelessWidget {
+class _DashboardState extends State<Dashboard> {
+  bool isDashboard = true; 
+  double contentPadding = 32;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Dashboard - Gaming Disorder Test Poland',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.deepPurple,
       ),
-      home: DashboardPage(),
-    );
-  }
-}
-
-class DashboardPage extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: {
-        '/': (context) => DashboardScreen(),
-      },
-    );
-  }
-}
-
-class DashboardScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[850],
-      appBar: AppBar(
-        title: Text('Gaming Disorder Test Poland - Dashboard'),
-        backgroundColor: Colors.red,
-        actions: <Widget>[ 
-          FlatButton(
-            textColor: Colors.white,
-            onPressed: () async {
-              _auth.signOut();
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              prefs.remove('email');
-              prefs.remove('password');
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (BuildContext ctx) => Login()));
-            },
-            child: Text('Logout'),
+      home: Scaffold (
+        body: Stack(
+        children: [
+          Positioned(
+            top: contentPadding,
+            left: contentPadding + 100,
+            right: contentPadding,
+            bottom: contentPadding,
+            child: isDashboard ? 
+              Text("Dashboard content",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                  color: Colors.deepPurple)
+              ):
+              Stack (children: [
+                Text("All Forms",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 32,
+                    color: Colors.deepPurple)
+                ),
+                Positioned(
+                  top: contentPadding * 2,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: ListView.builder(
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return new GestureDetector(
+                        onTap: () {
+                          print("tapped");
+                        },
+                        child: new Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: new Container(
+                            color: Colors.grey,
+                            height: 64.0,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],)
           ),
-        ]
-      ),
+          NavigationBar(
+            mainTouched: () {
+              setState(() {
+                isDashboard = true;
+              });
+            },
+            createFormTouched: () {
+              setState(() {
+                isDashboard = false;
+              });
+            }
+          )
+        ],),
+      )
     );
   }
 }
