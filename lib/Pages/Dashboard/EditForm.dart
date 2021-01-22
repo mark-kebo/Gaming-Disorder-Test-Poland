@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/Models/Questionary.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -12,14 +13,20 @@ class _EditFormState extends State<EditForm> {
   double _contentPadding = 32;
   double _fieldPadding = 8.0;
   double _elementsHeight = 64.0;
+  Color _elementBackgroundColor = Colors.grey[200];
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  CollectionReference forms = firestore.collection('forms');
-  TextStyle titleTextStyle = TextStyle(
+  CollectionReference _formsCollection = firestore.collection('forms');
+  TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
-  Radius listElementCornerRadius = const Radius.circular(16.0);
+  Radius _listElementCornerRadius = const Radius.circular(16.0);
   bool _isShowLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final List<FormField> fields = <FormField>[];
+  Questionary _questionary = Questionary();
+  TextStyle _listTitleStyle =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black);
+  SizedBox _inset = SizedBox(height: 16);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +57,7 @@ class _EditFormState extends State<EditForm> {
                   right: _contentPadding,
                   child: Text(
                     "Add new form",
-                    style: titleTextStyle,
+                    style: _titleTextStyle,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -72,6 +79,8 @@ class _EditFormState extends State<EditForm> {
                       children: [
                         _nameField(),
                         _descriptionField(),
+                        _addFieldButton(),
+                        _fieldsList()
                       ],
                     )),
               ],
@@ -87,18 +96,165 @@ class _EditFormState extends State<EditForm> {
     super.dispose();
   }
 
+  Widget _fieldsList() {
+    if (_questionary.fields != null && _questionary.fields.length > 0) {
+      return Expanded(
+          child: new ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: _questionary.fields.length,
+              itemBuilder: (BuildContext context, int index) {
+                return new Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new Container(
+                      decoration: new BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: new BorderRadius.only(
+                              topLeft: _listElementCornerRadius,
+                              topRight: _listElementCornerRadius,
+                              bottomLeft: _listElementCornerRadius,
+                              bottomRight: _listElementCornerRadius)),
+                      child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: _listElement(_questionary.fields[index]))),
+                );
+              }));
+    } else {
+      return Text("No fields have been added yet");
+    }
+  }
+
+  Widget _listElement(QuestionaryFieldType fieldType) {
+    switch (fieldType.type) {
+      case QuestionaryFieldAbstract.slider:
+        var element = fieldType as SliderFormField;
+        return new Column(
+          children: [
+            Text(element.name, style: _listTitleStyle),
+            TextFormField(),
+            TextFormField(),
+            _inset,
+            _deleteFieldButton(fieldType)
+          ],
+        );
+        break;
+      case QuestionaryFieldAbstract.likertScale:
+        var element = fieldType as LikertScaleFormField;
+        return new Column(
+          children: [
+            Text(element.name),
+            TextFormField(),
+            TextFormField(),
+            _inset,
+            _deleteFieldButton(fieldType)
+          ],
+        );
+        break;
+      case QuestionaryFieldAbstract.paragraph:
+        var element = fieldType as ParagraphFormField;
+        return new Column(
+          children: [
+            Text(element.name, style: _listTitleStyle),
+            TextFormField(),
+            TextFormField(),
+            _inset,
+            _deleteFieldButton(fieldType)
+          ],
+        );
+        break;
+      case QuestionaryFieldAbstract.multipleChoise:
+        var element = fieldType as MultipleChoiseFormField;
+        return new Column(
+          children: [
+            Text(element.name, style: _listTitleStyle),
+            TextFormField(),
+            TextFormField(),
+            _inset,
+            _deleteFieldButton(fieldType)
+          ],
+        );
+        break;
+      case QuestionaryFieldAbstract.singleChoise:
+        var element = fieldType as SingleChoiseFormField;
+        return new Column(
+          children: [
+            Text(element.name, style: _listTitleStyle),
+            TextFormField(),
+            TextFormField(),
+            _inset,
+            _deleteFieldButton(fieldType)
+          ],
+        );
+        break;
+    }
+    return Text("Empty element");
+  }
+
+  Widget _addFieldButton() {
+    return Container(
+        width: double.infinity,
+        padding: EdgeInsets.only(top: _fieldPadding, bottom: _fieldPadding),
+        child: FlatButton(
+            onPressed: () {
+              print("Add new field");
+              _addField();
+            },
+            color: Colors.deepPurple,
+            height: _elementsHeight,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                side: BorderSide(color: Colors.deepPurple[200])),
+            child: Text("Add Field",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.white))));
+  }
+
+  Widget _deleteFieldButton(QuestionaryFieldType fieldType) {
+    return Container(
+        width: 200,
+        padding: EdgeInsets.only(top: _fieldPadding, bottom: _fieldPadding),
+        child: FlatButton(
+            onPressed: () {
+              print("delete field");
+              _deleteField(fieldType);
+            },
+            color: Colors.red[50],
+            height: _elementsHeight,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                side: BorderSide(color: Colors.red[100])),
+            child: Text("Delete",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.red[400]))));
+  }
+
+  void _addField() {
+    setState(() {
+      _questionary.fields.add(SliderFormField());
+    });
+  }
+
+  void _deleteField(QuestionaryFieldType fieldType) {
+    setState(() {
+      _questionary.fields.remove(fieldType);
+    });
+  }
+
   Widget _nameField() {
     return Container(
         margin: EdgeInsets.only(top: _fieldPadding, bottom: _fieldPadding),
-        padding: EdgeInsets.all(_fieldPadding),
+        padding: EdgeInsets.only(
+            top: _fieldPadding,
+            bottom: _fieldPadding,
+            left: _fieldPadding * 2,
+            right: _fieldPadding * 2),
         height: _elementsHeight,
         decoration: new BoxDecoration(
-            color: Colors.grey[200],
+            color: _elementBackgroundColor,
             borderRadius: new BorderRadius.only(
-                topLeft: listElementCornerRadius,
-                topRight: listElementCornerRadius,
-                bottomLeft: listElementCornerRadius,
-                bottomRight: listElementCornerRadius)),
+                topLeft: _listElementCornerRadius,
+                topRight: _listElementCornerRadius,
+                bottomLeft: _listElementCornerRadius,
+                bottomRight: _listElementCornerRadius)),
         child: TextFormField(
           controller: _nameController,
           validator: (String value) {
@@ -115,15 +271,19 @@ class _EditFormState extends State<EditForm> {
   Widget _descriptionField() {
     return Container(
         margin: EdgeInsets.only(top: _fieldPadding, bottom: _fieldPadding),
-        padding: EdgeInsets.all(_fieldPadding),
+        padding: EdgeInsets.only(
+            top: _fieldPadding,
+            bottom: _fieldPadding,
+            left: _fieldPadding * 2,
+            right: _fieldPadding * 2),
         height: _elementsHeight,
         decoration: new BoxDecoration(
-            color: Colors.grey[200],
+            color: _elementBackgroundColor,
             borderRadius: new BorderRadius.only(
-                topLeft: listElementCornerRadius,
-                topRight: listElementCornerRadius,
-                bottomLeft: listElementCornerRadius,
-                bottomRight: listElementCornerRadius)),
+                topLeft: _listElementCornerRadius,
+                topRight: _listElementCornerRadius,
+                bottomLeft: _listElementCornerRadius,
+                bottomRight: _listElementCornerRadius)),
         child: TextFormField(
           controller: _descriptionController,
           validator: (String value) {
@@ -138,13 +298,15 @@ class _EditFormState extends State<EditForm> {
   }
 
   void _createFormAction() async {
+    _questionary.name = _nameController.text;
+    _questionary.description = _descriptionController.text;
     setState(() {
       _isShowLoading = true;
     });
-    forms
+    _formsCollection
         .add({
-          'name': _nameController.text,
-          'description': _descriptionController.text
+          'name': _questionary.name,
+          'description': _questionary.description
         })
         .then((value) => setState(() {
               Navigator.pop(context);
