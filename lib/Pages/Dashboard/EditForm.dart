@@ -129,8 +129,19 @@ class _EditFormState extends State<EditForm> {
         var element = fieldType as SliderFormField;
         return new Column(
           children: [
-            Text(element.name, style: _listTitleStyle),
-            TextFormField(),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              Expanded(
+                flex: 8,
+                child: TextFormField(),
+              ),
+              Expanded(
+                  flex: 2,
+                  child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(element.name, style: _listTitleStyle)))
+            ]),
+            _inset,
+            _inset,
             TextFormField(),
             _inset,
             _deleteFieldButton(fieldType)
@@ -196,7 +207,7 @@ class _EditFormState extends State<EditForm> {
         child: FlatButton(
             onPressed: () {
               print("Add new field");
-              _addField();
+              _showFieldTypeDialog();
             },
             color: Colors.deepPurple,
             height: _elementsHeight,
@@ -206,6 +217,62 @@ class _EditFormState extends State<EditForm> {
             child: Text("Add Field",
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: Colors.white))));
+  }
+
+  void _showFieldTypeDialog() {
+    String selectedRadio = "";
+    List<QuestionaryFieldType> questionaryFields = [
+      SingleChoiseFormField(),
+      SliderFormField(),
+      MultipleChoiseFormField(),
+      ParagraphFormField(),
+      LikertScaleFormField()
+    ];
+
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        for (var item in questionaryFields) {
+          if (item.key == selectedRadio) {
+            _addField(item);
+            Navigator.of(context, rootNavigator: true).pop();
+            break;
+          }
+        }
+      },
+    );
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Please select the type of added field",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.black)),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: questionaryFields
+                        .map((e) => RadioListTile<String>(
+                              value: e.key,
+                              title: Text(e.name),
+                              groupValue: selectedRadio,
+                              onChanged: (String value) {
+                                setState(() => selectedRadio = value);
+                              },
+                            ))
+                        .toList());
+              },
+            ),
+            actions: [okButton, cancelButton],
+          );
+        });
   }
 
   Widget _deleteFieldButton(QuestionaryFieldType fieldType) {
@@ -227,9 +294,9 @@ class _EditFormState extends State<EditForm> {
                     fontWeight: FontWeight.bold, color: Colors.red[400]))));
   }
 
-  void _addField() {
+  void _addField(QuestionaryFieldType field) {
     setState(() {
-      _questionary.fields.add(SliderFormField());
+      _questionary.fields.add(field);
     });
   }
 
