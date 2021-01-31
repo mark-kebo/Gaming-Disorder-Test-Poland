@@ -131,141 +131,165 @@ class _EditFormState extends State<EditForm> {
     switch (fieldType.type) {
       case QuestionaryFieldAbstract.slider:
         var element = fieldType as SliderFormField;
-        return new Column(
-          children: [
-            _questionTextField(element, index),
-            _inset,
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              Expanded(
-                  flex: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          hintText: 'Minimum value description'),
-                    ),
-                  )),
-              Expanded(
-                  flex: 5,
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                              hintText: 'Maximum value description'),
-                        ),
-                      )))
-            ]),
-            _inset,
-            _deleteFieldButton(fieldType)
-          ],
-        );
+        return _sliderField(element, index);
         break;
       case QuestionaryFieldAbstract.likertScale:
         var element = fieldType as LikertScaleFormField;
-        return new Column(
-          children: [
-            _questionTextField(element, index),
-            _inset,
-            // TextFormField(),//list with textfields
-            _inset,
-            _deleteFieldButton(fieldType)
-          ],
-        );
+        return _likertScaleField(element, index);
         break;
       case QuestionaryFieldAbstract.paragraph:
         var element = fieldType as ParagraphFormField;
-        return new Column(
-          children: [
-            _questionTextField(element, index),
-            _inset,
-            _deleteFieldButton(fieldType)
-          ],
-        );
+        return _paragraphField(element, index);
         break;
       case QuestionaryFieldAbstract.multipleChoise:
         var element = fieldType as MultipleChoiseFormField;
-        return new Column(
-          children: [
-            _questionTextField(element, index),
-            _inset,
-            TextFormField(), //list
-            _inset,
-            _deleteFieldButton(fieldType)
-          ],
-        );
+        return _multipleChoiseField(element, index);
         break;
       case QuestionaryFieldAbstract.singleChoise:
         var element = fieldType as SingleChoiseFormField;
-        return new Column(
-          children: [
-            _questionTextField(element, index),
-            _inset,
-            TextFormField(), //list
-            _inset,
-            _deleteFieldButton(fieldType)
-          ],
-        );
+        return _singleChoiseField(element, index);
         break;
     }
     return Text("Empty element");
   }
 
-  void _showFieldTypeDialog() {
-    String selectedRadio = "";
-    List<QuestionaryFieldType> questionaryFields = [
-      SingleChoiseFormField(),
-      SliderFormField(),
-      MultipleChoiseFormField(),
-      ParagraphFormField(),
-      LikertScaleFormField()
-    ];
+  Widget _sliderField(SliderFormField fieldType, int index) {
+    return new Column(
+      children: [
+        _questionTextField(fieldType, index),
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Expanded(
+              flex: 5,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: TextFormField(
+                  decoration:
+                      InputDecoration(hintText: 'Minimum value description'),
+                ),
+              )),
+          Expanded(
+              flex: 5,
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          hintText: 'Maximum value description'),
+                    ),
+                  )))
+        ]),
+        _inset,
+        _deleteFieldButton(fieldType)
+      ],
+    );
+  }
 
-    Widget okButton = FlatButton(
-      child: Text("OK"),
-      onPressed: () {
-        for (var item in questionaryFields) {
-          if (item.key == selectedRadio) {
-            _addField(item);
-            Navigator.of(context, rootNavigator: true).pop();
-            break;
-          }
-        }
-      },
+  Widget _likertScaleField(LikertScaleFormField fieldType, int index) {
+    return new Column(
+      children: [
+        _questionTextField(fieldType, index),
+        _inset,
+        for (var item in _optionsLikertScaleList(fieldType)) item,
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          _addFieldElementdButton(fieldType),
+          _deleteFieldButton(fieldType)
+        ])
+      ],
     );
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).pop();
-      },
+  }
+
+  Widget _paragraphField(ParagraphFormField fieldType, int index) {
+    return new Column(
+      children: [
+        _questionTextField(fieldType, index),
+        _inset,
+        _deleteFieldButton(fieldType)
+      ],
     );
-    showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Please select the type of added field",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.black)),
-            content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: questionaryFields
-                        .map((e) => RadioListTile<String>(
-                              value: e.key,
-                              title: Text(e.name),
-                              groupValue: selectedRadio,
-                              onChanged: (String value) {
-                                setState(() => selectedRadio = value);
-                              },
-                            ))
-                        .toList());
-              },
-            ),
-            actions: [okButton, cancelButton],
-          );
-        });
+  }
+
+  Widget _multipleChoiseField(MultipleChoiseFormField fieldType, int index) {
+    return new Column(
+      children: [
+        _questionTextField(fieldType, index),
+        _inset,
+        for (var item in _optionsMultipleChoiseList(fieldType)) item,
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          _addFieldElementdButton(fieldType),
+          _deleteFieldButton(fieldType)
+        ])
+      ],
+    );
+  }
+
+  Widget _singleChoiseField(SingleChoiseFormField fieldType, int index) {
+    return new Column(
+      children: [
+        _questionTextField(fieldType, index),
+        _inset,
+        for (var item in _optionsSingleChoiseList(fieldType)) item,
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          _addFieldElementdButton(fieldType),
+          _deleteFieldButton(fieldType)
+        ])
+      ],
+    );
+  }
+
+  List<Widget> _optionsSingleChoiseList(SingleChoiseFormField fieldType) {
+    if (fieldType.fields != null && fieldType.fields.length > 0) {
+      return fieldType.fields
+          .asMap()
+          .map((index, field) => MapEntry(
+              index,
+              SizedBox(
+                height: _elementsHeight,
+                child: _optionTextField(fieldType, index),
+              )))
+          .values
+          .toList();
+    } else {
+      return [Text("No fields have been added yet")];
+    }
+  }
+
+  List<Widget> _optionsMultipleChoiseList(MultipleChoiseFormField fieldType) {
+    if (fieldType.fields != null && fieldType.fields.length > 0) {
+      return fieldType.fields
+          .asMap()
+          .map((index, field) => MapEntry(
+              index,
+              SizedBox(
+                height: _elementsHeight,
+                child: _optionTextField(fieldType, index),
+              )))
+          .values
+          .toList();
+    } else {
+      return [Text("No fields have been added yet")];
+    }
+  }
+
+  List<Widget> _optionsLikertScaleList(LikertScaleFormField fieldType) {
+    if (fieldType.fields != null && fieldType.fields.length > 0) {
+      return fieldType.fields
+          .asMap()
+          .map((index, field) => MapEntry(
+              index,
+              SizedBox(
+                height: _elementsHeight,
+                child: _optionTextField(fieldType, index),
+              )))
+          .values
+          .toList();
+    } else {
+      return [Text("No fields have been added yet")];
+    }
   }
 
   Widget _questionTextField(QuestionaryFieldType fieldType, int index) {
@@ -299,6 +323,31 @@ class _EditFormState extends State<EditForm> {
         ]));
   }
 
+  Widget _optionTextField(QuestionaryFieldType fieldType, int index) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      Expanded(
+        flex: 9,
+        child: TextFormField(
+          decoration:
+              InputDecoration(hintText: 'Option ' + (index + 1).toString()),
+        ),
+      ),
+      Expanded(
+          flex: 1,
+          child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.delete_outlined,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () {
+                    print("delete option field");
+                    _deleteFieldOption(fieldType, index);
+                  })))
+    ]);
+  }
+
   Widget _deleteFieldButton(QuestionaryFieldType fieldType) {
     return Align(
         alignment: Alignment.centerRight,
@@ -313,16 +362,18 @@ class _EditFormState extends State<EditForm> {
             }));
   }
 
-  void _addField(QuestionaryFieldType field) {
-    setState(() {
-      _questionary.fields.add(field);
-    });
-  }
-
-  void _deleteField(QuestionaryFieldType fieldType) {
-    setState(() {
-      _questionary.fields.remove(fieldType);
-    });
+  Widget _addFieldElementdButton(QuestionaryFieldType fieldType) {
+    return Align(
+        alignment: Alignment.centerLeft,
+        child: IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Colors.deepPurple,
+            ),
+            onPressed: () {
+              print("add field element");
+              _addFieldOption(fieldType, "test");
+            }));
   }
 
   Widget _nameField() {
@@ -383,6 +434,60 @@ class _EditFormState extends State<EditForm> {
         ));
   }
 
+  void _addField(QuestionaryFieldType field) {
+    setState(() {
+      _questionary.fields.add(field);
+    });
+  }
+
+  void _deleteField(QuestionaryFieldType fieldType) {
+    setState(() {
+      _questionary.fields.remove(fieldType);
+    });
+  }
+
+  void _addFieldOption(QuestionaryFieldType fieldType, String option) {
+    setState(() {
+      switch (fieldType.type) {
+        case QuestionaryFieldAbstract.likertScale:
+          var element = fieldType as LikertScaleFormField;
+          element.fields.add(option);
+          break;
+        case QuestionaryFieldAbstract.multipleChoise:
+          var element = fieldType as MultipleChoiseFormField;
+          element.fields.add(option);
+          break;
+        case QuestionaryFieldAbstract.singleChoise:
+          var element = fieldType as SingleChoiseFormField;
+          element.fields.add(option);
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  void _deleteFieldOption(QuestionaryFieldType fieldType, int index) {
+    setState(() {
+      switch (fieldType.type) {
+        case QuestionaryFieldAbstract.likertScale:
+          var element = fieldType as LikertScaleFormField;
+          element.fields.remove(element.fields[index]);
+          break;
+        case QuestionaryFieldAbstract.multipleChoise:
+          var element = fieldType as MultipleChoiseFormField;
+          element.fields.remove(element.fields[index]);
+          break;
+        case QuestionaryFieldAbstract.singleChoise:
+          var element = fieldType as SingleChoiseFormField;
+          element.fields.remove(element.fields[index]);
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
   void _createFormAction() async {
     _questionary.name = _nameController.text;
     _questionary.description = _descriptionController.text;
@@ -402,5 +507,61 @@ class _EditFormState extends State<EditForm> {
             child: Text(error,
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: Colors.red))));
+  }
+
+  void _showFieldTypeDialog() {
+    String selectedRadio = "";
+    List<QuestionaryFieldType> questionaryFields = [
+      SingleChoiseFormField(),
+      SliderFormField(),
+      MultipleChoiseFormField(),
+      ParagraphFormField(),
+      LikertScaleFormField()
+    ];
+
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        for (var item in questionaryFields) {
+          if (item.key == selectedRadio) {
+            _addField(item);
+            Navigator.of(context, rootNavigator: true).pop();
+            break;
+          }
+        }
+      },
+    );
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Please select the type of added field",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.black)),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: questionaryFields
+                        .map((e) => RadioListTile<String>(
+                              value: e.key,
+                              title: Text(e.name),
+                              groupValue: selectedRadio,
+                              onChanged: (String value) {
+                                setState(() => selectedRadio = value);
+                              },
+                            ))
+                        .toList());
+              },
+            ),
+            actions: [okButton, cancelButton],
+          );
+        });
   }
 }
