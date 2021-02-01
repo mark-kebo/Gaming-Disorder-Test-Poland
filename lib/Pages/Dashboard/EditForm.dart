@@ -80,13 +80,14 @@ class _EditFormState extends State<EditForm> {
                     left: _contentPadding,
                     right: _contentPadding,
                     bottom: _contentPadding,
-                    child: Column(
+                    child: SingleChildScrollView(
+                        child: Column(
                       children: [
                         _nameField(),
                         _descriptionField(),
                         _fieldsList()
                       ],
-                    )),
+                    ))),
               ],
             ),
           ),
@@ -102,26 +103,27 @@ class _EditFormState extends State<EditForm> {
 
   Widget _fieldsList() {
     if (_questionary.fields != null && _questionary.fields.length > 0) {
-      return Expanded(
-          child: ListView.builder(
-              itemCount: _questionary.fields.length,
-              itemBuilder: (BuildContext context, int index) {
-                return new Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  child: new Container(
-                      decoration: new BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: new BorderRadius.only(
-                              topLeft: _listElementCornerRadius,
-                              topRight: _listElementCornerRadius,
-                              bottomLeft: _listElementCornerRadius,
-                              bottomRight: _listElementCornerRadius)),
-                      child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child:
-                              _listElement(_questionary.fields[index], index))),
-                );
-              }));
+      return ListView.builder(
+          primary: false,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _questionary.fields.length,
+          itemBuilder: (BuildContext context, int index) {
+            return new Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 8),
+              child: new Container(
+                  decoration: new BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: new BorderRadius.only(
+                          topLeft: _listElementCornerRadius,
+                          topRight: _listElementCornerRadius,
+                          bottomLeft: _listElementCornerRadius,
+                          bottomRight: _listElementCornerRadius)),
+                  child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _listElement(_questionary.fields[index], index))),
+            );
+          });
     } else {
       return Text("No fields have been added yet");
     }
