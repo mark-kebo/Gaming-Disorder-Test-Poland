@@ -125,7 +125,8 @@ class _EditFormState extends State<EditForm> {
             );
           });
     } else {
-      return Text("No fields have been added yet");
+      return Text("No fields have been added yet",
+          style: TextStyle(color: Colors.red));
     }
   }
 
@@ -166,6 +167,7 @@ class _EditFormState extends State<EditForm> {
               child: Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: TextFormField(
+                  controller: fieldType.minValueController,
                   decoration:
                       InputDecoration(hintText: 'Minimum value description'),
                 ),
@@ -177,6 +179,7 @@ class _EditFormState extends State<EditForm> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: TextFormField(
+                      controller: fieldType.maxValueController,
                       decoration: InputDecoration(
                           hintText: 'Maximum value description'),
                     ),
@@ -244,8 +247,8 @@ class _EditFormState extends State<EditForm> {
   }
 
   List<Widget> _optionsSingleChoiseList(SingleChoiseFormField fieldType) {
-    if (fieldType.fields != null && fieldType.fields.length > 0) {
-      return fieldType.fields
+    if (fieldType.optionsControllers != null && fieldType.optionsControllers.length > 0) {
+      return fieldType.optionsControllers
           .asMap()
           .map((index, field) => MapEntry(
               index,
@@ -256,13 +259,13 @@ class _EditFormState extends State<EditForm> {
           .values
           .toList();
     } else {
-      return [Text("No fields have been added yet")];
+      return [Text("No options have been added yet")];
     }
   }
 
   List<Widget> _optionsMultipleChoiseList(MultipleChoiseFormField fieldType) {
-    if (fieldType.fields != null && fieldType.fields.length > 0) {
-      return fieldType.fields
+    if (fieldType.optionsControllers != null && fieldType.optionsControllers.length > 0) {
+      return fieldType.optionsControllers
           .asMap()
           .map((index, field) => MapEntry(
               index,
@@ -273,13 +276,13 @@ class _EditFormState extends State<EditForm> {
           .values
           .toList();
     } else {
-      return [Text("No fields have been added yet")];
+      return [Text("No options have been added yet")];
     }
   }
 
   List<Widget> _optionsLikertScaleList(LikertScaleFormField fieldType) {
-    if (fieldType.fields != null && fieldType.fields.length > 0) {
-      return fieldType.fields
+    if (fieldType.optionsControllers != null && fieldType.optionsControllers.length > 0) {
+      return fieldType.optionsControllers
           .asMap()
           .map((index, field) => MapEntry(
               index,
@@ -290,7 +293,7 @@ class _EditFormState extends State<EditForm> {
           .values
           .toList();
     } else {
-      return [Text("No fields have been added yet")];
+      return [Text("No options have been added yet")];
     }
   }
 
@@ -313,6 +316,7 @@ class _EditFormState extends State<EditForm> {
           Expanded(
             flex: 8,
             child: TextFormField(
+              controller: fieldType.questionController,
               decoration: InputDecoration(
                   border: InputBorder.none, hintText: 'Question'),
             ),
@@ -330,6 +334,7 @@ class _EditFormState extends State<EditForm> {
       Expanded(
         flex: 9,
         child: TextFormField(
+          controller: fieldType.optionsControllers[index],
           decoration:
               InputDecoration(hintText: 'Option ' + (index + 1).toString()),
         ),
@@ -374,7 +379,7 @@ class _EditFormState extends State<EditForm> {
             ),
             onPressed: () {
               print("add field element");
-              _addFieldOption(fieldType, "test");
+              _addFieldOption(fieldType);
             }));
   }
 
@@ -448,20 +453,20 @@ class _EditFormState extends State<EditForm> {
     });
   }
 
-  void _addFieldOption(QuestionaryFieldType fieldType, String option) {
+  void _addFieldOption(QuestionaryFieldType fieldType) {
     setState(() {
       switch (fieldType.type) {
         case QuestionaryFieldAbstract.likertScale:
           var element = fieldType as LikertScaleFormField;
-          element.fields.add(option);
+          element.optionsControllers.add(TextEditingController());
           break;
         case QuestionaryFieldAbstract.multipleChoise:
           var element = fieldType as MultipleChoiseFormField;
-          element.fields.add(option);
+          element.optionsControllers.add(TextEditingController());
           break;
         case QuestionaryFieldAbstract.singleChoise:
           var element = fieldType as SingleChoiseFormField;
-          element.fields.add(option);
+          element.optionsControllers.add(TextEditingController());
           break;
         default:
           break;
@@ -474,15 +479,15 @@ class _EditFormState extends State<EditForm> {
       switch (fieldType.type) {
         case QuestionaryFieldAbstract.likertScale:
           var element = fieldType as LikertScaleFormField;
-          element.fields.remove(element.fields[index]);
+          element.optionsControllers.remove(element.optionsControllers[index]);
           break;
         case QuestionaryFieldAbstract.multipleChoise:
           var element = fieldType as MultipleChoiseFormField;
-          element.fields.remove(element.fields[index]);
+          element.optionsControllers.remove(element.optionsControllers[index]);
           break;
         case QuestionaryFieldAbstract.singleChoise:
           var element = fieldType as SingleChoiseFormField;
-          element.fields.remove(element.fields[index]);
+          element.optionsControllers.remove(element.optionsControllers[index]);
           break;
         default:
           break;
@@ -491,24 +496,30 @@ class _EditFormState extends State<EditForm> {
   }
 
   void _createFormAction() async {
-    _questionary.name = _nameController.text;
-    _questionary.description = _descriptionController.text;
-    setState(() {
-      _isShowLoading = true;
-    });
-    _formsCollection
-        .add({
-          'name': _questionary.name,
-          'description': _questionary.description
-        })
-        .then((value) => setState(() {
-              Navigator.pop(context);
-              _isShowLoading = false;
-            }))
-        .catchError((error) => Center(
-            child: Text(error,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.red))));
+    if (_questionary.fields != null && _questionary.fields.length > 0) {
+      _questionary.name = _nameController.text;
+      _questionary.description = _descriptionController.text;
+      setState(() {
+        _isShowLoading = true;
+      });
+      List forms = [];
+      for (int i = 0; i < _questionary.fields.length; i++)
+        forms.add(_questionary.fields[i].itemsList());
+      _formsCollection
+          .add({
+            'name': _questionary.name,
+            'description': _questionary.description,
+            'forms': forms
+          })
+          .then((value) => setState(() {
+                Navigator.pop(context);
+                _isShowLoading = false;
+              }))
+          .catchError((error) => Center(
+              child: Text(error,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.red))));
+    }
   }
 
   void _showFieldTypeDialog() {
