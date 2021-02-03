@@ -21,6 +21,100 @@ class _EditFormState extends State<EditForm> {
 
   _EditFormState(String id) {
     this.id = id;
+    _prepareViewData();
+  }
+
+  double _contentPadding = 32;
+  double _fieldPadding = 8.0;
+  double _elementsHeight = 64.0;
+  Color _elementBackgroundColor = Colors.grey[200];
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  CollectionReference _formsCollection = firestore.collection('forms');
+  TextStyle _titleTextStyle = TextStyle(
+      fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
+  Radius _listElementCornerRadius = const Radius.circular(16.0);
+  bool _isShowLoading = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Questionary _questionary = Questionary();
+  TextStyle _listTitleStyle = TextStyle(
+      fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple);
+  SizedBox _inset = SizedBox(height: 16, width: 16);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Dashboard - Gaming Disorder Test Poland',
+        theme: ThemeData(
+          primarySwatch: Colors.deepPurple,
+        ),
+        home: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            title: Text(
+              "Form",
+              style: _titleTextStyle,
+              textAlign: TextAlign.center,
+            ),
+            actions: <Widget>[
+              FlatButton(
+                textColor: Colors.deepPurple,
+                onPressed: () async {
+                  print("Add new field");
+                  _showFieldTypeDialog();
+                },
+                child: Text('Add new field'),
+              ),
+            ],
+            leading: BackButton(
+              color: Colors.deepPurple,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          floatingActionButton: _isShowLoading
+              ? CircularProgressIndicator()
+              : FloatingActionButton(
+                  child: Icon(Icons.done),
+                  backgroundColor: Colors.deepPurple,
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      _updateFormAction();
+                    }
+                  },
+                ),
+          body: Form(
+            key: _formKey,
+            child: Stack(
+              children: [
+                Positioned(
+                    top: _contentPadding,
+                    left: _contentPadding,
+                    right: _contentPadding,
+                    bottom: _contentPadding,
+                    child: SingleChildScrollView(
+                        child: Column(
+                      children: [
+                        _nameField(),
+                        _descriptionField(),
+                        _fieldsList()
+                      ],
+                    ))),
+              ],
+            ),
+          ),
+        ));
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _prepareViewData() {
     if (id.isNotEmpty) {
       _formsCollection.doc(id).get().then((doc) => {
             _questionary.name = doc.data()['name'],
@@ -87,96 +181,6 @@ class _EditFormState extends State<EditForm> {
             _descriptionController.text = _questionary.description
           });
     }
-  }
-
-  double _contentPadding = 32;
-  double _fieldPadding = 8.0;
-  double _elementsHeight = 64.0;
-  Color _elementBackgroundColor = Colors.grey[200];
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  CollectionReference _formsCollection = firestore.collection('forms');
-  TextStyle _titleTextStyle = TextStyle(
-      fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
-  Radius _listElementCornerRadius = const Radius.circular(16.0);
-  bool _isShowLoading = false;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Questionary _questionary = Questionary();
-  TextStyle _listTitleStyle = TextStyle(
-      fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple);
-  SizedBox _inset = SizedBox(height: 16, width: 16);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Dashboard - Gaming Disorder Test Poland',
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-        ),
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Text(
-              "Add new form",
-              style: _titleTextStyle,
-              textAlign: TextAlign.center,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                textColor: Colors.deepPurple,
-                onPressed: () async {
-                  print("Add new field");
-                  _showFieldTypeDialog();
-                },
-                child: Text('Add new field'),
-              ),
-            ],
-            leading: BackButton(
-              color: Colors.deepPurple,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          floatingActionButton: _isShowLoading
-              ? CircularProgressIndicator()
-              : FloatingActionButton(
-                  child: Icon(Icons.done),
-                  backgroundColor: Colors.deepPurple,
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      _createFormAction();
-                    }
-                  },
-                ),
-          body: Form(
-            key: _formKey,
-            child: Stack(
-              children: [
-                Positioned(
-                    top: _contentPadding,
-                    left: _contentPadding,
-                    right: _contentPadding,
-                    bottom: _contentPadding,
-                    child: SingleChildScrollView(
-                        child: Column(
-                      children: [
-                        _nameField(),
-                        _descriptionField(),
-                        _fieldsList()
-                      ],
-                    ))),
-              ],
-            ),
-          ),
-        ));
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
   }
 
   Widget _fieldsList() {
@@ -578,7 +582,7 @@ class _EditFormState extends State<EditForm> {
     });
   }
 
-  void _createFormAction() async {
+  void _updateFormAction() async {
     if (_questionary.fields != null && _questionary.fields.length > 0) {
       _questionary.name = _nameController.text;
       _questionary.description = _descriptionController.text;
@@ -588,20 +592,36 @@ class _EditFormState extends State<EditForm> {
       List forms = [];
       for (int i = 0; i < _questionary.fields.length; i++)
         forms.add(_questionary.fields[i].itemsList());
-      _formsCollection
-          .add({
-            'name': _questionary.name,
-            'description': _questionary.description,
-            'forms': forms
-          })
-          .then((value) => setState(() {
-                Navigator.pop(context);
-                _isShowLoading = false;
-              }))
-          .catchError((error) => Center(
-              child: Text(error,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.red))));
+      this.id.isEmpty
+          ? _formsCollection
+              .add({
+                'name': _questionary.name,
+                'description': _questionary.description,
+                'forms': forms
+              })
+              .then((value) => setState(() {
+                    Navigator.pop(context);
+                    _isShowLoading = false;
+                  }))
+              .catchError((error) => Center(
+                  child: Text(error,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.red))))
+          : _formsCollection
+              .doc(id)
+              .update({
+                'name': _questionary.name,
+                'description': _questionary.description,
+                'forms': forms
+              })
+              .then((value) => setState(() {
+                    Navigator.pop(context);
+                    _isShowLoading = false;
+                  }))
+              .catchError((error) => Center(
+                  child: Text(error,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.red))));
     }
   }
 
