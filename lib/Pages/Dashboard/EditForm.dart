@@ -4,12 +4,91 @@ import 'package:myapp/Models/Questionary.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+// ignore: must_be_immutable
 class EditForm extends StatefulWidget {
+  String id;
+
+  EditForm(String id) {
+    this.id = id;
+  }
+
   @override
-  State<StatefulWidget> createState() => _EditFormState();
+  State<StatefulWidget> createState() => _EditFormState(id);
 }
 
 class _EditFormState extends State<EditForm> {
+  String id;
+
+  _EditFormState(String id) {
+    this.id = id;
+    if (id.isNotEmpty) {
+      _formsCollection.doc(id).get().then((doc) => {
+            _questionary.name = doc.data()['name'],
+            _questionary.description = doc.data()['description'],
+            setState(() {
+              for (var form in doc.data()['forms']) {
+                var field;
+                switch (form["key"]) {
+                  case "likertScale":
+                    var likertScaleFormField = LikertScaleFormField();
+                    for (var option in form['options']) {
+                      var textController = TextEditingController();
+                      textController.text = option;
+                      likertScaleFormField.optionsControllers
+                          .add(textController);
+                    }
+                    likertScaleFormField.questionController.text =
+                        form["question"];
+                    field = likertScaleFormField;
+                    break;
+                  case "paragraph":
+                    var paragraphFormField = ParagraphFormField();
+                    paragraphFormField.questionController.text =
+                        form["question"];
+                    field = paragraphFormField;
+                    break;
+                  case "multipleChoise":
+                    var multipleChoiseFormField = MultipleChoiseFormField();
+                    for (var option in form['options']) {
+                      var textController = TextEditingController();
+                      textController.text = option;
+                      multipleChoiseFormField.optionsControllers
+                          .add(textController);
+                    }
+                    multipleChoiseFormField.questionController.text =
+                        form["question"];
+                    field = multipleChoiseFormField;
+                    break;
+                  case "singleChoise":
+                    var singleChoiseFormField = SingleChoiseFormField();
+                    for (var option in form['options']) {
+                      var textController = TextEditingController();
+                      textController.text = option;
+                      singleChoiseFormField.optionsControllers
+                          .add(textController);
+                    }
+                    singleChoiseFormField.questionController.text =
+                        form["question"];
+                    field = singleChoiseFormField;
+                    break;
+                  case "slider":
+                    var sliderFormField = SliderFormField();
+                    sliderFormField.maxValueController.text = form["maxValue"];
+                    sliderFormField.minValueController.text = form["minValue"];
+                    sliderFormField.questionController.text = form["question"];
+                    field = sliderFormField;
+                    break;
+                }
+                print(form);
+                _questionary.fields.add(field);
+              }
+            }),
+            _nameController.text = _questionary.name,
+            _descriptionController.text = _questionary.description
+          });
+    }
+  }
+
   double _contentPadding = 32;
   double _fieldPadding = 8.0;
   double _elementsHeight = 64.0;
@@ -22,11 +101,10 @@ class _EditFormState extends State<EditForm> {
   Radius _listElementCornerRadius = const Radius.circular(16.0);
   bool _isShowLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final List<FormField> fields = <FormField>[];
   Questionary _questionary = Questionary();
   TextStyle _listTitleStyle = TextStyle(
       fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple);
-  SizedBox _inset = SizedBox(height: 16);
+  SizedBox _inset = SizedBox(height: 16, width: 16);
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +325,8 @@ class _EditFormState extends State<EditForm> {
   }
 
   List<Widget> _optionsSingleChoiseList(SingleChoiseFormField fieldType) {
-    if (fieldType.optionsControllers != null && fieldType.optionsControllers.length > 0) {
+    if (fieldType.optionsControllers != null &&
+        fieldType.optionsControllers.length > 0) {
       return fieldType.optionsControllers
           .asMap()
           .map((index, field) => MapEntry(
@@ -264,7 +343,8 @@ class _EditFormState extends State<EditForm> {
   }
 
   List<Widget> _optionsMultipleChoiseList(MultipleChoiseFormField fieldType) {
-    if (fieldType.optionsControllers != null && fieldType.optionsControllers.length > 0) {
+    if (fieldType.optionsControllers != null &&
+        fieldType.optionsControllers.length > 0) {
       return fieldType.optionsControllers
           .asMap()
           .map((index, field) => MapEntry(
@@ -281,7 +361,8 @@ class _EditFormState extends State<EditForm> {
   }
 
   List<Widget> _optionsLikertScaleList(LikertScaleFormField fieldType) {
-    if (fieldType.optionsControllers != null && fieldType.optionsControllers.length > 0) {
+    if (fieldType.optionsControllers != null &&
+        fieldType.optionsControllers.length > 0) {
       return fieldType.optionsControllers
           .asMap()
           .map((index, field) => MapEntry(
@@ -325,7 +406,9 @@ class _EditFormState extends State<EditForm> {
               flex: 2,
               child: Align(
                   alignment: Alignment.centerRight,
-                  child: Text(fieldType.name, style: _listTitleStyle)))
+                  child: Text(fieldType.name, style: _listTitleStyle))),
+          _inset,
+          fieldType.icon
         ]));
   }
 

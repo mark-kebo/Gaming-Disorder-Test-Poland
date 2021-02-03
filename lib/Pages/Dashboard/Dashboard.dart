@@ -45,7 +45,7 @@ class _DashboardState extends State<Dashboard> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (BuildContext ctx) => EditForm()));
+                            builder: (BuildContext ctx) => EditForm("")));
                   },
                 )
               : null,
@@ -137,9 +137,6 @@ class _DashboardState extends State<Dashboard> {
     return new ListView(
       children: snapshot.data.docs.map((DocumentSnapshot document) {
         return new GestureDetector(
-          onTap: () {
-            print("table element tapped");
-          },
           child: new Padding(
             padding: const EdgeInsets.all(8.0),
             child: new Container(
@@ -174,6 +171,7 @@ class _DashboardState extends State<Dashboard> {
       ),
       onChanged: (String newValue) {
         if (newValue == 'Edit') {
+          _editForm(id);
         } else {
           _deleteForm(id);
         }
@@ -186,6 +184,11 @@ class _DashboardState extends State<Dashboard> {
         );
       }).toList(),
     );
+  }
+
+  void _editForm(String id) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (BuildContext ctx) => EditForm(id)));
   }
 
   void _deleteForm(String id) {

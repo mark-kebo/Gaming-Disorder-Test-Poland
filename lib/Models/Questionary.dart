@@ -21,6 +21,7 @@ abstract class QuestionaryFieldType {
   TextEditingController questionController;
   List<TextEditingController> optionsControllers;
   Map itemsList();
+  Icon icon;
 }
 
 class LikertScaleFormField extends QuestionaryFieldType {
@@ -29,6 +30,10 @@ class LikertScaleFormField extends QuestionaryFieldType {
   TextEditingController questionController = TextEditingController();
   String name = "Likert Scale";
   List<TextEditingController> optionsControllers = <TextEditingController>[];
+  Icon icon = Icon(
+    Icons.linear_scale,
+    color: Colors.deepPurple,
+  );
 
   Map itemsList() {
     return {
@@ -45,6 +50,10 @@ class ParagraphFormField extends QuestionaryFieldType {
   TextEditingController questionController = TextEditingController();
   String name = "Paragraph";
   String key = "paragraph";
+  Icon icon = Icon(
+    Icons.format_align_left_outlined,
+    color: Colors.deepPurple,
+  );
 
   Map itemsList() {
     return {
@@ -61,6 +70,10 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
   TextEditingController questionController = TextEditingController();
   String name = "Multiple Choise";
   List<TextEditingController> optionsControllers = <TextEditingController>[];
+  Icon icon = Icon(
+    Icons.check_box_outlined,
+    color: Colors.deepPurple,
+  );
 
   Map itemsList() {
     return {
@@ -78,6 +91,10 @@ class SingleChoiseFormField extends QuestionaryFieldType {
   TextEditingController questionController = TextEditingController();
   String name = "Single Choise";
   List<TextEditingController> optionsControllers = <TextEditingController>[];
+  Icon icon = Icon(
+    Icons.radio_button_checked_outlined,
+    color: Colors.deepPurple,
+  );
 
   Map itemsList() {
     return {
@@ -96,6 +113,10 @@ class SliderFormField extends QuestionaryFieldType {
   TextEditingController maxValueController = TextEditingController();
   TextEditingController minValueController = TextEditingController();
   String name = "Slider";
+  Icon icon = Icon(
+    Icons.toggle_on_outlined,
+    color: Colors.deepPurple,
+  );
 
   Map itemsList() {
     return {
