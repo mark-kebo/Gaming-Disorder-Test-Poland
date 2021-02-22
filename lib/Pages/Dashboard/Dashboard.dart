@@ -17,10 +17,20 @@ class _DashboardState extends State<Dashboard> {
   DashboardState state = DashboardState.main;
   double contentPadding = 32;
   CollectionReference forms = firestore.collection('forms');
-  TextStyle titleTextStyle = TextStyle(
+  CollectionReference _userGroups = firestore.collection('user_groups');
+  CollectionReference _users = firestore.collection('users');
+  TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
-  Radius listElementCornerRadius = const Radius.circular(16.0);
+  TextStyle _subtitleTextStyle = TextStyle(
+      fontWeight: FontWeight.normal, fontSize: 24, color: Colors.deepPurple);
   final AlertController _alertController = AlertController();
+  BorderRadius _borderRadius = BorderRadius.only(
+      topLeft: Radius.circular(16.0),
+      topRight: Radius.circular(16.0),
+      bottomLeft: Radius.circular(16.0),
+      bottomRight: Radius.circular(16.0));
+  EdgeInsets _boxPadding =
+      EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16);
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +88,7 @@ class _DashboardState extends State<Dashboard> {
     switch (state) {
       case DashboardState.main:
         {
-          return Text("Gaming Disorder Test Poland", style: titleTextStyle);
+          return mainScreenStack();
         }
         break;
       case DashboardState.forms:
@@ -88,12 +98,12 @@ class _DashboardState extends State<Dashboard> {
         break;
       case DashboardState.statistics:
         {
-          return Text("Statistics", style: titleTextStyle);
+          return Text("Statistics", style: _titleTextStyle);
         }
         break;
       case DashboardState.settings:
         {
-          return Text("Settings", style: titleTextStyle);
+          return Text("Settings", style: _titleTextStyle);
         }
         break;
       default:
@@ -107,7 +117,7 @@ class _DashboardState extends State<Dashboard> {
   Stack formsStack() {
     return Stack(
       children: [
-        Text("All Forms", style: titleTextStyle),
+        Text("All Forms", style: _titleTextStyle),
         Positioned(
             top: contentPadding * 2,
             left: 0,
@@ -133,6 +143,87 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  Widget mainScreenStack() {
+    return Stack(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              flex: 6,
+              child: Container(),
+            ),
+            Expanded(
+                flex: 4,
+                child: Column(children: [
+                  Expanded(child: _groupsWidget()),
+                  Expanded(child: _usersWidget())
+                ]))
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _groupsWidget() {
+    return new Container(
+        margin: EdgeInsets.only(bottom: 8),
+        padding: _boxPadding,
+        decoration: new BoxDecoration(
+            color: Colors.grey[100], borderRadius: _borderRadius),
+        child: Column(
+          children: [
+            Text("User groups", style: _subtitleTextStyle),
+            Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+              stream: _userGroups.snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text('Something went wrong',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.red)));
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return _groupsList(snapshot);
+              },
+            ))
+          ],
+        ));
+  }
+
+  Widget _usersWidget() {
+    return new Container(
+        margin: EdgeInsets.only(top: 8),
+        padding: _boxPadding,
+        decoration: new BoxDecoration(
+            color: Colors.grey[100], borderRadius: _borderRadius),
+        child: Column(
+          children: [
+            Text("All users", style: _subtitleTextStyle),
+            Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+              stream: _users.snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text('Something went wrong',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.red)));
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return _usersList(snapshot);
+              },
+            ))
+          ],
+        ));
+  }
+
   ListView formsList(AsyncSnapshot<QuerySnapshot> snapshot) {
     return new ListView(
       children: snapshot.data.docs.map((DocumentSnapshot document) {
@@ -142,12 +233,7 @@ class _DashboardState extends State<Dashboard> {
             child: new Container(
               height: 64.0,
               decoration: new BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: new BorderRadius.only(
-                      topLeft: listElementCornerRadius,
-                      topRight: listElementCornerRadius,
-                      bottomLeft: listElementCornerRadius,
-                      bottomRight: listElementCornerRadius)),
+                  color: Colors.grey[200], borderRadius: _borderRadius),
               child: ListTile(
                   title: new Text(document.data()['name']),
                   subtitle: new Text(document.data()['description']),
@@ -155,6 +241,45 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
         );
+      }).toList(),
+    );
+  }
+
+  ListView _groupsList(AsyncSnapshot<QuerySnapshot> snapshot) {
+    return new ListView(
+      children: snapshot.data.docs.map((DocumentSnapshot document) {
+        return new GestureDetector(
+          child: new Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: new Container(
+              height: 48.0,
+              decoration: new BoxDecoration(
+                  color: Colors.grey[200], borderRadius: _borderRadius),
+              child: ListTile(
+                  title: new Text(document.data()['name']),
+                  trailing: dropdownCellMenu(document.id)),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  ListView _usersList(AsyncSnapshot<QuerySnapshot> snapshot) {
+    return new ListView(
+      children: snapshot.data.docs.map((DocumentSnapshot document) {
+        return new GestureDetector(
+            child: new Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: new Container(
+            height: 48.0,
+            decoration: new BoxDecoration(
+                color: Colors.grey[200], borderRadius: _borderRadius),
+            child: ListTile(
+              title: new Text(document.data()['name']),
+            ),
+          ),
+        ));
       }).toList(),
     );
   }
@@ -187,8 +312,8 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _editForm(String id) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (BuildContext ctx) => EditForm(id)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext ctx) => EditForm(id)));
   }
 
   void _deleteForm(String id) {
