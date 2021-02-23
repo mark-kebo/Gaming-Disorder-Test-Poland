@@ -2,6 +2,7 @@ import 'package:myapp/NavigationBar/NavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/Pages/Dashboard/EditForm.dart';
+import 'package:myapp/Pages/Dashboard/EditGroup.dart';
 import 'package:myapp/Helpers/Alert.dart';
 
 enum DashboardState { main, forms, statistics, settings }
@@ -52,10 +53,7 @@ class _DashboardState extends State<Dashboard> {
                   backgroundColor: Colors.deepPurple,
                   onPressed: () {
                     print("new form pressed");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext ctx) => EditForm("")));
+                    _editForm("");
                   },
                 )
               : null,
@@ -172,7 +170,26 @@ class _DashboardState extends State<Dashboard> {
             color: Colors.grey[100], borderRadius: _borderRadius),
         child: Column(
           children: [
-            Text("User groups", style: _subtitleTextStyle),
+            Row(children: [
+              Expanded(
+                  flex: 9,
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text("User groups", style: _subtitleTextStyle))),
+              Expanded(
+                  flex: 1,
+                  child: Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.add,
+                            color: Colors.deepPurple,
+                          ),
+                          onPressed: () {
+                            print("add group pressed");
+                            _editGroup("");
+                          })))
+            ]),
             Expanded(
                 child: StreamBuilder<QuerySnapshot>(
               stream: _userGroups.snapshots(),
@@ -314,6 +331,11 @@ class _DashboardState extends State<Dashboard> {
   void _editForm(String id) {
     Navigator.push(context,
         MaterialPageRoute(builder: (BuildContext ctx) => EditForm(id)));
+  }
+
+  void _editGroup(String id) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext ctx) => EditGroup(id)));
   }
 
   void _deleteForm(String id) {
