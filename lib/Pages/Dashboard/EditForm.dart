@@ -31,6 +31,7 @@ class _EditFormState extends State<EditForm> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   CollectionReference _formsCollection = firestore.collection('forms');
+  CollectionReference _userGroups = firestore.collection('user_groups');
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   Radius _listElementCornerRadius = const Radius.circular(16.0);
@@ -40,6 +41,7 @@ class _EditFormState extends State<EditForm> {
   TextStyle _listTitleStyle = TextStyle(
       fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple);
   SizedBox _inset = SizedBox(height: 16, width: 16);
+  Map<String, String> groupItems = Map<String, String>();
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +100,7 @@ class _EditFormState extends State<EditForm> {
                       children: [
                         _nameField(),
                         _descriptionField(),
+                        _groupField(),
                         _fieldsList()
                       ],
                     ))),
@@ -115,10 +118,19 @@ class _EditFormState extends State<EditForm> {
   }
 
   void _prepareViewData() {
+    _userGroups.get().then((QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach((doc) {
+            setState(() {
+              groupItems[doc.id] = doc["name"];
+            });
+          })
+        });
     if (id.isNotEmpty) {
       _formsCollection.doc(id).get().then((doc) => {
             _questionary.name = doc.data()['name'],
             _questionary.description = doc.data()['description'],
+            _questionary.groupId = doc.data()['groupId'],
+            _questionary.groupName = doc.data()['groupName'],
             setState(() {
               for (var form in doc.data()['forms']) {
                 var field;
@@ -528,6 +540,51 @@ class _EditFormState extends State<EditForm> {
         ));
   }
 
+  Widget _groupField() {
+    return Container(
+        padding: EdgeInsets.only(
+            top: _fieldPadding,
+            bottom: _fieldPadding,
+            left: _fieldPadding * 2,
+            right: _fieldPadding * 2),
+        child: Align(
+            alignment: Alignment.centerRight,
+            child: Row(children: [
+              Text("Selected group:   ", style: TextStyle(fontSize: 16)),
+              Expanded(
+                  child: DropdownButton<String>(
+                iconSize: 0.0,
+                iconDisabledColor: Colors.white,
+                iconEnabledColor: Colors.white,
+                style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+                hint: Text(_questionary.groupName,
+                    style: TextStyle(fontSize: 16)),
+                underline: Container(
+                  height: 2,
+                  color: Colors.grey[200],
+                ),
+                onChanged: (String newValue) {
+                  setState(() {
+                    _questionary.groupId = newValue;
+                    _questionary.groupName = groupItems[newValue];
+                  });
+                },
+                items: groupItems
+                    .map<String, DropdownMenuItem<String>>(
+                        (String key, String value) {
+                      return MapEntry(
+                          key,
+                          DropdownMenuItem<String>(
+                            value: key,
+                            child: Text(value),
+                          ));
+                    })
+                    .values
+                    .toList(),
+              ))
+            ])));
+  }
+
   void _addField(QuestionaryFieldType field) {
     setState(() {
       _questionary.fields.add(field);
@@ -597,7 +654,9 @@ class _EditFormState extends State<EditForm> {
               .add({
                 'name': _questionary.name,
                 'description': _questionary.description,
-                'forms': forms
+                'forms': forms,
+                'groupId': _questionary.groupId,
+                'groupName': _questionary.groupName
               })
               .then((value) => setState(() {
                     Navigator.pop(context);
@@ -612,7 +671,9 @@ class _EditFormState extends State<EditForm> {
               .update({
                 'name': _questionary.name,
                 'description': _questionary.description,
-                'forms': forms
+                'forms': forms,
+                'groupId': _questionary.groupId,
+                'groupName': _questionary.groupName
               })
               .then((value) => setState(() {
                     Navigator.pop(context);

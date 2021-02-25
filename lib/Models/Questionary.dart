@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class Questionary {
   String name = "";
   String description = "";
+  String groupId = "";
+  String groupName = "";
   List<QuestionaryFieldType> fields = <QuestionaryFieldType>[];
 }
 
