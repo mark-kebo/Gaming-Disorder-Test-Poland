@@ -254,7 +254,9 @@ class _DashboardState extends State<Dashboard> {
               child: ListTile(
                   title: new Text(document.data()['name']),
                   subtitle: new Text(document.data()['description']),
-                  trailing: dropdownCellMenu(document.id)),
+                  trailing: dropdownCellMenu(
+                      onDelete: () => {_deleteForm(document.id)},
+                      onEdit: () => {_editForm(document.id)})),
             ),
           ),
         );
@@ -274,7 +276,9 @@ class _DashboardState extends State<Dashboard> {
                   color: Colors.grey[200], borderRadius: _borderRadius),
               child: ListTile(
                   title: new Text(document.data()['name']),
-                  trailing: dropdownCellMenu(document.id)),
+                  trailing: dropdownCellMenu(
+                      onDelete: () => {_deleteGroup(document.id)},
+                      onEdit: () => {_editGroup(document.id)})),
             ),
           ),
         );
@@ -301,7 +305,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget dropdownCellMenu(String id) {
+  Widget dropdownCellMenu({Function onDelete, Function onEdit}) {
     return DropdownButton<String>(
       icon: Icon(Icons.more_vert),
       iconSize: 24,
@@ -313,9 +317,9 @@ class _DashboardState extends State<Dashboard> {
       ),
       onChanged: (String newValue) {
         if (newValue == 'Edit') {
-          _editForm(id);
+          onEdit();
         } else {
-          _deleteForm(id);
+          onDelete();
         }
       },
       items: <String>['Edit', 'Delete']
@@ -345,6 +349,19 @@ class _DashboardState extends State<Dashboard> {
       forms.doc(id).delete().then((value) => print("User Deleted")).catchError(
           (error) => _alertController.showMessageDialog(
               context, "Failed to delete form", error));
+    });
+  }
+
+  void _deleteGroup(String id) {
+    _alertController.showMessageDialogWithAction(
+        context, "Delete group", "Are you sure you want to delete this group?",
+        () async {
+      _userGroups
+          .doc(id)
+          .delete()
+          .then((value) => print("User Deleted"))
+          .catchError((error) => _alertController.showMessageDialog(
+              context, "Failed to delete group", error));
     });
   }
 }

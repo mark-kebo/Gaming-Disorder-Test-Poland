@@ -17,28 +17,42 @@ class EditGroup extends StatefulWidget {
 
 class _EditGroupState extends State<EditGroup> {
   String id;
-
-  _EditGroupState(String id) {
-    this.id = id;
-    // _prepareViewData();
-  }
-
   double _contentPadding = 32;
   double _fieldPadding = 8.0;
   double _elementsHeight = 64.0;
   Color _elementBackgroundColor = Colors.grey[200];
   final _nameController = TextEditingController();
   CollectionReference _usersCollection = firestore.collection('users');
+  CollectionReference _userGroups = firestore.collection('user_groups');
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   Radius _listElementCornerRadius = const Radius.circular(16.0);
   bool _isShowLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  BorderRadius _borderRadius = BorderRadius.only(
-      topLeft: Radius.circular(16.0),
-      topRight: Radius.circular(16.0),
-      bottomLeft: Radius.circular(16.0),
-      bottomRight: Radius.circular(16.0));
+  Map<String, bool> users = Map<String, bool>();
+
+  _EditGroupState(String id) {
+    this.id = id;
+    _prepareViewData();
+  }
+
+  void _prepareViewData() {
+    _usersCollection.get().then((QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach((doc) {
+            users[doc.id] = false;
+          })
+        });
+    if (id.isNotEmpty) {
+      _userGroups.doc(id).get().then((doc) => {
+            _nameController.text = doc["name"],
+            doc["selectedUsers"].forEach((element) {
+              setState(() {
+                users[element] = true;
+              });
+            })
+          });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +83,7 @@ class _EditGroupState extends State<EditGroup> {
                   backgroundColor: Colors.deepPurple,
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      // _updateFormAction();
+                      _updateAction();
                     }
                   },
                 ),
@@ -131,30 +145,22 @@ class _EditGroupState extends State<EditGroup> {
       children: snapshot.data.docs.map((DocumentSnapshot document) {
         return new GestureDetector(
             child: new Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: new Container(
-            height: 46.0,
-            decoration: new BoxDecoration(border: Border(bottom: BorderSide(color: Colors.deepPurple[100]))),
-            child: ListTile(
-                title: new Row(children: [
-              Expanded(
-                  flex: 9,
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(document.data()['name']))),
-              Expanded(
-                  flex: 1,
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Checkbox(
-                        value: true, /////////
-                        onChanged: (newValue) {
-                          setState(() {}); ///////
-                        },
-                      )))
-            ])),
-          ),
-        ));
+                padding: const EdgeInsets.all(8.0),
+                child: new Container(
+                    height: 46.0,
+                    decoration: new BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(color: Colors.deepPurple[100]))),
+                    child: CheckboxListTile(
+                      title: Text(document.data()['name']),
+                      onChanged: (bool val) {
+                        setState(() {
+                          users[document.id] = !users[document.id];
+                        });
+                        print(users[document.id]);
+                      },
+                      value: users[document.id],
+                    ))));
       }).toList(),
     );
   }
@@ -188,46 +194,32 @@ class _EditGroupState extends State<EditGroup> {
         ));
   }
 
-  // void _updateFormAction() async {
-  //   if (_questionary.fields != null && _questionary.fields.length > 0) {
-  //     _questionary.name = _nameController.text;
-  //     _questionary.description = _descriptionController.text;
-  //     setState(() {
-  //       _isShowLoading = true;
-  //     });
-  //     List forms = [];
-  //     for (int i = 0; i < _questionary.fields.length; i++)
-  //       forms.add(_questionary.fields[i].itemsList());
-  //     this.id.isEmpty
-  //         ? _formsCollection
-  //             .add({
-  //               'name': _questionary.name,
-  //               'description': _questionary.description,
-  //               'forms': forms
-  //             })
-  //             .then((value) => setState(() {
-  //                   Navigator.pop(context);
-  //                   _isShowLoading = false;
-  //                 }))
-  //             .catchError((error) => Center(
-  //                 child: Text(error,
-  //                     style: TextStyle(
-  //                         fontWeight: FontWeight.bold, color: Colors.red))))
-  //         : _formsCollection
-  //             .doc(id)
-  //             .update({
-  //               'name': _questionary.name,
-  //               'description': _questionary.description,
-  //               'forms': forms
-  //             })
-  //             .then((value) => setState(() {
-  //                   Navigator.pop(context);
-  //                   _isShowLoading = false;
-  //                 }))
-  //             .catchError((error) => Center(
-  //                 child: Text(error,
-  //                     style: TextStyle(
-  //                         fontWeight: FontWeight.bold, color: Colors.red))));
-  //   }
-  // }
+  void _updateAction() async {
+    setState(() {
+      _isShowLoading = true;
+    });
+    var usersArray = users.keys.where((element) => users[element]);
+    this.id.isEmpty
+        ? _userGroups
+            .add({'name': _nameController.text, 'selectedUsers': usersArray})
+            .then((value) => setState(() {
+                  Navigator.pop(context);
+                  _isShowLoading = false;
+                }))
+            .catchError((error) => Center(
+                child: Text(error,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red))))
+        : _userGroups
+            .doc(id)
+            .update({'name': _nameController.text, 'selectedUsers': usersArray})
+            .then((value) => setState(() {
+                  Navigator.pop(context);
+                  _isShowLoading = false;
+                }))
+            .catchError((error) => Center(
+                child: Text(error,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red))));
+  }
 }
