@@ -5,7 +5,8 @@ class Questionary {
   String description = "";
   String groupId = "";
   String groupName = "";
-  List<QuestionaryFieldType> fields = <QuestionaryFieldType>[];
+
+  List<QuestionaryFieldType> questions = <QuestionaryFieldType>[];
 }
 
 enum QuestionaryFieldAbstract {
@@ -24,6 +25,8 @@ abstract class QuestionaryFieldType {
   List<TextEditingController> optionsControllers;
   Map itemsList();
   Icon icon;
+  int keyQuestionId;
+  int keyQuestionOptionId;
 }
 
 class LikertScaleFormField extends QuestionaryFieldType {
@@ -36,13 +39,17 @@ class LikertScaleFormField extends QuestionaryFieldType {
     Icons.linear_scale,
     color: Colors.deepPurple,
   );
+  int keyQuestionId;
+  int keyQuestionOptionId;
 
   Map itemsList() {
     return {
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,
-      "options": this.optionsControllers.map((e) => e.text)
+      "options": this.optionsControllers.map((e) => e.text),
+      "keyQuestionId": this.keyQuestionId,
+      "keyQuestionOptionId": this.keyQuestionOptionId
     };
   }
 }
@@ -56,12 +63,16 @@ class ParagraphFormField extends QuestionaryFieldType {
     Icons.format_align_left_outlined,
     color: Colors.deepPurple,
   );
+  int keyQuestionId;
+  int keyQuestionOptionId;
 
   Map itemsList() {
     return {
       "key": this.key,
       "question": this.questionController.text,
-      "name": this.name
+      "name": this.name,
+      "keyQuestionId": this.keyQuestionId,
+      "keyQuestionOptionId": this.keyQuestionOptionId
     };
   }
 }
@@ -76,13 +87,17 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
     Icons.check_box_outlined,
     color: Colors.deepPurple,
   );
+  int keyQuestionId;
+  int keyQuestionOptionId;
 
   Map itemsList() {
     return {
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,
-      "options": this.optionsControllers.map((e) => e.text)
+      "options": this.optionsControllers.map((e) => e.text),
+      "keyQuestionId": this.keyQuestionId,
+      "keyQuestionOptionId": this.keyQuestionOptionId
     };
   }
 }
@@ -97,13 +112,19 @@ class SingleChoiseFormField extends QuestionaryFieldType {
     Icons.radio_button_checked_outlined,
     color: Colors.deepPurple,
   );
+  bool isKeyQuestion = false;
+  int keyQuestionId;
+  int keyQuestionOptionId;
 
   Map itemsList() {
     return {
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,
-      "options": this.optionsControllers.map((e) => e.text)
+      "isKeyQuestion": this.isKeyQuestion,
+      "options": this.optionsControllers.map((e) => e.text),
+      "keyQuestionId": this.keyQuestionId,
+      "keyQuestionOptionId": this.keyQuestionOptionId
     };
   }
 }
@@ -119,6 +140,8 @@ class SliderFormField extends QuestionaryFieldType {
     Icons.toggle_on_outlined,
     color: Colors.deepPurple,
   );
+  int keyQuestionId;
+  int keyQuestionOptionId;
 
   Map itemsList() {
     return {
@@ -126,7 +149,9 @@ class SliderFormField extends QuestionaryFieldType {
       "question": this.questionController.text,
       "name": this.name,
       "maxValue": this.maxValueController.text,
-      "minValue": this.minValueController.text
+      "minValue": this.minValueController.text,
+      "keyQuestionId": this.keyQuestionId,
+      "keyQuestionOptionId": this.keyQuestionOptionId
     };
   }
 }

@@ -132,7 +132,7 @@ class _EditFormState extends State<EditForm> {
             _questionary.groupId = doc.data()['groupId'],
             _questionary.groupName = doc.data()['groupName'],
             setState(() {
-              for (var form in doc.data()['forms']) {
+              for (var form in doc.data()['questions']) {
                 var field;
                 switch (form["key"]) {
                   case "likertScale":
@@ -175,6 +175,7 @@ class _EditFormState extends State<EditForm> {
                     }
                     singleChoiseFormField.questionController.text =
                         form["question"];
+                    singleChoiseFormField.isKeyQuestion = form["isKeyQuestion"];
                     field = singleChoiseFormField;
                     break;
                   case "slider":
@@ -186,7 +187,7 @@ class _EditFormState extends State<EditForm> {
                     break;
                 }
                 print(form);
-                _questionary.fields.add(field);
+                _questionary.questions.add(field);
               }
             }),
             _nameController.text = _questionary.name,
@@ -196,12 +197,12 @@ class _EditFormState extends State<EditForm> {
   }
 
   Widget _fieldsList() {
-    if (_questionary.fields != null && _questionary.fields.length > 0) {
+    if (_questionary.questions != null && _questionary.questions.length > 0) {
       return ListView.builder(
           primary: false,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: _questionary.fields.length,
+          itemCount: _questionary.questions.length,
           itemBuilder: (BuildContext context, int index) {
             return new Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -215,7 +216,8 @@ class _EditFormState extends State<EditForm> {
                           bottomRight: _listElementCornerRadius)),
                   child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: _listElement(_questionary.fields[index], index))),
+                      child:
+                          _listElement(_questionary.questions[index], index))),
             );
           });
     } else {
@@ -332,6 +334,20 @@ class _EditFormState extends State<EditForm> {
         _inset,
         for (var item in _optionsSingleChoiseList(fieldType)) item,
         _inset,
+        Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+                width: 270,
+                child: CheckboxListTile(
+                  title: Text("Czy to kluczowe pytanie?"),
+                  onChanged: (bool val) {
+                    setState(() {
+                      fieldType.isKeyQuestion = !fieldType.isKeyQuestion;
+                    });
+                    print(fieldType.isKeyQuestion);
+                  },
+                  value: fieldType.isKeyQuestion,
+                ))),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _addFieldElementdButton(fieldType),
           _deleteFieldButton(fieldType)
@@ -587,13 +603,13 @@ class _EditFormState extends State<EditForm> {
 
   void _addField(QuestionaryFieldType field) {
     setState(() {
-      _questionary.fields.add(field);
+      _questionary.questions.add(field);
     });
   }
 
   void _deleteField(QuestionaryFieldType fieldType) {
     setState(() {
-      _questionary.fields.remove(fieldType);
+      _questionary.questions.remove(fieldType);
     });
   }
 
@@ -640,21 +656,21 @@ class _EditFormState extends State<EditForm> {
   }
 
   void _updateFormAction() async {
-    if (_questionary.fields != null && _questionary.fields.length > 0) {
+    if (_questionary.questions != null && _questionary.questions.length > 0) {
       _questionary.name = _nameController.text;
       _questionary.description = _descriptionController.text;
       setState(() {
         _isShowLoading = true;
       });
       List forms = [];
-      for (int i = 0; i < _questionary.fields.length; i++)
-        forms.add(_questionary.fields[i].itemsList());
+      for (int i = 0; i < _questionary.questions.length; i++)
+        forms.add(_questionary.questions[i].itemsList());
       this.id.isEmpty
           ? _formsCollection
               .add({
                 'name': _questionary.name,
                 'description': _questionary.description,
-                'forms': forms,
+                'questions': forms,
                 'groupId': _questionary.groupId,
                 'groupName': _questionary.groupName
               })
@@ -671,7 +687,7 @@ class _EditFormState extends State<EditForm> {
               .update({
                 'name': _questionary.name,
                 'description': _questionary.description,
-                'forms': forms,
+                'questions': forms,
                 'groupId': _questionary.groupId,
                 'groupName': _questionary.groupName
               })
