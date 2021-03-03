@@ -143,6 +143,10 @@ class _EditFormState extends State<EditForm> {
                       likertScaleFormField.optionsControllers
                           .add(textController);
                     }
+                    likertScaleFormField.keyQuestion =
+                        form['keyQuestion'];
+                    likertScaleFormField.keyQuestionOption =
+                        form['keyQuestionOption'];
                     likertScaleFormField.questionController.text =
                         form["question"];
                     field = likertScaleFormField;
@@ -151,6 +155,9 @@ class _EditFormState extends State<EditForm> {
                     var paragraphFormField = ParagraphFormField();
                     paragraphFormField.questionController.text =
                         form["question"];
+                    paragraphFormField.keyQuestion = form['keyQuestion'];
+                    paragraphFormField.keyQuestionOption =
+                        form['keyQuestionOption'];
                     field = paragraphFormField;
                     break;
                   case "multipleChoise":
@@ -163,6 +170,10 @@ class _EditFormState extends State<EditForm> {
                     }
                     multipleChoiseFormField.questionController.text =
                         form["question"];
+                    multipleChoiseFormField.keyQuestion =
+                        form['keyQuestion'];
+                    multipleChoiseFormField.keyQuestionOption =
+                        form['keyQuestionOption'];
                     field = multipleChoiseFormField;
                     break;
                   case "singleChoise":
@@ -175,6 +186,10 @@ class _EditFormState extends State<EditForm> {
                     }
                     singleChoiseFormField.questionController.text =
                         form["question"];
+                    singleChoiseFormField.keyQuestion =
+                        form['keyQuestion'];
+                    singleChoiseFormField.keyQuestionOption =
+                        form['keyQuestionOption'];
                     singleChoiseFormField.isKeyQuestion = form["isKeyQuestion"];
                     field = singleChoiseFormField;
                     break;
@@ -183,6 +198,9 @@ class _EditFormState extends State<EditForm> {
                     sliderFormField.maxValueController.text = form["maxValue"];
                     sliderFormField.minValueController.text = form["minValue"];
                     sliderFormField.questionController.text = form["question"];
+                    sliderFormField.keyQuestion = form['keyQuestion'];
+                    sliderFormField.keyQuestionOption =
+                        form['keyQuestionOption'];
                     field = sliderFormField;
                     break;
                 }
@@ -263,6 +281,9 @@ class _EditFormState extends State<EditForm> {
               child: Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: TextFormField(
+                  onChanged: (text) {
+                    setState(() {});
+                  },
                   controller: fieldType.minValueController,
                   decoration:
                       InputDecoration(hintText: 'Minimum value description'),
@@ -275,6 +296,9 @@ class _EditFormState extends State<EditForm> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: TextFormField(
+                      onChanged: (text) {
+                        setState(() {});
+                      },
                       controller: fieldType.maxValueController,
                       decoration: InputDecoration(
                           hintText: 'Maximum value description'),
@@ -282,7 +306,9 @@ class _EditFormState extends State<EditForm> {
                   )))
         ]),
         _inset,
-        _deleteFieldButton(fieldType)
+        _deleteFieldButton(fieldType),
+        _inset,
+        _keyFields(fieldType),
       ],
     );
   }
@@ -297,7 +323,9 @@ class _EditFormState extends State<EditForm> {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _addFieldElementdButton(fieldType),
           _deleteFieldButton(fieldType)
-        ])
+        ]),
+        _inset,
+        _keyFields(fieldType),
       ],
     );
   }
@@ -307,7 +335,9 @@ class _EditFormState extends State<EditForm> {
       children: [
         _questionTextField(fieldType, index),
         _inset,
-        _deleteFieldButton(fieldType)
+        _deleteFieldButton(fieldType),
+        _inset,
+        _keyFields(fieldType),
       ],
     );
   }
@@ -322,7 +352,9 @@ class _EditFormState extends State<EditForm> {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _addFieldElementdButton(fieldType),
           _deleteFieldButton(fieldType)
-        ])
+        ]),
+        _inset,
+        _keyFields(fieldType),
       ],
     );
   }
@@ -351,7 +383,9 @@ class _EditFormState extends State<EditForm> {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _addFieldElementdButton(fieldType),
           _deleteFieldButton(fieldType)
-        ])
+        ]),
+        _inset,
+        fieldType.isKeyQuestion ? _inset : _keyFields(fieldType),
       ],
     );
   }
@@ -429,6 +463,9 @@ class _EditFormState extends State<EditForm> {
           Expanded(
             flex: 8,
             child: TextFormField(
+              onChanged: (text) {
+                setState(() {});
+              },
               controller: fieldType.questionController,
               decoration: InputDecoration(
                   border: InputBorder.none, hintText: 'Question'),
@@ -449,6 +486,9 @@ class _EditFormState extends State<EditForm> {
       Expanded(
         flex: 9,
         child: TextFormField(
+          onChanged: (text) {
+            setState(() {});
+          },
           controller: fieldType.optionsControllers[index],
           decoration:
               InputDecoration(hintText: 'Option ' + (index + 1).toString()),
@@ -516,6 +556,9 @@ class _EditFormState extends State<EditForm> {
                 bottomRight: _listElementCornerRadius)),
         child: TextFormField(
           controller: _nameController,
+          onChanged: (text) {
+            setState(() {});
+          },
           validator: (String value) {
             if (value.isEmpty) {
               return 'A name is required';
@@ -545,6 +588,9 @@ class _EditFormState extends State<EditForm> {
                 bottomRight: _listElementCornerRadius)),
         child: TextFormField(
           controller: _descriptionController,
+          onChanged: (text) {
+            setState(() {});
+          },
           validator: (String value) {
             if (value.isEmpty) {
               return 'A description is required';
@@ -700,6 +746,99 @@ class _EditFormState extends State<EditForm> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.red))));
     }
+  }
+
+  Widget _keyFields(QuestionaryFieldType question) {
+    var filtredQuestions = _questionary.questions
+        .where((element) => element.key == "singleChoise")
+        .where((element) => (element as SingleChoiseFormField).isKeyQuestion)
+        .where((element) => element.questionController.text.isNotEmpty)
+        .toList();
+    List<String> options = [];
+    var selectedQuestion = filtredQuestions.firstWhere(
+        (element) => question.keyQuestion == element.questionController.text,
+        orElse: () => null);
+    print(selectedQuestion);
+    if (selectedQuestion != null) {
+      var optionsControllers = selectedQuestion.optionsControllers;
+      if (optionsControllers.isNotEmpty && optionsControllers != null) {
+        options = optionsControllers
+            .where((element) => element.text.isNotEmpty)
+            .map((e) => e.text)
+            .toList();
+      }
+    }
+    print(question.keyQuestion);
+    return filtredQuestions.isEmpty
+        ? _inset
+        : Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            Expanded(
+                flex: 5,
+                child: Row(children: [
+                  Text("Wybierz kluczowe pytanie:   ",
+                      style: TextStyle(fontSize: 16)),
+                  Expanded(
+                      child: DropdownButton<String>(
+                    iconSize: 0.0,
+                    iconDisabledColor: Colors.grey[200],
+                    iconEnabledColor: Colors.grey[200],
+                    style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+                    hint: Text(question.keyQuestion??'',
+                        style: TextStyle(fontSize: 16)),
+                    underline: Container(
+                      height: 1,
+                      color: Colors.grey[300],
+                    ),
+                    onChanged: (String newValue) {
+                      setState(() {
+                        question.keyQuestion = newValue;
+                      });
+                    },
+                    items: filtredQuestions.map<DropdownMenuItem<String>>(
+                        (QuestionaryFieldType value) {
+                      return DropdownMenuItem<String>(
+                        value: value.questionController.text,
+                        child: Text(
+                            value.name + " - " + value.questionController.text),
+                      );
+                    }).toList(),
+                  ))
+                ])),
+            options.isEmpty
+                ? _inset
+                : Expanded(
+                    flex: 5,
+                    child: Row(children: [
+                      Text("Wybierz kluczową odpowiedź:   ",
+                          style: TextStyle(fontSize: 16)),
+                      Expanded(
+                          child: DropdownButton<String>(
+                        iconSize: 0.0,
+                        iconDisabledColor: Colors.grey[200],
+                        iconEnabledColor: Colors.grey[200],
+                        style:
+                            TextStyle(color: Colors.deepPurple, fontSize: 16),
+                        hint: Text(question.keyQuestionOption??'',
+                            style: TextStyle(fontSize: 16)),
+                        underline: Container(
+                          height: 1,
+                          color: Colors.grey[300],
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            question.keyQuestionOption = newValue;
+                          });
+                        },
+                        items: options
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ))
+                    ]))
+          ]);
   }
 
   void _showFieldTypeDialog() {
