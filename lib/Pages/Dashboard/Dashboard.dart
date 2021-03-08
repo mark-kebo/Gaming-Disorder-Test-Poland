@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/Pages/Dashboard/EditForm.dart';
 import 'package:myapp/Pages/Dashboard/EditGroup.dart';
 import 'package:myapp/Helpers/Alert.dart';
+import 'package:myapp/Pages/Dashboard/FormStatistics.dart';
 
 enum DashboardState { main, forms, statistics, settings }
 
@@ -96,7 +97,7 @@ class _DashboardState extends State<Dashboard> {
         break;
       case DashboardState.statistics:
         {
-          return Text("Statistics", style: _titleTextStyle);
+          return _statisticsStack();
         }
         break;
       case DashboardState.settings:
@@ -110,6 +111,33 @@ class _DashboardState extends State<Dashboard> {
         }
         break;
     }
+  }
+
+  Stack _statisticsStack() {
+    return Stack(children: [
+      Text("Statistics", style: _titleTextStyle),
+      Positioned(
+          top: contentPadding * 2,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: StreamBuilder<QuerySnapshot>(
+            stream: forms.snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                    child: Text('Something went wrong',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.red)));
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return statisticsFormsList(snapshot);
+            },
+          )),
+    ]);
   }
 
   Stack formsStack() {
@@ -241,6 +269,27 @@ class _DashboardState extends State<Dashboard> {
         ));
   }
 
+  ListView statisticsFormsList(AsyncSnapshot<QuerySnapshot> snapshot) {
+    return new ListView(
+      children: snapshot.data.docs.map((DocumentSnapshot document) {
+        return new GestureDetector(
+          child: new Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: new Container(
+                height: 64.0,
+                decoration: new BoxDecoration(
+                    color: Colors.grey[200], borderRadius: _borderRadius),
+                child: GestureDetector(
+                    child: ListTile(
+                        title: new Text(document.data()['name']),
+                        subtitle: new Text(document.data()['description'])),
+                    onTap: () => {_navigateToFormStatistics(document.id)}),
+              )),
+        );
+      }).toList()
+    );
+  }
+
   ListView formsList(AsyncSnapshot<QuerySnapshot> snapshot) {
     return new ListView(
       children: snapshot.data.docs.map((DocumentSnapshot document) {
@@ -331,6 +380,11 @@ class _DashboardState extends State<Dashboard> {
       }).toList(),
     );
   }
+
+void _navigateToFormStatistics(String id) {
+      Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext ctx) => FormStatistics(id)));
+}
 
   void _editForm(String id) {
     Navigator.push(context,

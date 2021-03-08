@@ -29,6 +29,8 @@ dependencies:
   cloud_firestore: "0.14.2"
   shared_preferences: "0.5.12"
   cupertino_icons: ^1.0.1
+  syncfusion_flutter_charts: "18.4.46"
+
 
 dev_dependencies:
   flutter_test:
