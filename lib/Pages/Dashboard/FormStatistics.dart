@@ -19,11 +19,11 @@ class FormStatistics extends StatefulWidget {
 
 class _FormStatisticsState extends State<FormStatistics> {
   String id;
-  double _contentPadding = 32;
   CollectionReference _usersCollection = firestore.collection('users');
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
-  List<CompletedForm> questions = <CompletedForm>[];
+  List<CompletedFormQuestion> questions = <CompletedFormQuestion>[];
+  String _name = "";
 
   _FormStatisticsState(String id) {
     this.id = id;
@@ -34,10 +34,14 @@ class _FormStatisticsState extends State<FormStatistics> {
     _usersCollection.get().then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((doc) {
             setState(() {
-              questions = (doc["completedForms"] as List)
+              (doc["completedForms"] as List)
                   .map((e) => CompletedForm(e))
                   .where((element) => element.id == id)
-                  .toList();
+                  .toList()
+                  .forEach((element) {
+                    _name = element.name;
+                    questions.addAll(element.questions);
+                  });
             });
             print(questions);
           })
@@ -55,7 +59,7 @@ class _FormStatisticsState extends State<FormStatistics> {
           appBar: AppBar(
             backgroundColor: Colors.white,
             title: Text(
-              "Form statistics",
+              _name,
               style: _titleTextStyle,
               textAlign: TextAlign.center,
             ),
@@ -81,14 +85,25 @@ class _FormStatisticsState extends State<FormStatistics> {
               return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: new Container(
-                      height: 46.0,
+                      height: 300.0,
                       decoration: new BoxDecoration(
                           border: Border(
                               bottom:
                                   BorderSide(color: Colors.deepPurple[100]))),
-                      child: ListTile(
-                        title: Text(questions[index].name),
-                      )));
+                      child: SfCircularChart(
+                          legend: Legend(isVisible: true),
+                          title: ChartTitle(text: questions[index].name),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          series: <PieSeries<String, String>>[
+                            PieSeries<String, String>(
+                                // Bind data source
+                                dataSource: questions[index].selectedOptions,
+                                
+                                xValueMapper: (String option, _) =>
+                                    option,
+                                yValueMapper: (String option, _) =>
+                                    1)
+                          ])));
             }));
   }
 }
