@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/Helpers/Alert.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -30,6 +31,7 @@ class _EditGroupState extends State<EditGroup> {
   bool _isShowLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, bool> users = Map<String, bool>();
+  final AlertController alertController = AlertController();
 
   _EditGroupState(String id) {
     this.id = id;
@@ -199,27 +201,60 @@ class _EditGroupState extends State<EditGroup> {
       _isShowLoading = true;
     });
     var usersArray = users.keys.where((element) => users[element]);
-    this.id.isEmpty
-        ? _userGroups
-            .add({'name': _nameController.text, 'selectedUsers': usersArray})
-            .then((value) => setState(() {
-                  Navigator.pop(context);
-                  _isShowLoading = false;
-                }))
-            .catchError((error) => Center(
-                child: Text(error,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.red))))
-        : _userGroups
-            .doc(id)
-            .update({'name': _nameController.text, 'selectedUsers': usersArray})
-            .then((value) => setState(() {
-                  Navigator.pop(context);
-                  _isShowLoading = false;
-                }))
-            .catchError((error) => Center(
-                child: Text(error,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.red))));
+    bool isHasGroup = false;
+    _userGroups
+        .get()
+        .then((value) => value.docs.forEach((element) => {
+              print(element),
+              if (element["name"] == _nameController.text)
+                {print("test"), isHasGroup = true}
+            }))
+        .whenComplete(() => {
+              if (!isHasGroup)
+                {
+                  this.id.isEmpty
+                      ? _userGroups
+                          .add({
+                            'name': _nameController.text,
+                            'selectedUsers': usersArray
+                          })
+                          .then((value) => setState(() {
+                                Navigator.pop(context);
+                                _isShowLoading = false;
+                              }))
+                          .catchError((error) => {
+                                alertController.showMessageDialog(
+                                    context, "Error", error),
+                                setState(() {
+                                  _isShowLoading = false;
+                                })
+                              })
+                      : _userGroups
+                          .doc(id)
+                          .update({
+                            'name': _nameController.text,
+                            'selectedUsers': usersArray
+                          })
+                          .then((value) => setState(() {
+                                Navigator.pop(context);
+                                _isShowLoading = false;
+                              }))
+                          .catchError((error) => {
+                                alertController.showMessageDialog(
+                                    context, "Error", error),
+                                setState(() {
+                                  _isShowLoading = false;
+                                })
+                              })
+                }
+              else
+                {
+                  alertController.showMessageDialog(
+                      context, "Error", "Taka grupa już istnieje"),
+                  setState(() {
+                    _isShowLoading = false;
+                  })
+                }
+            });
   }
 }
