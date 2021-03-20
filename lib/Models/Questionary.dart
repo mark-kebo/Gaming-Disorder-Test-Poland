@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Questionary {
@@ -7,6 +8,40 @@ class Questionary {
   String groupName = "";
 
   List<QuestionaryFieldType> questions = <QuestionaryFieldType>[];
+
+  Questionary(DocumentSnapshot snapshot) {
+    if (snapshot != null) {
+      name = snapshot.data()["name"];
+      description = snapshot.data()["description"];
+      groupId = snapshot.data()["groupId"];
+      groupName = snapshot.data()["groupName"];
+      initQuestions(snapshot);
+    }
+  }
+
+  void initQuestions(DocumentSnapshot snapshot) {
+    for (var form in snapshot.data()['questions']) {
+      var field;
+      switch (form["key"]) {
+        case "likertScale":
+          field = LikertScaleFormField(form);
+          break;
+        case "paragraph":
+          field = ParagraphFormField(form);
+          break;
+        case "multipleChoise":
+          field = MultipleChoiseFormField(form);
+          break;
+        case "singleChoise":
+          field = SingleChoiseFormField(form);
+          break;
+        case "slider":
+          field = SliderFormField(form);
+          break;
+      }
+      questions.add(field);
+    }
+  }
 }
 
 enum QuestionaryFieldAbstract {
@@ -42,6 +77,19 @@ class LikertScaleFormField extends QuestionaryFieldType {
   String keyQuestion = "";
   String keyQuestionOption = "";
 
+  LikertScaleFormField(dynamic item) {
+    if (item != null) {
+      for (var option in item['options']) {
+        var textController = TextEditingController();
+        textController.text = option;
+        optionsControllers.add(textController);
+      }
+      keyQuestion = item['keyQuestion'];
+      keyQuestionOption = item['keyQuestionOption'];
+      questionController.text = item["question"];
+    }
+  }
+
   Map itemsList() {
     return {
       "key": this.key,
@@ -66,6 +114,14 @@ class ParagraphFormField extends QuestionaryFieldType {
   String keyQuestion = "";
   String keyQuestionOption = "";
 
+  ParagraphFormField(dynamic item) {
+    if (item != null) {
+      questionController.text = item["question"];
+      keyQuestion = item['keyQuestion'];
+      keyQuestionOption = item['keyQuestionOption'];
+    }
+  }
+
   Map itemsList() {
     return {
       "key": this.key,
@@ -89,6 +145,19 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
   );
   String keyQuestion = "";
   String keyQuestionOption = "";
+
+  MultipleChoiseFormField(dynamic item) {
+    if (item != null) {
+      for (var option in item['options']) {
+        var textController = TextEditingController();
+        textController.text = option;
+        optionsControllers.add(textController);
+      }
+      questionController.text = item["question"];
+      keyQuestion = item['keyQuestion'];
+      keyQuestionOption = item['keyQuestionOption'];
+    }
+  }
 
   Map itemsList() {
     return {
@@ -116,6 +185,20 @@ class SingleChoiseFormField extends QuestionaryFieldType {
   String keyQuestion = "";
   String keyQuestionOption = "";
 
+  SingleChoiseFormField(dynamic item) {
+    if (item != null) {
+      for (var option in item['options']) {
+        var textController = TextEditingController();
+        textController.text = option;
+        optionsControllers.add(textController);
+      }
+      questionController.text = item["question"];
+      keyQuestion = item['keyQuestion'];
+      keyQuestionOption = item['keyQuestionOption'];
+      isKeyQuestion = item["isKeyQuestion"];
+    }
+  }
+
   Map itemsList() {
     return {
       "key": this.key,
@@ -142,6 +225,16 @@ class SliderFormField extends QuestionaryFieldType {
   );
   String keyQuestion = "";
   String keyQuestionOption = "";
+
+  SliderFormField(dynamic item) {
+    if (item != null) {
+      maxValueController.text = item["maxValue"];
+      minValueController.text = item["minValue"];
+      questionController.text = item["question"];
+      keyQuestion = item['keyQuestion'];
+      keyQuestionOption = item['keyQuestionOption'];
+    }
+  }
 
   Map itemsList() {
     return {

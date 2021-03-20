@@ -37,7 +37,7 @@ class _EditFormState extends State<EditForm> {
   Radius _listElementCornerRadius = const Radius.circular(16.0);
   bool _isShowLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Questionary _questionary = Questionary();
+  Questionary _questionary = Questionary(null);
   TextStyle _listTitleStyle = TextStyle(
       fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple);
   SizedBox _inset = SizedBox(height: 16, width: 16);
@@ -127,89 +127,11 @@ class _EditFormState extends State<EditForm> {
         });
     if (id.isNotEmpty) {
       _formsCollection.doc(id).get().then((doc) => {
-            _questionary.name = doc.data()['name'],
-            _questionary.description = doc.data()['description'],
-            _questionary.groupId = doc.data()['groupId'],
-            _questionary.groupName = doc.data()['groupName'],
             setState(() {
-              for (var form in doc.data()['questions']) {
-                var field;
-                switch (form["key"]) {
-                  case "likertScale":
-                    var likertScaleFormField = LikertScaleFormField();
-                    for (var option in form['options']) {
-                      var textController = TextEditingController();
-                      textController.text = option;
-                      likertScaleFormField.optionsControllers
-                          .add(textController);
-                    }
-                    likertScaleFormField.keyQuestion =
-                        form['keyQuestion'];
-                    likertScaleFormField.keyQuestionOption =
-                        form['keyQuestionOption'];
-                    likertScaleFormField.questionController.text =
-                        form["question"];
-                    field = likertScaleFormField;
-                    break;
-                  case "paragraph":
-                    var paragraphFormField = ParagraphFormField();
-                    paragraphFormField.questionController.text =
-                        form["question"];
-                    paragraphFormField.keyQuestion = form['keyQuestion'];
-                    paragraphFormField.keyQuestionOption =
-                        form['keyQuestionOption'];
-                    field = paragraphFormField;
-                    break;
-                  case "multipleChoise":
-                    var multipleChoiseFormField = MultipleChoiseFormField();
-                    for (var option in form['options']) {
-                      var textController = TextEditingController();
-                      textController.text = option;
-                      multipleChoiseFormField.optionsControllers
-                          .add(textController);
-                    }
-                    multipleChoiseFormField.questionController.text =
-                        form["question"];
-                    multipleChoiseFormField.keyQuestion =
-                        form['keyQuestion'];
-                    multipleChoiseFormField.keyQuestionOption =
-                        form['keyQuestionOption'];
-                    field = multipleChoiseFormField;
-                    break;
-                  case "singleChoise":
-                    var singleChoiseFormField = SingleChoiseFormField();
-                    for (var option in form['options']) {
-                      var textController = TextEditingController();
-                      textController.text = option;
-                      singleChoiseFormField.optionsControllers
-                          .add(textController);
-                    }
-                    singleChoiseFormField.questionController.text =
-                        form["question"];
-                    singleChoiseFormField.keyQuestion =
-                        form['keyQuestion'];
-                    singleChoiseFormField.keyQuestionOption =
-                        form['keyQuestionOption'];
-                    singleChoiseFormField.isKeyQuestion = form["isKeyQuestion"];
-                    field = singleChoiseFormField;
-                    break;
-                  case "slider":
-                    var sliderFormField = SliderFormField();
-                    sliderFormField.maxValueController.text = form["maxValue"];
-                    sliderFormField.minValueController.text = form["minValue"];
-                    sliderFormField.questionController.text = form["question"];
-                    sliderFormField.keyQuestion = form['keyQuestion'];
-                    sliderFormField.keyQuestionOption =
-                        form['keyQuestionOption'];
-                    field = sliderFormField;
-                    break;
-                }
-                print(form);
-                _questionary.questions.add(field);
-              }
-            }),
-            _nameController.text = _questionary.name,
-            _descriptionController.text = _questionary.description
+              _questionary = Questionary(doc);           
+               _nameController.text = _questionary.name;
+            _descriptionController.text = _questionary.description;
+            })
           });
     }
   }
@@ -783,7 +705,7 @@ class _EditFormState extends State<EditForm> {
                     iconDisabledColor: Colors.grey[200],
                     iconEnabledColor: Colors.grey[200],
                     style: TextStyle(color: Colors.deepPurple, fontSize: 16),
-                    hint: Text(question.keyQuestion??'',
+                    hint: Text(question.keyQuestion ?? '',
                         style: TextStyle(fontSize: 16)),
                     underline: Container(
                       height: 1,
@@ -818,7 +740,7 @@ class _EditFormState extends State<EditForm> {
                         iconEnabledColor: Colors.grey[200],
                         style:
                             TextStyle(color: Colors.deepPurple, fontSize: 16),
-                        hint: Text(question.keyQuestionOption??'',
+                        hint: Text(question.keyQuestionOption ?? '',
                             style: TextStyle(fontSize: 16)),
                         underline: Container(
                           height: 1,
@@ -844,11 +766,11 @@ class _EditFormState extends State<EditForm> {
   void _showFieldTypeDialog() {
     String selectedRadio = "";
     List<QuestionaryFieldType> questionaryFields = [
-      SingleChoiseFormField(),
-      SliderFormField(),
-      MultipleChoiseFormField(),
-      ParagraphFormField(),
-      LikertScaleFormField()
+      SingleChoiseFormField(null),
+      SliderFormField(null),
+      MultipleChoiseFormField(null),
+      ParagraphFormField(null),
+      LikertScaleFormField(null)
     ];
 
     Widget okButton = FlatButton(
