@@ -41,7 +41,8 @@ class _EditGroupState extends State<EditGroup> {
   void _prepareViewData() {
     _usersCollection.get().then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((doc) {
-            users[doc.id] = false;
+            print(doc);
+            users[doc["id"]] = false;
           })
         });
     if (id.isNotEmpty) {
@@ -157,11 +158,12 @@ class _EditGroupState extends State<EditGroup> {
                       title: Text(document.data()['name']),
                       onChanged: (bool val) {
                         setState(() {
-                          users[document.id] = !users[document.id];
+                          users[document.data()['id']] =
+                              !users[document.data()['id']];
                         });
-                        print(users[document.id]);
+                        print(users[document.data()['id']]);
                       },
-                      value: users[document.id],
+                      value: users[document.data()['id']],
                     ))));
       }).toList(),
     );
@@ -210,51 +212,48 @@ class _EditGroupState extends State<EditGroup> {
                 {print("test"), isHasGroup = true}
             }))
         .whenComplete(() => {
-              if (!isHasGroup)
-                {
-                  this.id.isEmpty
-                      ? _userGroups
-                          .add({
-                            'name': _nameController.text,
-                            'selectedUsers': usersArray
+              this.id.isEmpty
+                  ? _addGroup(isHasGroup, usersArray)
+                  : _userGroups
+                      .doc(id)
+                      .update({
+                        'name': _nameController.text,
+                        'selectedUsers': usersArray
+                      })
+                      .then((value) => setState(() {
+                            Navigator.pop(context);
+                            _isShowLoading = false;
+                          }))
+                      .catchError((error) => {
+                            alertController.showMessageDialog(
+                                context, "Error", error),
+                            setState(() {
+                              _isShowLoading = false;
+                            })
                           })
-                          .then((value) => setState(() {
-                                Navigator.pop(context);
-                                _isShowLoading = false;
-                              }))
-                          .catchError((error) => {
-                                alertController.showMessageDialog(
-                                    context, "Error", error),
-                                setState(() {
-                                  _isShowLoading = false;
-                                })
-                              })
-                      : _userGroups
-                          .doc(id)
-                          .update({
-                            'name': _nameController.text,
-                            'selectedUsers': usersArray
-                          })
-                          .then((value) => setState(() {
-                                Navigator.pop(context);
-                                _isShowLoading = false;
-                              }))
-                          .catchError((error) => {
-                                alertController.showMessageDialog(
-                                    context, "Error", error),
-                                setState(() {
-                                  _isShowLoading = false;
-                                })
-                              })
-                }
-              else
-                {
-                  alertController.showMessageDialog(
-                      context, "Error", "Taka grupa już istnieje"),
-                  setState(() {
-                    _isShowLoading = false;
-                  })
-                }
             });
+  }
+
+  void _addGroup(bool isHasGroup, Iterable<String> usersArray) {
+    if (!isHasGroup) {
+      _userGroups
+          .add({'name': _nameController.text, 'selectedUsers': usersArray})
+          .then((value) => setState(() {
+                Navigator.pop(context);
+                _isShowLoading = false;
+              }))
+          .catchError((error) => {
+                alertController.showMessageDialog(context, "Error", error),
+                setState(() {
+                  _isShowLoading = false;
+                })
+              });
+    } else {
+      alertController.showMessageDialog(
+          context, "Error", "Taka grupa już istnieje");
+      setState(() {
+        _isShowLoading = false;
+      });
+    }
   }
 }
