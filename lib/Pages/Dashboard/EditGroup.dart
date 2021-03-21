@@ -209,7 +209,7 @@ class _EditGroupState extends State<EditGroup> {
         .then((value) => value.docs.forEach((element) => {
               print(element),
               if (element["name"] == _nameController.text)
-                {print("test"), isHasGroup = true}
+                {isHasGroup = true}
             }))
         .whenComplete(() => {
               this.id.isEmpty
