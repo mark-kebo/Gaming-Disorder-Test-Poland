@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/Helpers/Constants.dart';
+import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/Models/Questionary.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -30,8 +32,8 @@ class _EditFormState extends State<EditForm> {
   Color _elementBackgroundColor = Colors.grey[200];
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  CollectionReference _formsCollection = firestore.collection('forms');
-  CollectionReference _userGroups = firestore.collection('user_groups');
+  CollectionReference _formsCollection = firestore.collection(ProjectConstants.formsCollectionName);
+  CollectionReference _userGroups = firestore.collection(ProjectConstants.groupsCollectionName);
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   Radius _listElementCornerRadius = const Radius.circular(16.0);
@@ -46,7 +48,7 @@ class _EditFormState extends State<EditForm> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Dashboard - Gaming Disorder Test Poland',
+        title: ProjectStrings.projectName,
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
         ),
@@ -54,7 +56,7 @@ class _EditFormState extends State<EditForm> {
           appBar: AppBar(
             backgroundColor: Colors.white,
             title: Text(
-              "Form",
+              ProjectStrings.form,
               style: _titleTextStyle,
               textAlign: TextAlign.center,
             ),
@@ -65,7 +67,7 @@ class _EditFormState extends State<EditForm> {
                   print("Add new field");
                   _showFieldTypeDialog();
                 },
-                child: Text('Add new field'),
+                child: Text(ProjectStrings.addNewField),
               ),
             ],
             leading: BackButton(
@@ -161,7 +163,7 @@ class _EditFormState extends State<EditForm> {
             );
           });
     } else {
-      return Text("No fields have been added yet",
+      return Text(ProjectStrings.noFields,
           style: TextStyle(color: Colors.red));
     }
   }
@@ -189,7 +191,7 @@ class _EditFormState extends State<EditForm> {
         return _singleChoiseField(element, index);
         break;
     }
-    return Text("Empty element");
+    return Text(ProjectStrings.emptyElement);
   }
 
   Widget _sliderField(SliderFormField fieldType, int index) {
@@ -208,7 +210,7 @@ class _EditFormState extends State<EditForm> {
                   },
                   controller: fieldType.minValueController,
                   decoration:
-                      InputDecoration(hintText: 'Minimum value description'),
+                      InputDecoration(hintText: ProjectStrings.minValueDescription),
                 ),
               )),
           Expanded(
@@ -223,7 +225,7 @@ class _EditFormState extends State<EditForm> {
                       },
                       controller: fieldType.maxValueController,
                       decoration: InputDecoration(
-                          hintText: 'Maximum value description'),
+                          hintText: ProjectStrings.maxValueDescription),
                     ),
                   )))
         ]),
@@ -293,7 +295,7 @@ class _EditFormState extends State<EditForm> {
             child: SizedBox(
                 width: 270,
                 child: CheckboxListTile(
-                  title: Text("Czy to kluczowe pytanie?"),
+                  title: Text(ProjectStrings.isKeyQuestion),
                   onChanged: (bool val) {
                     setState(() {
                       fieldType.isKeyQuestion = !fieldType.isKeyQuestion;
@@ -326,7 +328,7 @@ class _EditFormState extends State<EditForm> {
           .values
           .toList();
     } else {
-      return [Text("No options have been added yet")];
+      return [Text(ProjectStrings.noOptions)];
     }
   }
 
@@ -344,7 +346,7 @@ class _EditFormState extends State<EditForm> {
           .values
           .toList();
     } else {
-      return [Text("No options have been added yet")];
+      return [Text(ProjectStrings.noOptions)];
     }
   }
 
@@ -362,7 +364,7 @@ class _EditFormState extends State<EditForm> {
           .values
           .toList();
     } else {
-      return [Text("No options have been added yet")];
+      return [Text(ProjectStrings.noOptions)];
     }
   }
 
@@ -390,7 +392,7 @@ class _EditFormState extends State<EditForm> {
               },
               controller: fieldType.questionController,
               decoration: InputDecoration(
-                  border: InputBorder.none, hintText: 'Question'),
+                  border: InputBorder.none, hintText: ProjectStrings.question),
             ),
           ),
           Expanded(
@@ -413,7 +415,7 @@ class _EditFormState extends State<EditForm> {
           },
           controller: fieldType.optionsControllers[index],
           decoration:
-              InputDecoration(hintText: 'Option ' + (index + 1).toString()),
+              InputDecoration(hintText: ProjectStrings.option + (index + 1).toString()),
         ),
       ),
       Expanded(
@@ -483,12 +485,12 @@ class _EditFormState extends State<EditForm> {
           },
           validator: (String value) {
             if (value.isEmpty) {
-              return 'A name is required';
+              return ProjectStrings.nameRequired;
             }
             return null;
           },
           decoration: InputDecoration(
-              border: InputBorder.none, hintText: 'Enter a form name'),
+              border: InputBorder.none, hintText: ProjectStrings.formName),
         ));
   }
 
@@ -515,12 +517,12 @@ class _EditFormState extends State<EditForm> {
           },
           validator: (String value) {
             if (value.isEmpty) {
-              return 'A description is required';
+              return ProjectStrings.descriptionRequired;
             }
             return null;
           },
           decoration: InputDecoration(
-              border: InputBorder.none, hintText: 'Enter a form description'),
+              border: InputBorder.none, hintText: ProjectStrings.formDescription),
         ));
   }
 
@@ -534,7 +536,7 @@ class _EditFormState extends State<EditForm> {
         child: Align(
             alignment: Alignment.centerRight,
             child: Row(children: [
-              Text("Selected group:   ", style: TextStyle(fontSize: 16)),
+              Text(ProjectStrings.selectedGroup, style: TextStyle(fontSize: 16)),
               Expanded(
                   child: DropdownButton<String>(
                 iconSize: 0.0,
@@ -697,7 +699,7 @@ class _EditFormState extends State<EditForm> {
             Expanded(
                 flex: 5,
                 child: Row(children: [
-                  Text("Wybierz kluczowe pytanie:   ",
+                  Text(ProjectStrings.selectKeyQuestion,
                       style: TextStyle(fontSize: 16)),
                   Expanded(
                       child: DropdownButton<String>(
@@ -731,7 +733,7 @@ class _EditFormState extends State<EditForm> {
                 : Expanded(
                     flex: 5,
                     child: Row(children: [
-                      Text("Wybierz kluczową odpowiedź:   ",
+                      Text(ProjectStrings.selectKeyAnswer,
                           style: TextStyle(fontSize: 16)),
                       Expanded(
                           child: DropdownButton<String>(
@@ -774,7 +776,7 @@ class _EditFormState extends State<EditForm> {
     ];
 
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text(ProjectStrings.ok),
       onPressed: () {
         for (var item in questionaryFields) {
           if (item.key == selectedRadio) {
@@ -786,7 +788,7 @@ class _EditFormState extends State<EditForm> {
       },
     );
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: Text(ProjectStrings.cancel),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
       },
@@ -795,7 +797,7 @@ class _EditFormState extends State<EditForm> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Please select the type of added field",
+            title: Text(ProjectStrings.selectFieldType,
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: Colors.black)),
             content: StatefulBuilder(

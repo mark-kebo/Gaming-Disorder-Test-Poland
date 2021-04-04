@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/Helpers/Constants.dart';
+import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/NavigationBar/CompanyName.dart';
 import 'package:myapp/NavigationBar/NavBar.dart';
 import 'package:myapp/Pages/Login/login.dart';
@@ -63,13 +65,13 @@ class _NavigationBarState extends State<NavigationBar> {
               active: false,
               touched: () {
                 alertController.showMessageDialogWithAction(context, 
-                "Log out", 
-                "Are you sure you want to log out?", 
+                ProjectStrings.logout, 
+                ProjectStrings.logoutQuestion, 
                 () async {
                   _auth.signOut();
                   SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.remove('email');
-                  prefs.remove('password');
+                  prefs.remove(ProjectConstants.prefsEmail);
+                  prefs.remove(ProjectConstants.prefsPassword);
                   Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (BuildContext ctx) => Login()));
                 });

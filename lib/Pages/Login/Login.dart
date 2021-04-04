@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myapp/Helpers/Alert.dart';
+import 'package:myapp/Helpers/Constants.dart';
+import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/Pages/Dashboard/Dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,7 +10,7 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dashboard - Gaming Disorder Test Poland',
+      title: ProjectStrings.projectName,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
@@ -63,19 +65,18 @@ class _LoginFormState extends State<LoginForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Gaming Disorder Test',
+            Text(ProjectStrings.projectName,
                 style: Theme.of(context).textTheme.headline4),
             Padding(
               padding: EdgeInsets.all(_fieldPadding),
               child: TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(hintText: 'Email'),
+                  decoration: InputDecoration(hintText: ProjectStrings.email),
                   validator: (String value) {
-                    bool emailValid = RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                    bool emailValid = ProjectConstants.emailRegExp
                         .hasMatch(value);
                     if (!emailValid || value.isEmpty) {
-                      return 'A valid email is required';
+                      return ProjectStrings.emailNotValid;
                     }
                     return null;
                   }),
@@ -84,13 +85,13 @@ class _LoginFormState extends State<LoginForm> {
               padding: EdgeInsets.all(_fieldPadding),
               child: TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(hintText: 'Password'),
+                  decoration: InputDecoration(hintText: ProjectStrings.password),
                   validator: (String value) {
                     if (value.isEmpty) {
-                      return 'A password is required';
+                      return ProjectStrings.emptyPassword;
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return ProjectStrings.passwordNotValid;
                     }
                     return null;
                   },
@@ -116,7 +117,7 @@ class _LoginFormState extends State<LoginForm> {
                             right: _formPadding,
                             top: _fieldPadding,
                             bottom: _fieldPadding),
-                        child: Text('Sign in',
+                        child: Text(ProjectStrings.login,
                             style:
                                 TextStyle(fontSize: 16, color: Colors.white)),
                       ),
@@ -147,15 +148,15 @@ class _LoginFormState extends State<LoginForm> {
         password: _passwordController.text,
       );
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('email', _emailController.text);
-      prefs.setString('password', _passwordController.text);
+      prefs.setString(ProjectConstants.prefsEmail, _emailController.text);
+      prefs.setString(ProjectConstants.prefsPassword, _passwordController.text);
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext ctx) => Dashboard()));
       setState(() {
         _isShowLoading = false;
       });
     } catch (error) {
-      alertController.showMessageDialog(context, "Error", error.message);
+      alertController.showMessageDialog(context, ProjectStrings.error, error.message);
       setState(() {
         _isShowLoading = false;
       });

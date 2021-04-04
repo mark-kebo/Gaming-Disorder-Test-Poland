@@ -1,3 +1,5 @@
+import 'package:myapp/Helpers/Constants.dart';
+import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/NavigationBar/NavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,9 +20,9 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   DashboardState state = DashboardState.main;
   double contentPadding = 32;
-  CollectionReference forms = firestore.collection('forms');
-  CollectionReference _userGroups = firestore.collection('user_groups');
-  CollectionReference _users = firestore.collection('users');
+  CollectionReference forms = firestore.collection(ProjectConstants.formsCollectionName);
+  CollectionReference _userGroups = firestore.collection(ProjectConstants.groupsCollectionName);
+  CollectionReference _users = firestore.collection(ProjectConstants.usersCollectionName);
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   TextStyle _subtitleTextStyle = TextStyle(
@@ -43,7 +45,7 @@ class _DashboardState extends State<Dashboard> {
         bottom: contentPadding,
         child: appStack());
     return MaterialApp(
-        title: 'Dashboard - Gaming Disorder Test Poland',
+        title: ProjectStrings.projectName,
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
         ),
@@ -102,7 +104,7 @@ class _DashboardState extends State<Dashboard> {
         break;
       case DashboardState.settings:
         {
-          return Text("Settings", style: _titleTextStyle);
+          return Text(ProjectStrings.settings, style: _titleTextStyle);
         }
         break;
       default:
@@ -115,7 +117,7 @@ class _DashboardState extends State<Dashboard> {
 
   Stack _statisticsStack() {
     return Stack(children: [
-      Text("Statistics", style: _titleTextStyle),
+      Text(ProjectStrings.statistics, style: _titleTextStyle),
       Positioned(
           top: contentPadding * 2,
           left: 0,
@@ -127,7 +129,7 @@ class _DashboardState extends State<Dashboard> {
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
                 return Center(
-                    child: Text('Something went wrong',
+                    child: Text(ProjectStrings.anyError,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.red)));
               }
@@ -143,7 +145,7 @@ class _DashboardState extends State<Dashboard> {
   Stack formsStack() {
     return Stack(
       children: [
-        Text("All Forms", style: _titleTextStyle),
+        Text(ProjectStrings.allForms, style: _titleTextStyle),
         Positioned(
             top: contentPadding * 2,
             left: 0,
@@ -155,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Center(
-                      child: Text('Something went wrong',
+                      child: Text(ProjectStrings.anyError,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.red)));
                 }
@@ -203,7 +205,7 @@ class _DashboardState extends State<Dashboard> {
                   flex: 9,
                   child: Align(
                       alignment: Alignment.topCenter,
-                      child: Text("User groups", style: _subtitleTextStyle))),
+                      child: Text(ProjectStrings.userGroups, style: _subtitleTextStyle))),
               Expanded(
                   flex: 1,
                   child: Align(
@@ -225,7 +227,7 @@ class _DashboardState extends State<Dashboard> {
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Center(
-                      child: Text('Something went wrong',
+                      child: Text(ProjectStrings.anyError,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.red)));
                 }
@@ -247,7 +249,7 @@ class _DashboardState extends State<Dashboard> {
             color: Colors.grey[100], borderRadius: _borderRadius),
         child: Column(
           children: [
-            Text("All users", style: _subtitleTextStyle),
+            Text(ProjectStrings.allUsers, style: _subtitleTextStyle),
             Expanded(
                 child: StreamBuilder<QuerySnapshot>(
               stream: _users.snapshots(),
@@ -255,7 +257,7 @@ class _DashboardState extends State<Dashboard> {
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Center(
-                      child: Text('Something went wrong',
+                      child: Text(ProjectStrings.anyError,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.red)));
                 }
@@ -365,13 +367,13 @@ class _DashboardState extends State<Dashboard> {
         color: Colors.grey[200],
       ),
       onChanged: (String newValue) {
-        if (newValue == 'Edit') {
+        if (newValue == ProjectStrings.edit) {
           onEdit();
         } else {
           onDelete();
         }
       },
-      items: <String>['Edit', 'Delete']
+      items: <String>[ProjectStrings.edit, ProjectStrings.delete]
           .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -398,24 +400,24 @@ void _navigateToFormStatistics(String id) {
 
   void _deleteForm(String id) {
     _alertController.showMessageDialogWithAction(
-        context, "Delete form", "Are you sure you want to delete this form?",
+        context, ProjectStrings.deleteForm, ProjectStrings.deleteFormQuestion,
         () async {
       forms.doc(id).delete().then((value) => print("User Deleted")).catchError(
           (error) => _alertController.showMessageDialog(
-              context, "Failed to delete form", error));
+              context, ProjectStrings.deleteFormError, error));
     });
   }
 
   void _deleteGroup(String id) {
     _alertController.showMessageDialogWithAction(
-        context, "Delete group", "Are you sure you want to delete this group?",
+        context, ProjectStrings.deleteGroup, ProjectStrings.deleteGroupQuestion,
         () async {
       _userGroups
           .doc(id)
           .delete()
-          .then((value) => print("User Deleted"))
+          .then((value) => print("Group Deleted"))
           .catchError((error) => _alertController.showMessageDialog(
-              context, "Failed to delete group", error));
+              context, ProjectStrings.deleteGroupError, error));
     });
   }
 }

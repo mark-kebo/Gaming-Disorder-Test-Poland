@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/Helpers/Alert.dart';
+import 'package:myapp/Helpers/Constants.dart';
+import 'package:myapp/Helpers/Strings.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -23,8 +25,8 @@ class _EditGroupState extends State<EditGroup> {
   double _elementsHeight = 64.0;
   Color _elementBackgroundColor = Colors.grey[200];
   final _nameController = TextEditingController();
-  CollectionReference _usersCollection = firestore.collection('users');
-  CollectionReference _userGroups = firestore.collection('user_groups');
+  CollectionReference _usersCollection = firestore.collection(ProjectConstants.usersCollectionName);
+  CollectionReference _userGroups = firestore.collection(ProjectConstants.groupsCollectionName);
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   Radius _listElementCornerRadius = const Radius.circular(16.0);
@@ -60,7 +62,7 @@ class _EditGroupState extends State<EditGroup> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Dashboard - Gaming Disorder Test Poland',
+        title: ProjectStrings.projectName,
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
         ),
@@ -68,7 +70,7 @@ class _EditGroupState extends State<EditGroup> {
           appBar: AppBar(
             backgroundColor: Colors.white,
             title: Text(
-              "Group",
+              ProjectStrings.group,
               style: _titleTextStyle,
               textAlign: TextAlign.center,
             ),
@@ -103,7 +105,7 @@ class _EditGroupState extends State<EditGroup> {
                       children: [
                         _nameField(),
                         Text(
-                          "Users",
+                          ProjectStrings.users,
                           style: TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: 24,
@@ -131,7 +133,7 @@ class _EditGroupState extends State<EditGroup> {
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return Center(
-              child: Text('Something went wrong',
+              child: Text(ProjectStrings.anyError,
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.red)));
         }
@@ -189,12 +191,12 @@ class _EditGroupState extends State<EditGroup> {
           controller: _nameController,
           validator: (String value) {
             if (value.isEmpty) {
-              return 'A name is required';
+              return ProjectStrings.nameRequired;
             }
             return null;
           },
           decoration: InputDecoration(
-              border: InputBorder.none, hintText: 'Enter a form name'),
+              border: InputBorder.none, hintText: ProjectStrings.formName),
         ));
   }
 
@@ -226,7 +228,7 @@ class _EditGroupState extends State<EditGroup> {
                           }))
                       .catchError((error) => {
                             alertController.showMessageDialog(
-                                context, "Error", error),
+                                context, ProjectStrings.error, error),
                             setState(() {
                               _isShowLoading = false;
                             })
@@ -243,14 +245,14 @@ class _EditGroupState extends State<EditGroup> {
                 _isShowLoading = false;
               }))
           .catchError((error) => {
-                alertController.showMessageDialog(context, "Error", error),
+                alertController.showMessageDialog(context, ProjectStrings.error, error),
                 setState(() {
                   _isShowLoading = false;
                 })
               });
     } else {
       alertController.showMessageDialog(
-          context, "Error", "Taka grupa już istnieje");
+          context, ProjectStrings.error, ProjectStrings.groupExists);
       setState(() {
         _isShowLoading = false;
       });

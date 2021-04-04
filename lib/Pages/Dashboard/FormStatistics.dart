@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/Helpers/Constants.dart';
+import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/Models/CompletedForm.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -19,7 +21,7 @@ class FormStatistics extends StatefulWidget {
 
 class _FormStatisticsState extends State<FormStatistics> {
   String id;
-  CollectionReference _usersCollection = firestore.collection('users');
+  CollectionReference _usersCollection = firestore.collection(ProjectConstants.usersCollectionName);
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   List<CompletedFormQuestion> questions = <CompletedFormQuestion>[];
@@ -34,7 +36,7 @@ class _FormStatisticsState extends State<FormStatistics> {
     _usersCollection.get().then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((doc) {
             setState(() {
-              (doc["completedForms"] as List)
+              (doc[ProjectConstants.completedFormsCollectionName] as List)
                   .map((e) => CompletedForm(e))
                   .where((element) => element.id == id)
                   .toList()
@@ -51,7 +53,7 @@ class _FormStatisticsState extends State<FormStatistics> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dashboard - Gaming Disorder Test Poland',
+      title: ProjectStrings.projectName,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),

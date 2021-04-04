@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/Helpers/Strings.dart';
 
 class CompanyName extends StatelessWidget {
   @override
@@ -13,7 +14,7 @@ class CompanyName extends StatelessWidget {
               bottom: 0,
               left: 0,
               right: 0,
-              child: Text('Dashboard',
+              child: Text(ProjectStrings.dashboard,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
