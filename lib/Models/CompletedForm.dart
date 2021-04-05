@@ -19,3 +19,8 @@ class CompletedFormQuestion {
     selectedOptions = (object["selectedOptions"] as List).map((e) => e as String).toList();
   }
 }
+
+class SelectedOption {
+  String name = "";
+  int count = 0;
+}

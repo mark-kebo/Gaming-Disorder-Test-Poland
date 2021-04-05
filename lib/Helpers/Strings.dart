@@ -24,7 +24,8 @@ class ProjectStrings {
   static var logoutQuestion = "Czy na pewno chcesz się wylogować?";
   static var deleteAccountQuestion = "Czy na pewno chcesz usunąć konto?";
   static var help = "Pomoc";
-  static var helpData = "Email: test@test.pl\nTel.: +123 45 677";
+  static var helpEmail = "Email: ";
+  static var helpTel = "Tel.: ";
   static var myForms = "Dostępne ankiety";
   static var completedForms = "Wykonane ankiety";
   static var settings = "Ustawienia";
@@ -66,4 +67,8 @@ class ProjectStrings {
   static var group = "Grupa";
   static var users = "Użytkownicy";
   static var groupExists = "Taka grupa już istnieje";
+  static var emptyStatistycs = "Brak statystyk dla tej ankiety";
+  static var contact = "Dane kontaktowe:";
+  static var phoneNumber = "Numer telefonu";
+  static var phoneNotValid = "Nieprawidłowy numer telefonu";
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myapp/Helpers/Constants.dart';
 import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/NavigationBar/NavigationBar.dart';
@@ -19,10 +20,21 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   DashboardState state = DashboardState.main;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   double contentPadding = 32;
-  CollectionReference forms = firestore.collection(ProjectConstants.formsCollectionName);
-  CollectionReference _userGroups = firestore.collection(ProjectConstants.groupsCollectionName);
-  CollectionReference _users = firestore.collection(ProjectConstants.usersCollectionName);
+  CollectionReference forms =
+      firestore.collection(ProjectConstants.formsCollectionName);
+  CollectionReference _userGroups =
+      firestore.collection(ProjectConstants.groupsCollectionName);
+  CollectionReference _users =
+      firestore.collection(ProjectConstants.usersCollectionName);
+  CollectionReference _settings =
+      firestore.collection(ProjectConstants.settingsCollectionName);
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final AlertController alertController = AlertController();
+  String userCollectionId = "";
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   TextStyle _subtitleTextStyle = TextStyle(
@@ -38,6 +50,12 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    _settings.doc(ProjectConstants.settingsContactCollectionName).get().then(
+        (value) => {
+              _emailController.text = value["email"],
+              _phoneController.text = value["phone"]
+            });
+
     var positioned = Positioned(
         top: contentPadding,
         left: contentPadding + 100,
@@ -50,13 +68,19 @@ class _DashboardState extends State<Dashboard> {
           primarySwatch: Colors.deepPurple,
         ),
         home: Scaffold(
-          floatingActionButton: state == DashboardState.forms
+          floatingActionButton: state == DashboardState.forms ||
+                  state == DashboardState.settings
               ? FloatingActionButton(
-                  child: Icon(Icons.add),
+                  child: Icon(
+                      state == DashboardState.forms ? Icons.add : Icons.done),
                   backgroundColor: Colors.deepPurple,
                   onPressed: () {
-                    print("new form pressed");
-                    _editForm("");
+                    if (state == DashboardState.forms) {
+                      print("new form pressed");
+                      _editForm("");
+                    } else {
+                      _saveSettings();
+                    }
                   },
                 )
               : null,
@@ -104,7 +128,7 @@ class _DashboardState extends State<Dashboard> {
         break;
       case DashboardState.settings:
         {
-          return Text(ProjectStrings.settings, style: _titleTextStyle);
+          return _settingsStack();
         }
         break;
       default:
@@ -113,6 +137,62 @@ class _DashboardState extends State<Dashboard> {
         }
         break;
     }
+  }
+
+  Stack _settingsStack() {
+    return Stack(children: [
+      Text(ProjectStrings.settings, style: _titleTextStyle),
+      Positioned(
+        top: contentPadding * 2,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                  padding: _boxPadding,
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(ProjectStrings.contact,
+                          style: Theme.of(context).textTheme.headline6,
+                          textAlign: TextAlign.start))),
+              Padding(
+                padding: _boxPadding,
+                child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(hintText: ProjectStrings.email),
+                    validator: (String value) {
+                      bool emailValid =
+                          ProjectConstants.emailRegExp.hasMatch(value);
+                      if (!emailValid || value.isEmpty) {
+                        return ProjectStrings.emailNotValid;
+                      }
+                      return null;
+                    }),
+              ),
+              Padding(
+                padding: _boxPadding,
+                child: TextFormField(
+                    controller: _phoneController,
+                    decoration:
+                        InputDecoration(hintText: ProjectStrings.phoneNumber),
+                    validator: (String value) {
+                      bool phoneValid =
+                          ProjectConstants.phoneRegExp.hasMatch(value);
+                      if (!phoneValid || value.isEmpty) {
+                        return ProjectStrings.phoneNotValid;
+                      }
+                      return null;
+                    }),
+              )
+            ],
+          ),
+        ),
+      ),
+    ]);
   }
 
   Stack _statisticsStack() {
@@ -177,15 +257,10 @@ class _DashboardState extends State<Dashboard> {
         Row(
           children: [
             Expanded(
-              flex: 6,
-              child: Container(),
+              flex: 5,
+              child: Expanded(child: _usersWidget()),
             ),
-            Expanded(
-                flex: 4,
-                child: Column(children: [
-                  Expanded(child: _groupsWidget()),
-                  Expanded(child: _usersWidget())
-                ]))
+            Expanded(flex: 5, child: Expanded(child: _groupsWidget()))
           ],
         )
       ],
@@ -194,7 +269,7 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _groupsWidget() {
     return new Container(
-        margin: EdgeInsets.only(bottom: 8),
+        margin: _boxPadding,
         padding: _boxPadding,
         decoration: new BoxDecoration(
             color: Colors.grey[100], borderRadius: _borderRadius),
@@ -205,7 +280,8 @@ class _DashboardState extends State<Dashboard> {
                   flex: 9,
                   child: Align(
                       alignment: Alignment.topCenter,
-                      child: Text(ProjectStrings.userGroups, style: _subtitleTextStyle))),
+                      child: Text(ProjectStrings.userGroups,
+                          style: _subtitleTextStyle))),
               Expanded(
                   flex: 1,
                   child: Align(
@@ -243,7 +319,7 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _usersWidget() {
     return new Container(
-        margin: EdgeInsets.only(top: 8),
+        margin: _boxPadding,
         padding: _boxPadding,
         decoration: new BoxDecoration(
             color: Colors.grey[100], borderRadius: _borderRadius),
@@ -273,23 +349,22 @@ class _DashboardState extends State<Dashboard> {
 
   ListView statisticsFormsList(AsyncSnapshot<QuerySnapshot> snapshot) {
     return new ListView(
-      children: snapshot.data.docs.map((DocumentSnapshot document) {
-        return new GestureDetector(
-          child: new Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: new Container(
-                height: 64.0,
-                decoration: new BoxDecoration(
-                    color: Colors.grey[200], borderRadius: _borderRadius),
-                child: GestureDetector(
-                    child: ListTile(
-                        title: new Text(document.data()['name']),
-                        subtitle: new Text(document.data()['description'])),
-                    onTap: () => {_navigateToFormStatistics(document.id)}),
-              )),
-        );
-      }).toList()
-    );
+        children: snapshot.data.docs.map((DocumentSnapshot document) {
+      return new GestureDetector(
+        child: new Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: new Container(
+              height: 64.0,
+              decoration: new BoxDecoration(
+                  color: Colors.grey[200], borderRadius: _borderRadius),
+              child: GestureDetector(
+                  child: ListTile(
+                      title: new Text(document.data()['name']),
+                      subtitle: new Text(document.data()['description'])),
+                  onTap: () => {_navigateToFormStatistics(document.id)}),
+            )),
+      );
+    }).toList());
   }
 
   ListView formsList(AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -383,10 +458,10 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-void _navigateToFormStatistics(String id) {
-      Navigator.push(context,
+  void _navigateToFormStatistics(String id) {
+    Navigator.push(context,
         MaterialPageRoute(builder: (BuildContext ctx) => FormStatistics(id)));
-}
+  }
 
   void _editForm(String id) {
     Navigator.push(context,
@@ -419,5 +494,17 @@ void _navigateToFormStatistics(String id) {
           .catchError((error) => _alertController.showMessageDialog(
               context, ProjectStrings.deleteGroupError, error));
     });
+  }
+
+  void _saveSettings() async {
+    if (_formKey.currentState.validate()) {
+      _settings.doc(ProjectConstants.settingsContactCollectionName).update({
+        'email': _emailController.text,
+        'phone': _phoneController.text
+      }).catchError((error) => {
+            alertController.showMessageDialog(
+                context, ProjectStrings.error, error),
+          });
+    }
   }
 }
