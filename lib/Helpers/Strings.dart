@@ -68,6 +68,7 @@ class ProjectStrings {
   static var users = "Użytkownicy";
   static var groupExists = "Taka grupa już istnieje";
   static var emptyStatistycs = "Brak statystyk dla tej ankiety";
+  static var emptyUserStatistycs = "Brak statystyk dla tego użytkownika";
   static var contact = "Dane kontaktowe:";
   static var phoneNumber = "Numer telefonu";
   static var phoneNotValid = "Nieprawidłowy numer telefonu";

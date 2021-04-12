@@ -8,6 +8,7 @@ import 'package:myapp/Pages/Dashboard/EditForm.dart';
 import 'package:myapp/Pages/Dashboard/EditGroup.dart';
 import 'package:myapp/Helpers/Alert.dart';
 import 'package:myapp/Pages/Dashboard/FormStatistics.dart';
+import 'package:myapp/Pages/Dashboard/UserStatistics.dart';
 
 enum DashboardState { main, forms, statistics, settings }
 
@@ -354,13 +355,13 @@ class _DashboardState extends State<Dashboard> {
         child: new Padding(
             padding: const EdgeInsets.all(8.0),
             child: new Container(
-              height: 64.0,
               decoration: new BoxDecoration(
                   color: Colors.grey[200], borderRadius: _borderRadius),
               child: GestureDetector(
                   child: ListTile(
                       title: new Text(document.data()['name']),
-                      subtitle: new Text(document.data()['description'])),
+                      subtitle: new Text(document.data()['description']),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded)),
                   onTap: () => {_navigateToFormStatistics(document.id)}),
             )),
       );
@@ -374,7 +375,6 @@ class _DashboardState extends State<Dashboard> {
           child: new Padding(
             padding: const EdgeInsets.all(8.0),
             child: new Container(
-              height: 64.0,
               decoration: new BoxDecoration(
                   color: Colors.grey[200], borderRadius: _borderRadius),
               child: ListTile(
@@ -397,7 +397,6 @@ class _DashboardState extends State<Dashboard> {
           child: new Padding(
             padding: const EdgeInsets.all(8.0),
             child: new Container(
-              height: 48.0,
               decoration: new BoxDecoration(
                   color: Colors.grey[200], borderRadius: _borderRadius),
               child: ListTile(
@@ -419,12 +418,14 @@ class _DashboardState extends State<Dashboard> {
             child: new Padding(
           padding: const EdgeInsets.all(8.0),
           child: new Container(
-            height: 48.0,
             decoration: new BoxDecoration(
                 color: Colors.grey[200], borderRadius: _borderRadius),
-            child: ListTile(
-              title: new Text(document.data()['name']),
-            ),
+            child: GestureDetector(
+                child: ListTile(
+                  title: new Text(document.data()['name']),
+                  trailing: Icon(Icons.arrow_forward_ios_rounded),
+                ),
+                onTap: () => {_navigateToUserStatistics(document.data()['id'])}),
           ),
         ));
       }).toList(),
@@ -461,6 +462,11 @@ class _DashboardState extends State<Dashboard> {
   void _navigateToFormStatistics(String id) {
     Navigator.push(context,
         MaterialPageRoute(builder: (BuildContext ctx) => FormStatistics(id)));
+  }
+
+  void _navigateToUserStatistics(String id) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext ctx) => UserStatistics(id)));
   }
 
   void _editForm(String id) {

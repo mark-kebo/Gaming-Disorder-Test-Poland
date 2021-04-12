@@ -39,7 +39,7 @@ class _EditFormState extends State<EditForm> {
   Radius _listElementCornerRadius = const Radius.circular(16.0);
   bool _isShowLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Questionary _questionary = Questionary(null);
+  QuestionaryModel _questionary = QuestionaryModel(null, null);
   TextStyle _listTitleStyle = TextStyle(
       fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple);
   SizedBox _inset = SizedBox(height: 16, width: 16);
@@ -130,7 +130,7 @@ class _EditFormState extends State<EditForm> {
     if (id.isNotEmpty) {
       _formsCollection.doc(id).get().then((doc) => {
             setState(() {
-              _questionary = Questionary(doc);           
+              _questionary = QuestionaryModel(id, doc);           
                _nameController.text = _questionary.name;
             _descriptionController.text = _questionary.description;
             })

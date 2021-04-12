@@ -47,7 +47,7 @@ class _FormStatisticsState extends State<FormStatistics> {
                   print('-------------$completedCollection');
                   if (completedCollection != null) {
                     completedCollection
-                        .map((e) => CompletedForm(e))
+                        .map((e) => CompletedFormModel(e))
                         .where((element) => element.id == id)
                         .toList()
                         .forEach((element) {
