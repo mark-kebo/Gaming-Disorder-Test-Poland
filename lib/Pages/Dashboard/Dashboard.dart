@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myapp/Helpers/Constants.dart';
 import 'package:myapp/Helpers/Strings.dart';
+import 'package:myapp/Models/Questionary.dart';
 import 'package:myapp/NavigationBar/NavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -382,7 +383,8 @@ class _DashboardState extends State<Dashboard> {
                   subtitle: new Text(document.data()['description']),
                   trailing: dropdownCellMenu(
                       onDelete: () => {_deleteForm(document.id)},
-                      onEdit: () => {_editForm(document.id)})),
+                      onEdit: () => {_editForm(document.id)},
+                      onCopy: () => {_copyForm(document.id)})),
             ),
           ),
         );
@@ -425,14 +427,16 @@ class _DashboardState extends State<Dashboard> {
                   title: new Text(document.data()['name']),
                   trailing: Icon(Icons.arrow_forward_ios_rounded),
                 ),
-                onTap: () => {_navigateToUserStatistics(document.data()['id'])}),
+                onTap: () =>
+                    {_navigateToUserStatistics(document.data()['id'])}),
           ),
         ));
       }).toList(),
     );
   }
 
-  Widget dropdownCellMenu({Function onDelete, Function onEdit}) {
+  Widget dropdownCellMenu(
+      {Function onDelete, Function onEdit, Function onCopy}) {
     return DropdownButton<String>(
       icon: Icon(Icons.more_vert),
       iconSize: 24,
@@ -445,12 +449,17 @@ class _DashboardState extends State<Dashboard> {
       onChanged: (String newValue) {
         if (newValue == ProjectStrings.edit) {
           onEdit();
-        } else {
+        } else if (newValue == ProjectStrings.delete) {
           onDelete();
+        } else {
+          onCopy();
         }
       },
-      items: <String>[ProjectStrings.edit, ProjectStrings.delete]
-          .map<DropdownMenuItem<String>>((String value) {
+      items: <String>[
+        ProjectStrings.edit,
+        ProjectStrings.copy,
+        ProjectStrings.delete
+      ].map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -477,6 +486,44 @@ class _DashboardState extends State<Dashboard> {
   void _editGroup(String id) {
     Navigator.push(context,
         MaterialPageRoute(builder: (BuildContext ctx) => EditGroup(id)));
+  }
+
+  void _copyForm(String id) {
+    var questionary;
+    List newforms = [];
+    if (id.isNotEmpty) {
+      forms
+          .doc(id)
+          .get()
+          .then((doc) => {
+                questionary = QuestionaryModel(id, doc)
+              })
+          .whenComplete(() => {
+                if (questionary.questions != null &&
+                    questionary.questions.length > 0)
+                  {
+                    questionary.name = questionary.name + " " +
+                        ProjectStrings.copyAddString +
+                        UniqueKey().toString(),
+                    for (int i = 0; i < questionary.questions.length; i++)
+                      newforms.add(questionary.questions[i].itemsList()),
+                    forms
+                        .add({
+                          'name': questionary.name,
+                          'description': questionary.description,
+                          'questions': newforms,
+                          'groupId': questionary.groupId,
+                          'groupName': questionary.groupName
+                        })
+                        .then((value) => setState(() {}))
+                        .catchError((error) => Center(
+                            child: Text(error,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red))))
+                  }
+              });
+    }
   }
 
   void _deleteForm(String id) {
