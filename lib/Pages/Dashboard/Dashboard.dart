@@ -495,14 +495,13 @@ class _DashboardState extends State<Dashboard> {
       forms
           .doc(id)
           .get()
-          .then((doc) => {
-                questionary = QuestionaryModel(id, doc)
-              })
+          .then((doc) => {questionary = QuestionaryModel(id, doc)})
           .whenComplete(() => {
                 if (questionary.questions != null &&
                     questionary.questions.length > 0)
                   {
-                    questionary.name = questionary.name + " " +
+                    questionary.name = questionary.name +
+                        " " +
                         ProjectStrings.copyAddString +
                         UniqueKey().toString(),
                     for (int i = 0; i < questionary.questions.length; i++)
@@ -510,6 +509,8 @@ class _DashboardState extends State<Dashboard> {
                     forms
                         .add({
                           'name': questionary.name,
+                          'isHasCheckList': questionary.isHasCheckList,
+                          'checkList': questionary.checkList.itemsList(),
                           'description': questionary.description,
                           'questions': newforms,
                           'groupId': questionary.groupId,
