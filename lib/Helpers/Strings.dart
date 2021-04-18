@@ -74,4 +74,7 @@ class ProjectStrings {
   static const phoneNotValid = "Nieprawidłowy numer telefonu";
   static const copy = "Utwórz kopię";
   static const copyAddString = "Kopia";
+  static const createChecklist = "Stworzyć checklistę";
+  static const checklist = "Checklista";
+  static const title = "Tytuł";
 }

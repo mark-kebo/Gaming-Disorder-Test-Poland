@@ -32,8 +32,10 @@ class _EditFormState extends State<EditForm> {
   Color _elementBackgroundColor = Colors.grey[200];
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  CollectionReference _formsCollection = firestore.collection(ProjectConstants.formsCollectionName);
-  CollectionReference _userGroups = firestore.collection(ProjectConstants.groupsCollectionName);
+  CollectionReference _formsCollection =
+      firestore.collection(ProjectConstants.formsCollectionName);
+  CollectionReference _userGroups =
+      firestore.collection(ProjectConstants.groupsCollectionName);
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   Radius _listElementCornerRadius = const Radius.circular(16.0);
@@ -61,6 +63,19 @@ class _EditFormState extends State<EditForm> {
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
+              _questionary.isHasCheckList
+                  ? Center(
+                      child: Text(ProjectStrings.createChecklist,
+                          style: TextStyle(color: Colors.grey)))
+                  : FlatButton(
+                      textColor: Colors.deepPurple,
+                      onPressed: () async {
+                        setState(() {
+                          _questionary.isHasCheckList = true;
+                        });
+                      },
+                      child: Text(ProjectStrings.createChecklist),
+                    ),
               FlatButton(
                 textColor: Colors.deepPurple,
                 onPressed: () async {
@@ -103,6 +118,9 @@ class _EditFormState extends State<EditForm> {
                         _nameField(),
                         _descriptionField(),
                         _groupField(),
+                        _questionary.isHasCheckList
+                            ? _checkListField()
+                            : _inset,
                         _fieldsList()
                       ],
                     ))),
@@ -130,12 +148,28 @@ class _EditFormState extends State<EditForm> {
     if (id.isNotEmpty) {
       _formsCollection.doc(id).get().then((doc) => {
             setState(() {
-              _questionary = QuestionaryModel(id, doc);           
-               _nameController.text = _questionary.name;
-            _descriptionController.text = _questionary.description;
+              _questionary = QuestionaryModel(id, doc);
+              _nameController.text = _questionary.name;
+              _descriptionController.text = _questionary.description;
             })
           });
     }
+  }
+
+  Widget _checkListField() {
+    return new Column(
+      children: [
+        _checkListTextField(),
+        _inset,
+        for (var item in _checkListWidget()) item,
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          _addCheckListFieldElementButton(),
+          _deleteCheckListFieldButton()
+        ]),
+        _inset,
+      ],
+    );
   }
 
   Widget _fieldsList() {
@@ -163,8 +197,7 @@ class _EditFormState extends State<EditForm> {
             );
           });
     } else {
-      return Text(ProjectStrings.noFields,
-          style: TextStyle(color: Colors.red));
+      return Text(ProjectStrings.noFields, style: TextStyle(color: Colors.red));
     }
   }
 
@@ -209,8 +242,8 @@ class _EditFormState extends State<EditForm> {
                     setState(() {});
                   },
                   controller: fieldType.minValueController,
-                  decoration:
-                      InputDecoration(hintText: ProjectStrings.minValueDescription),
+                  decoration: InputDecoration(
+                      hintText: ProjectStrings.minValueDescription),
                 ),
               )),
           Expanded(
@@ -332,6 +365,24 @@ class _EditFormState extends State<EditForm> {
     }
   }
 
+  List<Widget> _checkListWidget() {
+    if (_questionary.checkList.optionsControllers != null &&
+        _questionary.checkList.optionsControllers.length > 0) {
+      return _questionary.checkList.optionsControllers
+          .asMap()
+          .map((index, field) => MapEntry(
+              index,
+              SizedBox(
+                height: _elementsHeight,
+                child: _checkListOptionTextField(index),
+              )))
+          .values
+          .toList();
+    } else {
+      return [Text(ProjectStrings.noOptions)];
+    }
+  }
+
   List<Widget> _optionsMultipleChoiseList(MultipleChoiseFormField fieldType) {
     if (fieldType.optionsControllers != null &&
         fieldType.optionsControllers.length > 0) {
@@ -366,6 +417,43 @@ class _EditFormState extends State<EditForm> {
     } else {
       return [Text(ProjectStrings.noOptions)];
     }
+  }
+
+  Widget _checkListTextField() {
+    return Container(
+        padding: EdgeInsets.only(
+            top: _fieldPadding * 2,
+            bottom: _fieldPadding * 2,
+            left: _fieldPadding * 2,
+            right: _fieldPadding * 2),
+        decoration: new BoxDecoration(
+            color: Colors.deepPurple[50],
+            borderRadius: new BorderRadius.only(
+                topLeft: _listElementCornerRadius,
+                topRight: _listElementCornerRadius,
+                bottomLeft: _listElementCornerRadius,
+                bottomRight: _listElementCornerRadius)),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Expanded(
+            flex: 8,
+            child: TextFormField(
+              onChanged: (text) {
+                setState(() {});
+              },
+              controller: _questionary.checkList.nameController,
+              decoration: InputDecoration(
+                  border: InputBorder.none, hintText: ProjectStrings.title),
+            ),
+          ),
+          Expanded(
+              flex: 2,
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child:
+                      Text(ProjectStrings.checklist, style: _listTitleStyle))),
+          _inset,
+          _questionary.checkList.icon
+        ]));
   }
 
   Widget _questionTextField(QuestionaryFieldType fieldType, int index) {
@@ -414,8 +502,8 @@ class _EditFormState extends State<EditForm> {
             setState(() {});
           },
           controller: fieldType.optionsControllers[index],
-          decoration:
-              InputDecoration(hintText: ProjectStrings.option + (index + 1).toString()),
+          decoration: InputDecoration(
+              hintText: ProjectStrings.option + (index + 1).toString()),
         ),
       ),
       Expanded(
@@ -434,6 +522,35 @@ class _EditFormState extends State<EditForm> {
     ]);
   }
 
+  Widget _checkListOptionTextField(int index) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      Expanded(
+        flex: 9,
+        child: TextFormField(
+          onChanged: (text) {
+            setState(() {});
+          },
+          controller: _questionary.checkList.optionsControllers[index],
+          decoration: InputDecoration(
+              hintText: ProjectStrings.option + (index + 1).toString()),
+        ),
+      ),
+      Expanded(
+          flex: 1,
+          child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.delete_outlined,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () {
+                    print("delete option field");
+                    _deleteCheckListFieldOption(index);
+                  })))
+    ]);
+  }
+
   Widget _deleteFieldButton(QuestionaryFieldType fieldType) {
     return Align(
         alignment: Alignment.centerRight,
@@ -448,6 +565,20 @@ class _EditFormState extends State<EditForm> {
             }));
   }
 
+  Widget _deleteCheckListFieldButton() {
+    return Align(
+        alignment: Alignment.centerRight,
+        child: IconButton(
+            icon: Icon(
+              Icons.delete,
+              color: Colors.deepPurple,
+            ),
+            onPressed: () {
+              print("delete field");
+              _deleteCheckListField();
+            }));
+  }
+
   Widget _addFieldElementdButton(QuestionaryFieldType fieldType) {
     return Align(
         alignment: Alignment.centerLeft,
@@ -459,6 +590,20 @@ class _EditFormState extends State<EditForm> {
             onPressed: () {
               print("add field element");
               _addFieldOption(fieldType);
+            }));
+  }
+
+  Widget _addCheckListFieldElementButton() {
+    return Align(
+        alignment: Alignment.centerLeft,
+        child: IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Colors.deepPurple,
+            ),
+            onPressed: () {
+              print("add field element");
+              _addCheckListFieldOption();
             }));
   }
 
@@ -522,7 +667,8 @@ class _EditFormState extends State<EditForm> {
             return null;
           },
           decoration: InputDecoration(
-              border: InputBorder.none, hintText: ProjectStrings.formDescription),
+              border: InputBorder.none,
+              hintText: ProjectStrings.formDescription),
         ));
   }
 
@@ -536,7 +682,8 @@ class _EditFormState extends State<EditForm> {
         child: Align(
             alignment: Alignment.centerRight,
             child: Row(children: [
-              Text(ProjectStrings.selectedGroup, style: TextStyle(fontSize: 16)),
+              Text(ProjectStrings.selectedGroup,
+                  style: TextStyle(fontSize: 16)),
               Expanded(
                   child: DropdownButton<String>(
                 iconSize: 0.0,
@@ -583,6 +730,13 @@ class _EditFormState extends State<EditForm> {
     });
   }
 
+  void _deleteCheckListField() {
+    setState(() {
+      _questionary.isHasCheckList = false;
+      _questionary.questions.remove(_questionary.checkList);
+    });
+  }
+
   void _addFieldOption(QuestionaryFieldType fieldType) {
     setState(() {
       switch (fieldType.type) {
@@ -601,6 +755,12 @@ class _EditFormState extends State<EditForm> {
         default:
           break;
       }
+    });
+  }
+
+  void _addCheckListFieldOption() {
+    setState(() {
+      _questionary.checkList.optionsControllers.add(TextEditingController());
     });
   }
 
@@ -625,6 +785,13 @@ class _EditFormState extends State<EditForm> {
     });
   }
 
+  void _deleteCheckListFieldOption(int index) {
+    setState(() {
+      _questionary.checkList.optionsControllers
+          .remove(_questionary.checkList.optionsControllers[index]);
+    });
+  }
+
   void _updateFormAction() async {
     if (_questionary.questions != null && _questionary.questions.length > 0) {
       _questionary.name = _nameController.text;
@@ -639,6 +806,8 @@ class _EditFormState extends State<EditForm> {
           ? _formsCollection
               .add({
                 'name': _questionary.name,
+                'isHasCheckList': _questionary.isHasCheckList,
+                'checkList': _questionary.checkList.itemsList(),
                 'description': _questionary.description,
                 'questions': forms,
                 'groupId': _questionary.groupId,
@@ -656,6 +825,8 @@ class _EditFormState extends State<EditForm> {
               .doc(id)
               .update({
                 'name': _questionary.name,
+                'isHasCheckList': _questionary.isHasCheckList,
+                'checkList': _questionary.checkList.itemsList(),
                 'description': _questionary.description,
                 'questions': forms,
                 'groupId': _questionary.groupId,
