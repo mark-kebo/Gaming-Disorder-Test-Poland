@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/Helpers/Constants.dart';
 import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/Models/CompletedForm.dart';
 import 'package:myapp/Helpers/Alert.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class CompletedFormAnswers extends StatefulWidget {
@@ -37,7 +39,10 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
         home: Scaffold(
             key: _scaffoldKey,
             body: Padding(
-                padding: EdgeInsets.all(_formPadding), child: _questionsList()),
+                padding: EdgeInsets.all(_formPadding),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [_checkList(), _questionsList()])),
             appBar: AppBar(
               backgroundColor: Colors.white,
               leading: BackButton(
@@ -57,13 +62,32 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
   Widget _questionsList() {
     var questions = _formModel.questions;
     print(questions.first.name);
-    return ListView.builder(
-        itemCount: questions.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-              title:
-                  Text((index + 1).toString() + ". " + questions[index].name),
-              subtitle: Text(questions[index].selectedOptions.join(", ")));
-        });
+    return Expanded(
+        child: ListView.builder(
+            itemCount: questions.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                  title: Text(
+                      (index + 1).toString() + ". " + questions[index].name),
+                  subtitle: Text(questions[index].selectedOptions.join(", ")));
+            }));
+  }
+
+  Widget _checkList() {
+    print(_formModel.checkList.dateTime);
+    return _formModel.checkList != null &&
+            _formModel.checkList.dateTime != null &&
+            _formModel.checkList.options != null &&
+            _formModel.checkList.name != null
+        ? ListTile(
+            title: Text(
+                ProjectStrings.checklist + " - " + (_formModel.checkList.name ??
+                    "") +
+                        " (" +
+                        DateFormat(ProjectConstants.dateFormat)
+                            .format(_formModel.checkList.dateTime) +
+                        ") "),
+            subtitle: Text(_formModel.checkList.options.toString()))
+        : SizedBox();
   }
 }
