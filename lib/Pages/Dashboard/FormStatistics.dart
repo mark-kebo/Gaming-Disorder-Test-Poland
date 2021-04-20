@@ -6,6 +6,8 @@ import 'package:myapp/Models/CompletedForm.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import "package:collection/collection.dart";
 
+import 'UsersList.dart';
+
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 // ignore: must_be_immutable
@@ -80,6 +82,18 @@ class _FormStatisticsState extends State<FormStatistics> {
               style: _titleTextStyle,
               textAlign: TextAlign.center,
             ),
+            actions: [
+              FlatButton(
+                textColor: Colors.deepPurple,
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext ctx) => UsersList(id)));
+                },
+                child: Text(ProjectStrings.users),
+              ),
+            ],
             leading: BackButton(
               color: Colors.deepPurple,
               onPressed: () {

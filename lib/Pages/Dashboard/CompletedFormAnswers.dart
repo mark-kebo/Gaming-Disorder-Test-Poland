@@ -4,17 +4,31 @@ import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/Models/CompletedForm.dart';
 import 'package:myapp/Helpers/Alert.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 // ignore: must_be_immutable
 class CompletedFormAnswers extends StatefulWidget {
   CompletedFormModel _formModel;
+  String _userId;
+  String _formId;
+  String _userName = "";
 
-  CompletedFormAnswers(CompletedFormModel formModel) {
+  CompletedFormAnswers(CompletedFormModel formModel, String userName) {
     this._formModel = formModel;
+    this._userName = userName;
+  }
+
+  CompletedFormAnswers.initById(String userId, String formId) {
+    this._userId = userId;
+    this._formId = formId;
   }
 
   @override
-  State<StatefulWidget> createState() => _CompletedFormAnswersState(_formModel);
+  State<StatefulWidget> createState() => _formModel != null
+      ? _CompletedFormAnswersState(_formModel, _userName)
+      : _CompletedFormAnswersState.initById(_userId, _formId);
 }
 
 class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
@@ -24,9 +38,45 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
   CompletedFormModel _formModel;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final AlertController alertController = AlertController();
+  CollectionReference _usersCollection =
+      firestore.collection(ProjectConstants.usersCollectionName);
+  bool _isShowLoading = true;
+  String _userName = "";
 
-  _CompletedFormAnswersState(CompletedFormModel formModel) {
+  _CompletedFormAnswersState(CompletedFormModel formModel, String userName) {
     this._formModel = formModel;
+    this._userName = userName;
+    _isShowLoading = false;
+  }
+
+  _CompletedFormAnswersState.initById(String userId, String formId) {
+    _usersCollection
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((doc) {
+                if (doc["id"] == userId &&
+                    doc[ProjectConstants.completedFormsCollectionName] !=
+                        null) {
+                  doc[ProjectConstants.completedFormsCollectionName]
+                      .map((e) => CompletedFormModel(e))
+                      .toList()
+                      .forEach((element) {
+                    if (element != null) {
+                      print(element.id);
+                      if (element.id == formId) {
+                        this._userName = doc["name"];
+                        this._formModel = element;
+                      }
+                    }
+                  });
+                }
+              })
+            })
+        .whenComplete(() => {
+              setState(() {
+                _isShowLoading = false;
+              })
+            });
   }
 
   @override
@@ -38,11 +88,13 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
         ),
         home: Scaffold(
             key: _scaffoldKey,
-            body: Padding(
-                padding: EdgeInsets.all(_formPadding),
-                child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [_checkList(), _questionsList()])),
+            body: _isShowLoading
+                ? Center(child: CircularProgressIndicator())
+                : Padding(
+                    padding: EdgeInsets.all(_formPadding),
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [_checkList(), _questionsList()])),
             appBar: AppBar(
               backgroundColor: Colors.white,
               leading: BackButton(
@@ -52,7 +104,9 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
                 },
               ),
               title: Text(
-                _formModel.name,
+                _formModel != null
+                    ? _formModel.name + " - " + _userName
+                    : ProjectStrings.statistics,
                 style: _titleTextStyle,
                 textAlign: TextAlign.center,
               ),
@@ -80,13 +134,13 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
             _formModel.checkList.options != null &&
             _formModel.checkList.name != null
         ? ListTile(
-            title: Text(
-                ProjectStrings.checklist + " - " + (_formModel.checkList.name ??
-                    "") +
-                        " (" +
-                        DateFormat(ProjectConstants.dateFormat)
-                            .format(_formModel.checkList.dateTime) +
-                        ") "),
+            title: Text(ProjectStrings.checklist +
+                " - " +
+                (_formModel.checkList.name ?? "") +
+                " (" +
+                DateFormat(ProjectConstants.dateFormat)
+                    .format(_formModel.checkList.dateTime) +
+                ") "),
             subtitle: Text(_formModel.checkList.options.toString()))
         : SizedBox();
   }
