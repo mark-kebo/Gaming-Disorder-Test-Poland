@@ -77,4 +77,5 @@ class ProjectStrings {
   static const createChecklist = "Stworzyć checklistę";
   static const checklist = "Checklista";
   static const title = "Tytuł";
+  static const minTimeForAnswer = "Przybliżony minimalny czas na odpowiedź na pytanie (sek):   ";
 }

@@ -79,7 +79,7 @@ abstract class QuestionaryFieldType {
   Icon icon;
   String keyQuestion = "";
   String keyQuestionOption = "";
-  int minQuestionTime = 0;
+  TextEditingController minQuestionTimeController;
 }
 
 class LikertScaleFormField extends QuestionaryFieldType {
@@ -103,7 +103,8 @@ class LikertScaleFormField extends QuestionaryFieldType {
       keyQuestion = item['keyQuestion'];
       keyQuestionOption = item['keyQuestionOption'];
       questionController.text = item["question"];
-      minQuestionTime = item["minTime"];
+      minQuestionTimeController =
+          TextEditingController(text: item["minTime"].toString());
     }
   }
 
@@ -115,7 +116,7 @@ class LikertScaleFormField extends QuestionaryFieldType {
       "options": this.optionsControllers.map((e) => e.text),
       "keyQuestion": this.keyQuestion,
       "keyQuestionOption": this.keyQuestionOption,
-      "minTime": this.minQuestionTime
+      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0
     };
   }
 }
@@ -137,7 +138,8 @@ class ParagraphFormField extends QuestionaryFieldType {
       questionController.text = item["question"];
       keyQuestion = item['keyQuestion'];
       keyQuestionOption = item['keyQuestionOption'];
-      minQuestionTime = item["minTime"];
+      minQuestionTimeController =
+          TextEditingController(text: item["minTime"].toString());
     }
   }
 
@@ -148,7 +150,7 @@ class ParagraphFormField extends QuestionaryFieldType {
       "name": this.name,
       "keyQuestion": this.keyQuestion,
       "keyQuestionOption": this.keyQuestionOption,
-      "minTime": this.minQuestionTime
+      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0
     };
   }
 }
@@ -174,7 +176,8 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
       questionController.text = item["question"];
       keyQuestion = item['keyQuestion'];
       keyQuestionOption = item['keyQuestionOption'];
-      minQuestionTime = item["minTime"];
+      minQuestionTimeController =
+          TextEditingController(text: item["minTime"].toString());
     }
   }
 
@@ -186,7 +189,7 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
       "options": this.optionsControllers.map((e) => e.text),
       "keyQuestion": this.keyQuestion,
       "keyQuestionOption": this.keyQuestionOption,
-      "minTime": this.minQuestionTime
+      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0
     };
   }
 }
@@ -214,7 +217,8 @@ class SingleChoiseFormField extends QuestionaryFieldType {
       keyQuestion = item['keyQuestion'];
       keyQuestionOption = item['keyQuestionOption'];
       isKeyQuestion = item["isKeyQuestion"];
-      minQuestionTime = item["minTime"];
+      minQuestionTimeController =
+          TextEditingController(text: item["minTime"].toString());
     }
   }
 
@@ -227,7 +231,7 @@ class SingleChoiseFormField extends QuestionaryFieldType {
       "options": this.optionsControllers.map((e) => e.text),
       "keyQuestion": this.keyQuestion,
       "keyQuestionOption": this.keyQuestionOption,
-      "minTime": this.minQuestionTime
+      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0
     };
   }
 }
@@ -253,7 +257,8 @@ class SliderFormField extends QuestionaryFieldType {
       questionController.text = item["question"];
       keyQuestion = item['keyQuestion'];
       keyQuestionOption = item['keyQuestionOption'];
-      minQuestionTime = item["minTime"];
+      minQuestionTimeController =
+          TextEditingController(text: item["minTime"].toString());
     }
   }
 
@@ -266,7 +271,7 @@ class SliderFormField extends QuestionaryFieldType {
       "minValue": this.minValueController.text,
       "keyQuestion": this.keyQuestion,
       "keyQuestionOption": this.keyQuestionOption,
-      "minTime": this.minQuestionTime
+      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0
     };
   }
 }

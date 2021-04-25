@@ -231,6 +231,7 @@ class _EditFormState extends State<EditForm> {
     return new Column(
       children: [
         _questionTextField(fieldType, index),
+        _questionMinTimeTextField(fieldType, index),
         _inset,
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Expanded(
@@ -274,6 +275,7 @@ class _EditFormState extends State<EditForm> {
     return new Column(
       children: [
         _questionTextField(fieldType, index),
+        _questionMinTimeTextField(fieldType, index),
         _inset,
         for (var item in _optionsLikertScaleList(fieldType)) item,
         _inset,
@@ -291,6 +293,7 @@ class _EditFormState extends State<EditForm> {
     return new Column(
       children: [
         _questionTextField(fieldType, index),
+        _questionMinTimeTextField(fieldType, index),
         _inset,
         _deleteFieldButton(fieldType),
         _inset,
@@ -303,6 +306,7 @@ class _EditFormState extends State<EditForm> {
     return new Column(
       children: [
         _questionTextField(fieldType, index),
+        _questionMinTimeTextField(fieldType, index),
         _inset,
         for (var item in _optionsMultipleChoiseList(fieldType)) item,
         _inset,
@@ -320,6 +324,7 @@ class _EditFormState extends State<EditForm> {
     return new Column(
       children: [
         _questionTextField(fieldType, index),
+        _questionMinTimeTextField(fieldType, index),
         _inset,
         for (var item in _optionsSingleChoiseList(fieldType)) item,
         _inset,
@@ -491,6 +496,20 @@ class _EditFormState extends State<EditForm> {
           _inset,
           fieldType.icon
         ]));
+  }
+
+  Widget _questionMinTimeTextField(QuestionaryFieldType fieldType, int index) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      Text(ProjectStrings.minTimeForAnswer),
+      Expanded(
+        child: TextFormField(
+            onChanged: (text) {
+              setState(() {});
+            },
+            controller: fieldType.minQuestionTimeController),
+      ),
+      _inset,
+    ]);
   }
 
   Widget _optionTextField(QuestionaryFieldType fieldType, int index) {
@@ -806,8 +825,14 @@ class _EditFormState extends State<EditForm> {
           ? _formsCollection
               .add({
                 'name': _questionary.name,
-                'isHasCheckList': _questionary.isHasCheckList,
-                'checkList': _questionary.checkList.itemsList(),
+                'isHasCheckList':
+                    _questionary.checkList.nameController.text.isNotEmpty
+                        ? _questionary.isHasCheckList
+                        : false,
+                'checkList':
+                    _questionary.checkList.nameController.text.isNotEmpty
+                        ? _questionary.checkList.itemsList()
+                        : null,
                 'description': _questionary.description,
                 'questions': forms,
                 'groupId': _questionary.groupId,
@@ -825,8 +850,14 @@ class _EditFormState extends State<EditForm> {
               .doc(id)
               .update({
                 'name': _questionary.name,
-                'isHasCheckList': _questionary.isHasCheckList,
-                'checkList': _questionary.checkList.itemsList(),
+                'isHasCheckList':
+                    _questionary.checkList.nameController.text.isNotEmpty
+                        ? _questionary.isHasCheckList
+                        : false,
+                'checkList':
+                    _questionary.checkList.nameController.text.isNotEmpty
+                        ? _questionary.checkList.itemsList()
+                        : null,
                 'description': _questionary.description,
                 'questions': forms,
                 'groupId': _questionary.groupId,
