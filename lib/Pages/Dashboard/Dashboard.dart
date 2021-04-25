@@ -437,6 +437,16 @@ class _DashboardState extends State<Dashboard> {
 
   Widget dropdownCellMenu(
       {Function onDelete, Function onEdit, Function onCopy}) {
+    var items = <String>[];
+    if (onEdit != null) {
+      items.add(ProjectStrings.edit);
+    }
+    if (onCopy != null) {
+      items.add(ProjectStrings.copy);
+    }
+    if (onDelete != null) {
+      items.add(ProjectStrings.delete);
+    }
     return DropdownButton<String>(
       icon: Icon(Icons.more_vert),
       iconSize: 24,
@@ -455,11 +465,7 @@ class _DashboardState extends State<Dashboard> {
           onCopy();
         }
       },
-      items: <String>[
-        ProjectStrings.edit,
-        ProjectStrings.copy,
-        ProjectStrings.delete
-      ].map<DropdownMenuItem<String>>((String value) {
+      items: items.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
