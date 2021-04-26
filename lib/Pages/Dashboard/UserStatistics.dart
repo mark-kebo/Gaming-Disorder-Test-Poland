@@ -71,7 +71,8 @@ class _UserStatisticsState extends State<UserStatistics> {
       home: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
-            title: Text(ProjectStrings.statistics + " " + _userName,
+            title: Text(
+              ProjectStrings.statistics + " " + _userName,
               style: _titleTextStyle,
               textAlign: TextAlign.center,
             ),
@@ -105,6 +106,9 @@ class _UserStatisticsState extends State<UserStatistics> {
                   child: GestureDetector(
                       child: ListTile(
                         title: new Text(_forms[index].name),
+                        leading: _forms[index].isSuspicious
+                            ? Icon(Icons.error, color: Colors.redAccent)
+                            : SizedBox(),
                         trailing: Icon(Icons.arrow_forward_ios_rounded),
                       ),
                       onTap: () => {_navigateToStatistics(_forms[index])}),

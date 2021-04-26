@@ -3,12 +3,14 @@ import 'package:myapp/Models/Questionary.dart';
 class CompletedFormModel {
   String id = "";
   String name = "";
+  bool isSuspicious = false;
   CompletedCheckList checkList;
   List<CompletedFormQuestion> questions = <CompletedFormQuestion>[];
 
   CompletedFormModel(dynamic object) {
     id = object["id"];
     name = object["name"];
+    isSuspicious = object["isSuspicious"];
     checkList = CompletedCheckList(object["checkList"]);
     questions = (object["questions"] as List)
         .map((e) => CompletedFormQuestion(e))
@@ -29,6 +31,7 @@ class CompletedFormModel {
     return {
       "id": this.id,
       "name": this.name,
+      "isSuspicious": this.isSuspicious,
       "checkList": this.checkList.itemsList(),
       "questions": this.questions.map((e) => e.itemsList()).toList()
     };

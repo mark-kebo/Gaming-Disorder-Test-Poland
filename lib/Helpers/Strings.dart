@@ -77,5 +77,8 @@ class ProjectStrings {
   static const createChecklist = "Stworzyć checklistę";
   static const checklist = "Checklista";
   static const title = "Tytuł";
-  static const minTimeForAnswer = "Przybliżony minimalny czas na odpowiedź na pytanie (sek):   ";
+  static const minTimeForAnswer =
+      "Przybliżony minimalny czas na odpowiedź na pytanie (sek):   ";
+  static const isSuspicious =
+      "Ta ankieta została oznaczona jako podejrzana. (Na przykład z powodu zbyt szybkiej odpowiedzi na pytania)";
 }

@@ -92,9 +92,11 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
                 ? Center(child: CircularProgressIndicator())
                 : Padding(
                     padding: EdgeInsets.all(_formPadding),
-                    child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [_checkList(), _questionsList()])),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      _suspiciousCheckBox(),
+                      _checkList(),
+                      _questionsList()
+                    ])),
             appBar: AppBar(
               backgroundColor: Colors.white,
               leading: BackButton(
@@ -111,6 +113,13 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
                 textAlign: TextAlign.center,
               ),
             )));
+  }
+
+  Widget _suspiciousCheckBox() {
+    return _formModel.isSuspicious
+        ? Text(ProjectStrings.isSuspicious,
+            style: TextStyle(color: Colors.redAccent))
+        : SizedBox();
   }
 
   Widget _questionsList() {

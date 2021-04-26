@@ -21,6 +21,7 @@ class UsersList extends StatefulWidget {
 
 class _UsersListState extends State<UsersList> {
   Map<String, String> _users = Map<String, String>();
+  List<bool> _isUsersSuspicious = [];
   CollectionReference _usersCollection =
       firestore.collection(ProjectConstants.usersCollectionName);
   TextStyle _titleTextStyle = TextStyle(
@@ -44,13 +45,16 @@ class _UsersListState extends State<UsersList> {
         .get()
         .then((QuerySnapshot querySnapshot) => {
               querySnapshot.docs.forEach((doc) {
-                var isHasForm = false;
-                for (var item in doc["completedForms"]) {
-                  isHasForm = item["id"] == id;
-                  if (isHasForm) {
-                    _name = ProjectStrings.users + ": " + item["name"];
-                    _users[doc["id"]] = doc["name"];
-                    continue;
+                if (doc.data()["completedForms"] != null) {
+                  var isHasForm = false;
+                  for (var item in doc["completedForms"]) {
+                    isHasForm = item["id"] == id;
+                    if (isHasForm) {
+                      _name = ProjectStrings.users + ": " + item["name"];
+                      _users[doc["id"]] = doc["name"];
+                      _isUsersSuspicious.add(item["isSuspicious"] ?? false);
+                      continue;
+                    }
                   }
                 }
               })
@@ -103,6 +107,9 @@ class _UsersListState extends State<UsersList> {
                   child: GestureDetector(
                       child: ListTile(
                         title: new Text(_users[_users.keys.elementAt(index)]),
+                        leading: _isUsersSuspicious[index]
+                            ? Icon(Icons.error, color: Colors.redAccent)
+                            : SizedBox(),
                         trailing: Icon(Icons.arrow_forward_ios_rounded),
                       ),
                       onTap: () => {
