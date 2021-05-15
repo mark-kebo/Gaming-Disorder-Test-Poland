@@ -54,6 +54,7 @@ class CompletedCheckList {
   }
 
   CompletedCheckList.fromQuestionaryModel(CheckListQuestionaryField object) {
+    print("fromQuestionaryModel");
     name = object.nameController.text;
     for (var option in object.optionsControllers) {
       options[option.text] = false;

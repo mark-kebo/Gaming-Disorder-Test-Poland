@@ -9,7 +9,7 @@ class QuestionaryModel {
   String groupName = "";
   bool isHasCheckList = false;
 
-  CheckListQuestionaryField checkList;
+  CheckListQuestionaryField checkList = CheckListQuestionaryField.newModel();
   List<QuestionaryFieldType> questions = <QuestionaryFieldType>[];
 
   QuestionaryModel(String id, DocumentSnapshot snapshot) {
@@ -283,6 +283,8 @@ class CheckListQuestionaryField {
     Icons.check_circle_rounded,
     color: Colors.deepPurple,
   );
+
+  CheckListQuestionaryField.newModel();
 
   CheckListQuestionaryField(dynamic item) {
     if (item != null) {

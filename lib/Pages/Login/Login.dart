@@ -73,8 +73,8 @@ class _LoginFormState extends State<LoginForm> {
                   controller: _emailController,
                   decoration: InputDecoration(hintText: ProjectStrings.email),
                   validator: (String value) {
-                    bool emailValid = ProjectConstants.emailRegExp
-                        .hasMatch(value);
+                    bool emailValid =
+                        ProjectConstants.emailRegExp.hasMatch(value);
                     if (!emailValid || value.isEmpty) {
                       return ProjectStrings.emailNotValid;
                     }
@@ -85,7 +85,8 @@ class _LoginFormState extends State<LoginForm> {
               padding: EdgeInsets.all(_fieldPadding),
               child: TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(hintText: ProjectStrings.password),
+                  decoration:
+                      InputDecoration(hintText: ProjectStrings.password),
                   validator: (String value) {
                     if (value.isEmpty) {
                       return ProjectStrings.emptyPassword;
@@ -141,7 +142,6 @@ class _LoginFormState extends State<LoginForm> {
       _isShowLoading = true;
     });
     final FirebaseAuth _auth = FirebaseAuth.instance;
-    print("Sign in");
     try {
       await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
@@ -156,7 +156,8 @@ class _LoginFormState extends State<LoginForm> {
         _isShowLoading = false;
       });
     } catch (error) {
-      alertController.showMessageDialog(context, ProjectStrings.error, error.message);
+      alertController.showMessageDialog(
+          context, ProjectStrings.error, error.message);
       setState(() {
         _isShowLoading = false;
       });
