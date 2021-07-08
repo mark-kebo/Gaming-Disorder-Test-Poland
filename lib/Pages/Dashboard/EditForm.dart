@@ -813,8 +813,8 @@ class _EditFormState extends State<EditForm> {
 
   void _updateFormAction() async {
     if (_questionary.questions != null && _questionary.questions.length > 0) {
-      _questionary.name = _nameController.text;
-      _questionary.description = _descriptionController.text;
+      _questionary.name = _nameController.text ?? "";
+      _questionary.description = _descriptionController.text ?? "";
       setState(() {
         _isShowLoading = true;
       });

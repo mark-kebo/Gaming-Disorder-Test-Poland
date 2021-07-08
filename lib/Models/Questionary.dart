@@ -73,13 +73,13 @@ abstract class QuestionaryFieldType {
   QuestionaryFieldAbstract type;
   String key;
   String name;
-  TextEditingController questionController;
-  List<TextEditingController> optionsControllers;
+  TextEditingController questionController = TextEditingController();
+  List<TextEditingController> optionsControllers = <TextEditingController>[];
   Map itemsList();
   Icon icon;
   String keyQuestion = "";
   String keyQuestionOption = "";
-  TextEditingController minQuestionTimeController;
+  TextEditingController minQuestionTimeController = TextEditingController();
 }
 
 class LikertScaleFormField extends QuestionaryFieldType {
