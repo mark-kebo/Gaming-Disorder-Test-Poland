@@ -10,14 +10,14 @@ import 'package:myapp/Helpers/Alert.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
-class NavigationBar extends StatefulWidget {
+class NavigationCustomBar extends StatefulWidget {
   final Function mainTouched;
   final Function formsTouched;
   final Function statisticsTouched;
   final Function settingsTouched;
 
 
-  NavigationBar({
+  NavigationCustomBar({
     this.mainTouched,
     this.formsTouched,
     this.settingsTouched,
@@ -28,7 +28,7 @@ class NavigationBar extends StatefulWidget {
   State<StatefulWidget> createState() => _NavigationBarState();
 }
 
-class _NavigationBarState extends State<NavigationBar> {
+class _NavigationBarState extends State<NavigationCustomBar> {
   final AlertController alertController = AlertController();
 
   @override

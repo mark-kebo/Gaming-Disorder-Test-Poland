@@ -89,7 +89,7 @@ class _DashboardState extends State<Dashboard> {
           body: Stack(
             children: [
               positioned,
-              NavigationBar(mainTouched: () {
+              NavigationCustomBar(mainTouched: () {
                 setState(() {
                   state = DashboardState.main;
                 });
