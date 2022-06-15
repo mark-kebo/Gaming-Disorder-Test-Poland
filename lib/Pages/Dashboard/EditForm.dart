@@ -269,20 +269,6 @@ class _EditFormState extends State<EditForm> {
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Expanded(
               flex: 5,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: TextFormField(
-                  onChanged: (text) {
-                    setState(() {});
-                  },
-                  controller: fieldType.digitStepController,
-                  decoration: InputDecoration(
-                      helperText: ProjectStrings.digitStepDescription,
-                      hintText: ProjectStrings.digitStepDescription),
-                ),
-              )),
-          Expanded(
-              flex: 5,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
