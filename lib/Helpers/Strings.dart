@@ -52,6 +52,8 @@ class ProjectStrings {
   static const emptyElement = "Pusty element";
   static const minValueDescription = "Opis wartości minimalnej";
   static const maxValueDescription = "Opis wartości maksymalnej";
+  static const digitStepDescription = "Krok wartości";
+  static const maxDigitDescription = "Maksymalna wartość";
   static const isKeyQuestion = "Czy to kluczowe pytanie?";
   static const noOptions = "Nie dodano jeszcze żadnych opcji";
   static const question = "Pytanie";
@@ -81,4 +83,5 @@ class ProjectStrings {
       "Przybliżony minimalny czas na odpowiedź na pytanie (sek):   ";
   static const isSuspicious =
       "Ta ankieta została oznaczona jako podejrzana. (Na przykład z powodu zbyt szybkiej odpowiedzi na pytania)";
+  static const copyQuestion = "Skopiuj pytanie";
 }

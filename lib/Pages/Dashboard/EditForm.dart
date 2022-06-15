@@ -244,6 +244,7 @@ class _EditFormState extends State<EditForm> {
                   },
                   controller: fieldType.minValueController,
                   decoration: InputDecoration(
+                      helperText: ProjectStrings.minValueDescription,
                       hintText: ProjectStrings.minValueDescription),
                 ),
               )),
@@ -259,7 +260,41 @@ class _EditFormState extends State<EditForm> {
                       },
                       controller: fieldType.maxValueController,
                       decoration: InputDecoration(
+                          helperText: ProjectStrings.maxValueDescription,
                           hintText: ProjectStrings.maxValueDescription),
+                    ),
+                  )))
+        ]),
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Expanded(
+              flex: 5,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: TextFormField(
+                  onChanged: (text) {
+                    setState(() {});
+                  },
+                  controller: fieldType.digitStepController,
+                  decoration: InputDecoration(
+                      helperText: ProjectStrings.digitStepDescription,
+                      hintText: ProjectStrings.digitStepDescription),
+                ),
+              )),
+          Expanded(
+              flex: 5,
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: TextFormField(
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                      controller: fieldType.maxDigitController,
+                      decoration: InputDecoration(
+                          helperText: ProjectStrings.maxDigitDescription,
+                          hintText: ProjectStrings.maxDigitDescription),
                     ),
                   )))
         ]),
@@ -485,7 +520,8 @@ class _EditFormState extends State<EditForm> {
               },
               controller: fieldType.questionController,
               decoration: InputDecoration(
-                  border: InputBorder.none, hintText: ProjectStrings.question),
+                  border: OutlineInputBorder(),
+                  hintText: ProjectStrings.question),
             ),
           ),
           Expanded(
@@ -494,7 +530,20 @@ class _EditFormState extends State<EditForm> {
                   alignment: Alignment.centerRight,
                   child: Text(fieldType.name, style: _listTitleStyle))),
           _inset,
-          fieldType.icon
+          fieldType.icon,
+          _inset,
+          _inset,
+          IconButton(
+            icon: const Icon(Icons.content_copy),
+            color: Colors.lightGreen,
+            tooltip: ProjectStrings.copyQuestion,
+            onPressed: () {
+              setState(() {
+                print("Copy question");
+                _addField(fieldType);
+              });
+            },
+          )
         ]));
   }
 
