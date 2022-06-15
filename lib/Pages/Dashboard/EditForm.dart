@@ -526,7 +526,23 @@ class _EditFormState extends State<EditForm> {
             onPressed: () {
               setState(() {
                 print("Copy question");
-                _addField(fieldType);
+                switch (fieldType.type) {
+                  case QuestionaryFieldAbstract.likertScale:
+                    _addField(LikertScaleFormField.copy(fieldType) );
+                    break;
+                  case QuestionaryFieldAbstract.paragraph:
+                    _addField(ParagraphFormField.copy(fieldType) );
+                    break;
+                  case QuestionaryFieldAbstract.multipleChoise:
+                    _addField(MultipleChoiseFormField.copy(fieldType) );
+                    break;
+                  case QuestionaryFieldAbstract.singleChoise:
+                    _addField(SingleChoiseFormField.copy(fieldType) );
+                    break;
+                  case QuestionaryFieldAbstract.slider:
+                    _addField(SliderFormField.copy(fieldType) );
+                    break;
+                }
               });
             },
           )

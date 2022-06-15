@@ -93,6 +93,20 @@ class LikertScaleFormField extends QuestionaryFieldType {
     color: Colors.deepPurple,
   );
 
+  LikertScaleFormField.copy(QuestionaryFieldType questionaryFieldType) {
+    this.type = questionaryFieldType.type;
+    this.key = questionaryFieldType.key;
+    this.name = questionaryFieldType.name;
+    this.questionController.text = questionaryFieldType.questionController.text;
+    this.optionsControllers = questionaryFieldType.optionsControllers
+        .map((e) => TextEditingController(text: e.text)).toList();
+    this.icon = questionaryFieldType.icon;
+    this.keyQuestion = questionaryFieldType.keyQuestion;
+    this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
+    this.minQuestionTimeController.text =
+        questionaryFieldType.minQuestionTimeController.text;
+  }
+
   LikertScaleFormField(dynamic item) {
     if (item != null) {
       for (var option in item['options']) {
@@ -132,6 +146,20 @@ class ParagraphFormField extends QuestionaryFieldType {
   );
   List<TextEditingController> optionsControllers = <TextEditingController>[];
 
+  ParagraphFormField.copy(QuestionaryFieldType questionaryFieldType) {
+    this.type = questionaryFieldType.type;
+    this.key = questionaryFieldType.key;
+    this.name = questionaryFieldType.name;
+    this.questionController.text = questionaryFieldType.questionController.text;
+    this.optionsControllers = questionaryFieldType.optionsControllers
+        .map((e) => TextEditingController(text: e.text)).toList();
+    this.icon = questionaryFieldType.icon;
+    this.keyQuestion = questionaryFieldType.keyQuestion;
+    this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
+    this.minQuestionTimeController.text =
+        questionaryFieldType.minQuestionTimeController.text;
+  }
+
   ParagraphFormField(dynamic item) {
     if (item != null) {
       optionsControllers.add(TextEditingController());
@@ -165,6 +193,20 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
     Icons.check_box_outlined,
     color: Colors.deepPurple,
   );
+
+  MultipleChoiseFormField.copy(QuestionaryFieldType questionaryFieldType) {
+    this.type = questionaryFieldType.type;
+    this.key = questionaryFieldType.key;
+    this.name = questionaryFieldType.name;
+    this.questionController.text = questionaryFieldType.questionController.text;
+    this.optionsControllers = questionaryFieldType.optionsControllers
+        .map((e) => TextEditingController(text: e.text)).toList();
+    this.icon = questionaryFieldType.icon;
+    this.keyQuestion = questionaryFieldType.keyQuestion;
+    this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
+    this.minQuestionTimeController.text =
+        questionaryFieldType.minQuestionTimeController.text;
+  }
 
   MultipleChoiseFormField(dynamic item) {
     if (item != null) {
@@ -205,6 +247,20 @@ class SingleChoiseFormField extends QuestionaryFieldType {
     color: Colors.deepPurple,
   );
   bool isKeyQuestion = false;
+
+  SingleChoiseFormField.copy(QuestionaryFieldType questionaryFieldType) {
+    this.type = questionaryFieldType.type;
+    this.key = questionaryFieldType.key;
+    this.name = questionaryFieldType.name;
+    this.questionController.text = questionaryFieldType.questionController.text;
+    this.optionsControllers = questionaryFieldType.optionsControllers
+        .map((e) => TextEditingController(text: e.text)).toList();
+    this.icon = questionaryFieldType.icon;
+    this.keyQuestion = questionaryFieldType.keyQuestion;
+    this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
+    this.minQuestionTimeController.text =
+        questionaryFieldType.minQuestionTimeController.text;
+  }
 
   SingleChoiseFormField(dynamic item) {
     if (item != null) {
@@ -250,6 +306,20 @@ class SliderFormField extends QuestionaryFieldType {
     color: Colors.deepPurple,
   );
   List<TextEditingController> optionsControllers = <TextEditingController>[];
+
+  SliderFormField.copy(QuestionaryFieldType questionaryFieldType) {
+    this.type = questionaryFieldType.type;
+    this.key = questionaryFieldType.key;
+    this.name = questionaryFieldType.name;
+    this.questionController.text = questionaryFieldType.questionController.text;
+    this.optionsControllers = questionaryFieldType.optionsControllers
+        .map((e) => TextEditingController(text: e.text)).toList();
+    this.icon = questionaryFieldType.icon;
+    this.keyQuestion = questionaryFieldType.keyQuestion;
+    this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
+    this.minQuestionTimeController.text =
+        questionaryFieldType.minQuestionTimeController.text;
+  }
 
   SliderFormField(dynamic item) {
     if (item != null) {
