@@ -55,6 +55,9 @@ class QuestionaryModel {
         case "slider":
           field = SliderFormField(form);
           break;
+        case "matrix":
+          field = MatrixFormField(form);
+          break;
       }
       questions.add(field);
     }
@@ -66,7 +69,8 @@ enum QuestionaryFieldAbstract {
   paragraph,
   multipleChoise,
   singleChoise,
-  slider
+  slider,
+  matrix
 }
 
 abstract class QuestionaryFieldType {
@@ -80,6 +84,61 @@ abstract class QuestionaryFieldType {
   String keyQuestion = "";
   String keyQuestionOption = "";
   TextEditingController minQuestionTimeController = TextEditingController();
+}
+
+class MatrixFormField extends QuestionaryFieldType {
+  QuestionaryFieldAbstract type = QuestionaryFieldAbstract.matrix;
+  String key = "matrix";
+  String name = "Matrix";
+  List<TextEditingController> questionsControllers = <TextEditingController>[];
+  List<TextEditingController> optionsControllers = <TextEditingController>[];
+  Icon icon = Icon(
+    Icons.table_rows_sharp,
+    color: Colors.deepPurple,
+  );
+
+  MatrixFormField.copy(MatrixFormField questionaryFieldType) {
+    this.questionsControllers = questionaryFieldType.questionsControllers
+        .map((e) => TextEditingController(text: e.text)).toList();
+    this.optionsControllers = questionaryFieldType.optionsControllers
+        .map((e) => TextEditingController(text: e.text)).toList();
+    this.icon = questionaryFieldType.icon;
+    this.keyQuestion = questionaryFieldType.keyQuestion;
+    this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
+    this.minQuestionTimeController.text =
+        questionaryFieldType.minQuestionTimeController.text;
+  }
+
+  MatrixFormField(dynamic item) {
+    if (item != null) {
+      for (var option in item['options']) {
+        var textController = TextEditingController();
+        textController.text = option;
+        optionsControllers.add(textController);
+      }
+      keyQuestion = item['keyQuestion'];
+      keyQuestionOption = item['keyQuestionOption'];
+      for (var option in item['questions']) {
+        var textController = TextEditingController();
+        textController.text = option;
+        questionsControllers.add(textController);
+      }
+      minQuestionTimeController =
+          TextEditingController(text: item["minTime"].toString());
+    }
+  }
+
+  Map itemsList() {
+    return {
+      "key": this.key,
+      "questions": this.questionsControllers.map((e) => e.text),
+      "name": this.name,
+      "options": this.optionsControllers.map((e) => e.text),
+      "keyQuestion": this.keyQuestion,
+      "keyQuestionOption": this.keyQuestionOption,
+      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0
+    };
+  }
 }
 
 class LikertScaleFormField extends QuestionaryFieldType {

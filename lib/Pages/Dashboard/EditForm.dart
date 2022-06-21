@@ -223,6 +223,10 @@ class _EditFormState extends State<EditForm> {
         var element = fieldType as SingleChoiseFormField;
         return _singleChoiseField(element, index);
         break;
+      case QuestionaryFieldAbstract.matrix:
+        var element = fieldType as MatrixFormField;
+        return _matrixField(element, index);
+        break;
     }
     return Text(ProjectStrings.emptyElement);
   }
@@ -298,7 +302,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _inset,
-        for (var item in _optionsLikertScaleList(fieldType)) item,
+        for (var item in _optionsList(fieldType)) item,
         _inset,
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _addFieldElementdButton(fieldType),
@@ -329,10 +333,31 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _inset,
-        for (var item in _optionsMultipleChoiseList(fieldType)) item,
+        for (var item in _optionsList(fieldType)) item,
         _inset,
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _addFieldElementdButton(fieldType),
+          _deleteFieldButton(fieldType)
+        ]),
+        _inset,
+        _keyFields(fieldType),
+      ],
+    );
+  }
+
+  Widget _matrixField(MatrixFormField fieldType, int index) {
+    int maxOptionsCount = 5;
+    return new Column(
+      children: [
+        _questionTextField(fieldType, index),
+        _questionMinTimeTextField(fieldType, index),
+        _inset,
+        for (var item in _optionsList(fieldType)) item,
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          fieldType.optionsControllers.length >= maxOptionsCount
+              ? SizedBox()
+              : _addFieldElementdButton(fieldType),
           _deleteFieldButton(fieldType)
         ]),
         _inset,
@@ -347,7 +372,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _inset,
-        for (var item in _optionsSingleChoiseList(fieldType)) item,
+        for (var item in _optionsList(fieldType)) item,
         _inset,
         Align(
             alignment: Alignment.centerRight,
@@ -373,7 +398,7 @@ class _EditFormState extends State<EditForm> {
     );
   }
 
-  List<Widget> _optionsSingleChoiseList(SingleChoiseFormField fieldType) {
+  List<Widget> _optionsList(QuestionaryFieldType fieldType) {
     if (fieldType.optionsControllers != null &&
         fieldType.optionsControllers.length > 0) {
       return fieldType.optionsControllers
@@ -388,6 +413,24 @@ class _EditFormState extends State<EditForm> {
           .toList();
     } else {
       return [Text(ProjectStrings.noOptions)];
+    }
+  }
+
+  List<Widget> _questionsList(MatrixFormField fieldType) {
+    if (fieldType.questionsControllers != null &&
+        fieldType.questionsControllers.length > 0) {
+      return fieldType.questionsControllers
+          .asMap()
+          .map((index, field) => MapEntry(
+              index,
+              SizedBox(
+                height: _elementsHeight,
+                child: _matrixQuestionTextField(fieldType, index),
+              )))
+          .values
+          .toList();
+    } else {
+      return [];
     }
   }
 
@@ -401,42 +444,6 @@ class _EditFormState extends State<EditForm> {
               SizedBox(
                 height: _elementsHeight,
                 child: _checkListOptionTextField(index),
-              )))
-          .values
-          .toList();
-    } else {
-      return [Text(ProjectStrings.noOptions)];
-    }
-  }
-
-  List<Widget> _optionsMultipleChoiseList(MultipleChoiseFormField fieldType) {
-    if (fieldType.optionsControllers != null &&
-        fieldType.optionsControllers.length > 0) {
-      return fieldType.optionsControllers
-          .asMap()
-          .map((index, field) => MapEntry(
-              index,
-              SizedBox(
-                height: _elementsHeight,
-                child: _optionTextField(fieldType, index),
-              )))
-          .values
-          .toList();
-    } else {
-      return [Text(ProjectStrings.noOptions)];
-    }
-  }
-
-  List<Widget> _optionsLikertScaleList(LikertScaleFormField fieldType) {
-    if (fieldType.optionsControllers != null &&
-        fieldType.optionsControllers.length > 0) {
-      return fieldType.optionsControllers
-          .asMap()
-          .map((index, field) => MapEntry(
-              index,
-              SizedBox(
-                height: _elementsHeight,
-                child: _optionTextField(fieldType, index),
               )))
           .values
           .toList();
@@ -483,6 +490,26 @@ class _EditFormState extends State<EditForm> {
   }
 
   Widget _questionTextField(QuestionaryFieldType fieldType, int index) {
+    Widget questionWidget = fieldType.type == QuestionaryFieldAbstract.matrix
+        ? Expanded(
+            flex: 8,
+            child: Column(children: [
+              for (var item in _questionsList(fieldType)) item,
+              _addMatrixQuestionFieldElementButton(fieldType)
+            ]))
+        : Expanded(
+            flex: 8,
+            child: TextFormField(
+              onChanged: (text) {
+                setState(() {});
+              },
+              controller: fieldType.questionController,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: ProjectStrings.question),
+            ),
+          );
+
     return Container(
         padding: EdgeInsets.only(
             top: _fieldPadding * 2,
@@ -498,18 +525,7 @@ class _EditFormState extends State<EditForm> {
                 bottomRight: _listElementCornerRadius)),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Text((index + 1).toString() + ". ", style: _listTitleStyle),
-          Expanded(
-            flex: 8,
-            child: TextFormField(
-              onChanged: (text) {
-                setState(() {});
-              },
-              controller: fieldType.questionController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: ProjectStrings.question),
-            ),
-          ),
+          questionWidget,
           Expanded(
               flex: 2,
               child: Align(
@@ -528,19 +544,22 @@ class _EditFormState extends State<EditForm> {
                 print("Copy question");
                 switch (fieldType.type) {
                   case QuestionaryFieldAbstract.likertScale:
-                    _addField(LikertScaleFormField.copy(fieldType) );
+                    _addField(LikertScaleFormField.copy(fieldType));
                     break;
                   case QuestionaryFieldAbstract.paragraph:
-                    _addField(ParagraphFormField.copy(fieldType) );
+                    _addField(ParagraphFormField.copy(fieldType));
                     break;
                   case QuestionaryFieldAbstract.multipleChoise:
-                    _addField(MultipleChoiseFormField.copy(fieldType) );
+                    _addField(MultipleChoiseFormField.copy(fieldType));
                     break;
                   case QuestionaryFieldAbstract.singleChoise:
-                    _addField(SingleChoiseFormField.copy(fieldType) );
+                    _addField(SingleChoiseFormField.copy(fieldType));
                     break;
                   case QuestionaryFieldAbstract.slider:
-                    _addField(SliderFormField.copy(fieldType) );
+                    _addField(SliderFormField.copy(fieldType));
+                    break;
+                  case QuestionaryFieldAbstract.matrix:
+                    _addField(MatrixFormField.copy(fieldType));
                     break;
                 }
               });
@@ -560,6 +579,36 @@ class _EditFormState extends State<EditForm> {
             controller: fieldType.minQuestionTimeController),
       ),
       _inset,
+    ]);
+  }
+
+  Widget _matrixQuestionTextField(MatrixFormField fieldType, int index) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      Expanded(
+        flex: 9,
+        child: TextFormField(
+          onChanged: (text) {
+            setState(() {});
+          },
+          controller: fieldType.questionsControllers[index],
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: ProjectStrings.question + (index + 1).toString()),
+        ),
+      ),
+      Expanded(
+          flex: 1,
+          child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.delete_outlined,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () {
+                    print("delete question field");
+                    _deleteMatrixFieldQuestion(fieldType, index);
+                  })))
     ]);
   }
 
@@ -675,6 +724,24 @@ class _EditFormState extends State<EditForm> {
               print("add field element");
               _addCheckListFieldOption();
             }));
+  }
+
+  Widget _addMatrixQuestionFieldElementButton(QuestionaryFieldType fieldType) {
+    return Align(
+        alignment: Alignment.centerLeft,
+        child: Row(children: [
+          IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.deepPurple,
+              ),
+              onPressed: () {
+                print("add question field element");
+                _addMatrixQuestion(fieldType);
+              }),
+          Text(ProjectStrings.question,
+              style: TextStyle(fontSize: 16, color: Colors.deepPurple))
+        ]));
   }
 
   Widget _nameField() {
@@ -822,6 +889,10 @@ class _EditFormState extends State<EditForm> {
           var element = fieldType as SingleChoiseFormField;
           element.optionsControllers.add(TextEditingController());
           break;
+        case QuestionaryFieldAbstract.matrix:
+          var element = fieldType as MatrixFormField;
+          element.optionsControllers.add(TextEditingController());
+          break;
         default:
           break;
       }
@@ -831,6 +902,19 @@ class _EditFormState extends State<EditForm> {
   void _addCheckListFieldOption() {
     setState(() {
       _questionary.checkList.optionsControllers.add(TextEditingController());
+    });
+  }
+
+  void _addMatrixQuestion(QuestionaryFieldType fieldType) {
+    setState(() {
+      switch (fieldType.type) {
+        case QuestionaryFieldAbstract.matrix:
+          var element = fieldType as MatrixFormField;
+          element.questionsControllers.add(TextEditingController());
+          break;
+        default:
+          break;
+      }
     });
   }
 
@@ -848,6 +932,24 @@ class _EditFormState extends State<EditForm> {
         case QuestionaryFieldAbstract.singleChoise:
           var element = fieldType as SingleChoiseFormField;
           element.optionsControllers.remove(element.optionsControllers[index]);
+          break;
+        case QuestionaryFieldAbstract.matrix:
+          var element = fieldType as MatrixFormField;
+          element.optionsControllers.remove(element.optionsControllers[index]);
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  void _deleteMatrixFieldQuestion(QuestionaryFieldType fieldType, int index) {
+    setState(() {
+      switch (fieldType.type) {
+        case QuestionaryFieldAbstract.matrix:
+          var element = fieldType as MatrixFormField;
+          element.questionsControllers
+              .remove(element.questionsControllers[index]);
           break;
         default:
           break;
@@ -1025,7 +1127,8 @@ class _EditFormState extends State<EditForm> {
       SliderFormField(null),
       MultipleChoiseFormField(null),
       ParagraphFormField(null),
-      LikertScaleFormField(null)
+      LikertScaleFormField(null),
+      MatrixFormField(null)
     ];
 
     Widget okButton = FlatButton(
