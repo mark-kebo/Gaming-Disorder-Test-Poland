@@ -267,7 +267,7 @@ class ParagraphFormField extends QuestionaryFieldType {
     if (validationSymbols.isEmpty) {
       switch (validationType) {
         case ParagraphFormFieldValidationType.text:
-          regEx = r'^[(A-Za-z ,.()?!:;"=)]*$';
+          regEx = r'^[(AaĄąBbCcĆćDdEeĘęFfGgHhIiJjKkLlŁłMmNnŃńOoÓóPpRrSsŚśTtUuWwYyZzŹźŻż ,.()?!:;"=)]*$';
           break;
         case ParagraphFormFieldValidationType.value:
           regEx = r'^[(0-9 ,.)]*$';
