@@ -64,6 +64,8 @@ class ProjectStrings {
   static const formDescription = "Wpisz opis ankiety";
   static const selectedGroup = "Wybrana grupa:   ";
   static const selectKeyQuestion = "Wybierz kluczowe pytanie:   ";
+  static const selectValidationType = "Wybierz typ walidacji:   ";
+  static const selectValidationSymbols = "Wpisz dopuszczalne symbole";
   static const selectKeyAnswer = "Wybierz kluczową odpowiedź:   ";
   static const selectFieldType = "Proszę wybrać rodzaj pola";
   static const group = "Grupa";

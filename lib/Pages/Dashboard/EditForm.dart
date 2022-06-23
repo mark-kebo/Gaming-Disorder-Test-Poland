@@ -320,6 +320,8 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _inset,
+        _validationFields(fieldType),
+        _inset,
         _deleteFieldButton(fieldType),
         _inset,
         _keyFields(fieldType),
@@ -1118,6 +1120,65 @@ class _EditFormState extends State<EditForm> {
                       ))
                     ]))
           ]);
+  }
+
+  Widget _validationFields(ParagraphFormField field) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      Expanded(
+          flex: 5,
+          child: Row(children: [
+            Text(ProjectStrings.selectValidationType,
+                style: TextStyle(fontSize: 16)),
+            Expanded(
+                child: DropdownButton<String>(
+              iconSize: 0.0,
+              iconDisabledColor: Colors.grey[200],
+              iconEnabledColor: Colors.grey[200],
+              style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+              hint: Text(field.questionValidationType ?? '',
+                  style: TextStyle(fontSize: 16)),
+              underline: Container(
+                height: 1,
+                color: Colors.grey[300],
+              ),
+              onChanged: (String newValue) {
+                setState(() {
+                  field.questionValidationType = newValue;
+                  field.initRegEx();
+                });
+              },
+              items: [
+                ParagraphFormFieldValidationType.text
+                    .toString()
+                    .split('.')
+                    .last,
+                ParagraphFormFieldValidationType.value
+                    .toString()
+                    .split('.')
+                    .last
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ))
+          ])),
+      _inset,
+      Expanded(
+          flex: 5,
+          child: TextFormField(
+            onChanged: (text) {
+              setState(() {
+                field.initRegEx();
+              });
+            },
+            controller: field.questionValidationSymbols,
+            decoration: InputDecoration(
+                helperText: ProjectStrings.selectValidationSymbols,
+                hintText: ProjectStrings.selectValidationSymbols),
+          ))
+    ]);
   }
 
   void _showFieldTypeDialog() {

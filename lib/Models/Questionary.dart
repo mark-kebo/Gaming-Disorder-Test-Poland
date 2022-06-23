@@ -99,9 +99,11 @@ class MatrixFormField extends QuestionaryFieldType {
 
   MatrixFormField.copy(MatrixFormField questionaryFieldType) {
     this.questionsControllers = questionaryFieldType.questionsControllers
-        .map((e) => TextEditingController(text: e.text)).toList();
+        .map((e) => TextEditingController(text: e.text))
+        .toList();
     this.optionsControllers = questionaryFieldType.optionsControllers
-        .map((e) => TextEditingController(text: e.text)).toList();
+        .map((e) => TextEditingController(text: e.text))
+        .toList();
     this.icon = questionaryFieldType.icon;
     this.keyQuestion = questionaryFieldType.keyQuestion;
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
@@ -158,7 +160,8 @@ class LikertScaleFormField extends QuestionaryFieldType {
     this.name = questionaryFieldType.name;
     this.questionController.text = questionaryFieldType.questionController.text;
     this.optionsControllers = questionaryFieldType.optionsControllers
-        .map((e) => TextEditingController(text: e.text)).toList();
+        .map((e) => TextEditingController(text: e.text))
+        .toList();
     this.icon = questionaryFieldType.icon;
     this.keyQuestion = questionaryFieldType.keyQuestion;
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
@@ -194,6 +197,8 @@ class LikertScaleFormField extends QuestionaryFieldType {
   }
 }
 
+enum ParagraphFormFieldValidationType { text, value }
+
 class ParagraphFormField extends QuestionaryFieldType {
   QuestionaryFieldAbstract type = QuestionaryFieldAbstract.paragraph;
   TextEditingController questionController = TextEditingController();
@@ -204,19 +209,24 @@ class ParagraphFormField extends QuestionaryFieldType {
     color: Colors.deepPurple,
   );
   List<TextEditingController> optionsControllers = <TextEditingController>[];
+  String regEx;
+  String questionValidationType = "";
+  TextEditingController questionValidationSymbols = TextEditingController();
 
-  ParagraphFormField.copy(QuestionaryFieldType questionaryFieldType) {
+  ParagraphFormField.copy(ParagraphFormField questionaryFieldType) {
     this.type = questionaryFieldType.type;
     this.key = questionaryFieldType.key;
     this.name = questionaryFieldType.name;
     this.questionController.text = questionaryFieldType.questionController.text;
     this.optionsControllers = questionaryFieldType.optionsControllers
-        .map((e) => TextEditingController(text: e.text)).toList();
+        .map((e) => TextEditingController(text: e.text))
+        .toList();
     this.icon = questionaryFieldType.icon;
     this.keyQuestion = questionaryFieldType.keyQuestion;
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
     this.minQuestionTimeController.text =
         questionaryFieldType.minQuestionTimeController.text;
+    this.regEx = questionaryFieldType.regEx;
   }
 
   ParagraphFormField(dynamic item) {
@@ -227,6 +237,10 @@ class ParagraphFormField extends QuestionaryFieldType {
       keyQuestionOption = item['keyQuestionOption'];
       minQuestionTimeController =
           TextEditingController(text: item["minTime"].toString());
+      this.regEx = item["regEx"];
+      this.questionValidationType = item["validationType"];
+      this.questionValidationSymbols =
+          TextEditingController(text: item["validationSymbols"].toString());
     }
   }
 
@@ -237,8 +251,31 @@ class ParagraphFormField extends QuestionaryFieldType {
       "name": this.name,
       "keyQuestion": this.keyQuestion,
       "keyQuestionOption": this.keyQuestionOption,
-      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0
+      "minTime": int.tryParse(this.minQuestionTimeController.text) ?? 0,
+      "regEx": regEx,
+      "validationSymbols": this.questionValidationSymbols.text,
+      "validationType": this.questionValidationType
     };
+  }
+
+  void initRegEx() {
+    ParagraphFormFieldValidationType validationType = questionValidationType ==
+            ParagraphFormFieldValidationType.text.toString().split('.').last
+        ? ParagraphFormFieldValidationType.text
+        : ParagraphFormFieldValidationType.value;
+    String validationSymbols = questionValidationSymbols.text;
+    if (validationSymbols.isEmpty) {
+      switch (validationType) {
+        case ParagraphFormFieldValidationType.text:
+          regEx = r'^[(A-Za-z ,.()?!:;"=)]*$';
+          break;
+        case ParagraphFormFieldValidationType.value:
+          regEx = r'^[(0-9 ,.)]*$';
+          break;
+      }
+    } else {
+      regEx = '^[($validationSymbols)]' + r'*$';
+    }
   }
 }
 
@@ -259,7 +296,8 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
     this.name = questionaryFieldType.name;
     this.questionController.text = questionaryFieldType.questionController.text;
     this.optionsControllers = questionaryFieldType.optionsControllers
-        .map((e) => TextEditingController(text: e.text)).toList();
+        .map((e) => TextEditingController(text: e.text))
+        .toList();
     this.icon = questionaryFieldType.icon;
     this.keyQuestion = questionaryFieldType.keyQuestion;
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
@@ -313,7 +351,8 @@ class SingleChoiseFormField extends QuestionaryFieldType {
     this.name = questionaryFieldType.name;
     this.questionController.text = questionaryFieldType.questionController.text;
     this.optionsControllers = questionaryFieldType.optionsControllers
-        .map((e) => TextEditingController(text: e.text)).toList();
+        .map((e) => TextEditingController(text: e.text))
+        .toList();
     this.icon = questionaryFieldType.icon;
     this.keyQuestion = questionaryFieldType.keyQuestion;
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
@@ -372,7 +411,8 @@ class SliderFormField extends QuestionaryFieldType {
     this.name = questionaryFieldType.name;
     this.questionController.text = questionaryFieldType.questionController.text;
     this.optionsControllers = questionaryFieldType.optionsControllers
-        .map((e) => TextEditingController(text: e.text)).toList();
+        .map((e) => TextEditingController(text: e.text))
+        .toList();
     this.icon = questionaryFieldType.icon;
     this.keyQuestion = questionaryFieldType.keyQuestion;
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
