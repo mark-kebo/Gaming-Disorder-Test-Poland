@@ -136,7 +136,11 @@ class MatrixFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
-      image = Uint8List.fromList(item["image"].toString().codeUnits);
+      if (item["image"] != "null" && item["image"].toString().isNotEmpty) {
+        image = Uint8List.fromList(item["image"].toString().codeUnits);
+      } else {
+        image = Uint8List(0);
+      }
     }
   }
 
@@ -198,7 +202,11 @@ class LikertScaleFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
-      image = Uint8List.fromList(item["image"].toString().codeUnits);
+      if (item["image"] != "null" && item["image"].toString().isNotEmpty) {
+        image = Uint8List.fromList(item["image"].toString().codeUnits);
+      } else {
+        image = Uint8List(0);
+      }
     }
   }
 
@@ -266,7 +274,11 @@ class ParagraphFormField extends QuestionaryFieldType {
           TextEditingController(text: item["validationSymbols"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
-      image = Uint8List.fromList(item["image"].toString().codeUnits);
+      if (item["image"] != "null" && item["image"].toString().isNotEmpty) {
+        image = Uint8List.fromList(item["image"].toString().codeUnits);
+      } else {
+        image = Uint8List(0);
+      }
     }
   }
 
@@ -351,7 +363,11 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
-      image = Uint8List.fromList(item["image"].toString().codeUnits);
+      if (item["image"] != "null" && item["image"].toString().isNotEmpty) {
+        image = Uint8List.fromList(item["image"].toString().codeUnits);
+      } else {
+        image = Uint8List(0);
+      }
     }
   }
 
@@ -415,7 +431,11 @@ class SingleChoiseFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
-      image = Uint8List.fromList(item["image"].toString().codeUnits);
+      if (item["image"] != "null" && item["image"].toString().isNotEmpty) {
+        image = Uint8List.fromList(item["image"].toString().codeUnits);
+      } else {
+        image = Uint8List(0);
+      }
     }
   }
 
@@ -484,7 +504,11 @@ class SliderFormField extends QuestionaryFieldType {
           TextEditingController(text: item["maxDigit"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
-      image = Uint8List.fromList(item["image"].toString().codeUnits);
+      if (item["image"] != "null" && item["image"].toString().isNotEmpty) {
+        image = Uint8List.fromList(item["image"].toString().codeUnits);
+      } else {
+        image = Uint8List(0);
+      }
     }
   }
 

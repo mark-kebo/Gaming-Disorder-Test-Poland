@@ -628,7 +628,20 @@ class _EditFormState extends State<EditForm> {
         child: fieldType.image.isEmpty
             ? SizedBox()
             : Image.memory(fieldType.image),
-      )
+      ),
+      _inset,
+      fieldType.image.isEmpty
+          ? SizedBox()
+          : IconButton(
+              icon: Icon(
+                Icons.delete_outlined,
+                color: Colors.redAccent,
+              ),
+              onPressed: () {
+                print("delete image field");
+                fieldType.image = Uint8List(0);
+                setState(() {});
+              })
     ]);
   }
 
