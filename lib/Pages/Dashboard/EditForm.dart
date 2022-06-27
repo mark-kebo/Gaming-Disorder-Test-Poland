@@ -236,6 +236,7 @@ class _EditFormState extends State<EditForm> {
       children: [
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
+        _questionInstructionsTextField(fieldType, index),
         _inset,
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Expanded(
@@ -301,6 +302,7 @@ class _EditFormState extends State<EditForm> {
       children: [
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
+        _questionInstructionsTextField(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -319,6 +321,7 @@ class _EditFormState extends State<EditForm> {
       children: [
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
+        _questionInstructionsTextField(fieldType, index),
         _inset,
         _validationFields(fieldType),
         _inset,
@@ -334,6 +337,7 @@ class _EditFormState extends State<EditForm> {
       children: [
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
+        _questionInstructionsTextField(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -353,6 +357,7 @@ class _EditFormState extends State<EditForm> {
       children: [
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
+        _questionInstructionsTextField(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -373,6 +378,7 @@ class _EditFormState extends State<EditForm> {
       children: [
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
+        _questionInstructionsTextField(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -582,6 +588,19 @@ class _EditFormState extends State<EditForm> {
       ),
       _inset,
     ]);
+  }
+
+  Widget _questionInstructionsTextField(
+      QuestionaryFieldType fieldType, int index) {
+    return TextFormField(
+      onChanged: (text) {
+        setState(() {});
+      },
+      controller: fieldType.instructionsController,
+      decoration: InputDecoration(
+          helperText: ProjectStrings.instructions,
+          hintText: ProjectStrings.instructions),
+    );
   }
 
   Widget _matrixQuestionTextField(MatrixFormField fieldType, int index) {

@@ -77,6 +77,7 @@ abstract class QuestionaryFieldType {
   QuestionaryFieldAbstract type;
   String key;
   String name;
+  TextEditingController instructionsController = TextEditingController();
   TextEditingController questionController = TextEditingController();
   List<TextEditingController> optionsControllers = <TextEditingController>[];
   Map itemsList();
@@ -109,6 +110,8 @@ class MatrixFormField extends QuestionaryFieldType {
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
     this.minQuestionTimeController.text =
         questionaryFieldType.minQuestionTimeController.text;
+    this.instructionsController.text =
+        questionaryFieldType.instructionsController.text;
   }
 
   MatrixFormField(dynamic item) {
@@ -127,11 +130,14 @@ class MatrixFormField extends QuestionaryFieldType {
       }
       minQuestionTimeController =
           TextEditingController(text: item["minTime"].toString());
+      instructionsController =
+          TextEditingController(text: item["instructions"].toString());
     }
   }
 
   Map itemsList() {
     return {
+      "instructions": this.instructionsController.text,
       "key": this.key,
       "questions": this.questionsControllers.map((e) => e.text),
       "name": this.name,
@@ -167,6 +173,8 @@ class LikertScaleFormField extends QuestionaryFieldType {
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
     this.minQuestionTimeController.text =
         questionaryFieldType.minQuestionTimeController.text;
+    this.instructionsController.text =
+        questionaryFieldType.instructionsController.text;
   }
 
   LikertScaleFormField(dynamic item) {
@@ -181,11 +189,14 @@ class LikertScaleFormField extends QuestionaryFieldType {
       questionController.text = item["question"];
       minQuestionTimeController =
           TextEditingController(text: item["minTime"].toString());
+      instructionsController =
+          TextEditingController(text: item["instructions"].toString());
     }
   }
 
   Map itemsList() {
     return {
+      "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,
@@ -227,6 +238,8 @@ class ParagraphFormField extends QuestionaryFieldType {
     this.minQuestionTimeController.text =
         questionaryFieldType.minQuestionTimeController.text;
     this.regEx = questionaryFieldType.regEx;
+    this.instructionsController.text =
+        questionaryFieldType.instructionsController.text;
   }
 
   ParagraphFormField(dynamic item) {
@@ -241,11 +254,14 @@ class ParagraphFormField extends QuestionaryFieldType {
       this.questionValidationType = item["validationType"];
       this.questionValidationSymbols =
           TextEditingController(text: item["validationSymbols"].toString());
+      instructionsController =
+          TextEditingController(text: item["instructions"].toString());
     }
   }
 
   Map itemsList() {
     return {
+      "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,
@@ -267,7 +283,8 @@ class ParagraphFormField extends QuestionaryFieldType {
     if (validationSymbols.isEmpty) {
       switch (validationType) {
         case ParagraphFormFieldValidationType.text:
-          regEx = r'^[(AaĄąBbCcĆćDdEeĘęFfGgHhIiJjKkLlŁłMmNnŃńOoÓóPpRrSsŚśTtUuWwYyZzŹźŻż ,.()?!:;"=)]*$';
+          regEx =
+              r'^[(AaĄąBbCcĆćDdEeĘęFfGgHhIiJjKkLlŁłMmNnŃńOoÓóPpRrSsŚśTtUuWwYyZzŹźŻż ,.()?!:;"=)]*$';
           break;
         case ParagraphFormFieldValidationType.value:
           regEx = r'^[(0-9 ,.)]*$';
@@ -303,6 +320,8 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
     this.minQuestionTimeController.text =
         questionaryFieldType.minQuestionTimeController.text;
+    this.instructionsController.text =
+        questionaryFieldType.instructionsController.text;
   }
 
   MultipleChoiseFormField(dynamic item) {
@@ -317,11 +336,14 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
       keyQuestionOption = item['keyQuestionOption'];
       minQuestionTimeController =
           TextEditingController(text: item["minTime"].toString());
+      instructionsController =
+          TextEditingController(text: item["instructions"].toString());
     }
   }
 
   Map itemsList() {
     return {
+      "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,
@@ -358,6 +380,8 @@ class SingleChoiseFormField extends QuestionaryFieldType {
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
     this.minQuestionTimeController.text =
         questionaryFieldType.minQuestionTimeController.text;
+    this.instructionsController.text =
+        questionaryFieldType.instructionsController.text;
   }
 
   SingleChoiseFormField(dynamic item) {
@@ -373,11 +397,14 @@ class SingleChoiseFormField extends QuestionaryFieldType {
       isKeyQuestion = item["isKeyQuestion"];
       minQuestionTimeController =
           TextEditingController(text: item["minTime"].toString());
+      instructionsController =
+          TextEditingController(text: item["instructions"].toString());
     }
   }
 
   Map itemsList() {
     return {
+      "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,
@@ -418,6 +445,8 @@ class SliderFormField extends QuestionaryFieldType {
     this.keyQuestionOption = questionaryFieldType.keyQuestionOption;
     this.minQuestionTimeController.text =
         questionaryFieldType.minQuestionTimeController.text;
+    this.instructionsController.text =
+        questionaryFieldType.instructionsController.text;
   }
 
   SliderFormField(dynamic item) {
@@ -434,11 +463,14 @@ class SliderFormField extends QuestionaryFieldType {
           TextEditingController(text: item["digitStep"].toString());
       maxDigitController =
           TextEditingController(text: item["maxDigit"].toString());
+      instructionsController =
+          TextEditingController(text: item["instructions"].toString());
     }
   }
 
   Map itemsList() {
     return {
+      "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
       "name": this.name,

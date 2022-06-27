@@ -86,4 +86,5 @@ class ProjectStrings {
   static const isSuspicious =
       "Ta ankieta została oznaczona jako podejrzana. (Na przykład z powodu zbyt szybkiej odpowiedzi na pytania)";
   static const copyQuestion = "Skopiuj pytanie";
+  static const instructions = "Instrukcja";
 }
