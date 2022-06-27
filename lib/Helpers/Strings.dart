@@ -87,4 +87,5 @@ class ProjectStrings {
       "Ta ankieta została oznaczona jako podejrzana. (Na przykład z powodu zbyt szybkiej odpowiedzi na pytania)";
   static const copyQuestion = "Skopiuj pytanie";
   static const instructions = "Instrukcja";
+  static const selectImage = "Dodaj zdjęcie";
 }

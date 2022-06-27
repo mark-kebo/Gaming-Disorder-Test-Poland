@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -80,6 +82,7 @@ abstract class QuestionaryFieldType {
   TextEditingController instructionsController = TextEditingController();
   TextEditingController questionController = TextEditingController();
   List<TextEditingController> optionsControllers = <TextEditingController>[];
+  Uint8List image;
   Map itemsList();
   Icon icon;
   String keyQuestion = "";
@@ -112,6 +115,7 @@ class MatrixFormField extends QuestionaryFieldType {
         questionaryFieldType.minQuestionTimeController.text;
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
+    this.image = questionaryFieldType.image;
   }
 
   MatrixFormField(dynamic item) {
@@ -132,11 +136,13 @@ class MatrixFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
+      image = Uint8List.fromList(item["image"].toString().codeUnits);
     }
   }
 
   Map itemsList() {
     return {
+      "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
       "questions": this.questionsControllers.map((e) => e.text),
@@ -175,6 +181,7 @@ class LikertScaleFormField extends QuestionaryFieldType {
         questionaryFieldType.minQuestionTimeController.text;
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
+    this.image = questionaryFieldType.image;
   }
 
   LikertScaleFormField(dynamic item) {
@@ -191,11 +198,13 @@ class LikertScaleFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
+      image = Uint8List.fromList(item["image"].toString().codeUnits);
     }
   }
 
   Map itemsList() {
     return {
+      "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
@@ -240,6 +249,7 @@ class ParagraphFormField extends QuestionaryFieldType {
     this.regEx = questionaryFieldType.regEx;
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
+    this.image = questionaryFieldType.image;
   }
 
   ParagraphFormField(dynamic item) {
@@ -256,11 +266,13 @@ class ParagraphFormField extends QuestionaryFieldType {
           TextEditingController(text: item["validationSymbols"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
+      image = Uint8List.fromList(item["image"].toString().codeUnits);
     }
   }
 
   Map itemsList() {
     return {
+      "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
@@ -322,6 +334,7 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
         questionaryFieldType.minQuestionTimeController.text;
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
+    this.image = questionaryFieldType.image;
   }
 
   MultipleChoiseFormField(dynamic item) {
@@ -338,11 +351,13 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
+      image = Uint8List.fromList(item["image"].toString().codeUnits);
     }
   }
 
   Map itemsList() {
     return {
+      "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
@@ -382,6 +397,7 @@ class SingleChoiseFormField extends QuestionaryFieldType {
         questionaryFieldType.minQuestionTimeController.text;
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
+    this.image = questionaryFieldType.image;
   }
 
   SingleChoiseFormField(dynamic item) {
@@ -399,11 +415,13 @@ class SingleChoiseFormField extends QuestionaryFieldType {
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
+      image = Uint8List.fromList(item["image"].toString().codeUnits);
     }
   }
 
   Map itemsList() {
     return {
+      "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,
@@ -447,6 +465,7 @@ class SliderFormField extends QuestionaryFieldType {
         questionaryFieldType.minQuestionTimeController.text;
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
+    this.image = questionaryFieldType.image;
   }
 
   SliderFormField(dynamic item) {
@@ -465,11 +484,13 @@ class SliderFormField extends QuestionaryFieldType {
           TextEditingController(text: item["maxDigit"].toString());
       instructionsController =
           TextEditingController(text: item["instructions"].toString());
+      image = Uint8List.fromList(item["image"].toString().codeUnits);
     }
   }
 
   Map itemsList() {
     return {
+      "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
       "question": this.questionController.text,

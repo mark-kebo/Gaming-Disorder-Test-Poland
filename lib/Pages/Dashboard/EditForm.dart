@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:myapp/Helpers/Constants.dart';
 import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/Models/Questionary.dart';
@@ -237,6 +240,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
+        _questionImage(fieldType, index),
         _inset,
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Expanded(
@@ -303,6 +307,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
+        _questionImage(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -322,6 +327,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
+        _questionImage(fieldType, index),
         _inset,
         _validationFields(fieldType),
         _inset,
@@ -338,6 +344,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
+        _questionImage(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -358,6 +365,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
+        _questionImage(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -379,6 +387,7 @@ class _EditFormState extends State<EditForm> {
         _questionTextField(fieldType, index),
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
+        _questionImage(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -587,6 +596,39 @@ class _EditFormState extends State<EditForm> {
             controller: fieldType.minQuestionTimeController),
       ),
       _inset,
+    ]);
+  }
+
+  Widget _questionImage(QuestionaryFieldType fieldType, int index) {
+    return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+      GestureDetector(
+          onTap: () async {
+            fieldType.image = await ImagePickerWeb.getImageAsBytes();
+            setState(() {});
+          },
+          child: Container(
+            height: 32,
+            width: 150,
+            decoration: new BoxDecoration(
+                color: Colors.purple,
+                borderRadius: new BorderRadius.only(
+                    topLeft: _listElementCornerRadius,
+                    topRight: _listElementCornerRadius,
+                    bottomLeft: _listElementCornerRadius,
+                    bottomRight: _listElementCornerRadius)),
+            child: Align(
+                alignment: Alignment.center,
+                child: Text(ProjectStrings.selectImage,
+                    style: TextStyle(fontSize: 16, color: Colors.white))),
+          )),
+      _inset,
+      Container(
+        height: 64,
+        width: 64,
+        child: fieldType.image.isEmpty
+            ? SizedBox()
+            : Image.memory(fieldType.image),
+      )
     ]);
   }
 
