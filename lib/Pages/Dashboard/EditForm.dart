@@ -1123,6 +1123,10 @@ class _EditFormState extends State<EditForm> {
         .where((element) => (element as SingleChoiseFormField).isKeyQuestion)
         .where((element) => element.questionController.text.isNotEmpty)
         .toList();
+    if (filtredQuestions.isEmpty) {
+      question.keyQuestion = null;
+      question.keyQuestionOption = null;
+    }
     List<String> options = [];
     var selectedQuestion = filtredQuestions.firstWhere(
         (element) => question.keyQuestion == element.questionController.text,
@@ -1138,6 +1142,7 @@ class _EditFormState extends State<EditForm> {
       }
     }
     print(question.keyQuestion);
+    int maxTextSize = 45;
     return filtredQuestions.isEmpty
         ? _inset
         : Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -1146,13 +1151,18 @@ class _EditFormState extends State<EditForm> {
                 child: Row(children: [
                   Text(ProjectStrings.selectKeyQuestion,
                       style: TextStyle(fontSize: 16)),
-                  Expanded(
+                  Flexible(
                       child: DropdownButton<String>(
                     iconSize: 0.0,
                     iconDisabledColor: Colors.grey[200],
                     iconEnabledColor: Colors.grey[200],
                     style: TextStyle(color: Colors.deepPurple, fontSize: 16),
-                    hint: Text(question.keyQuestion ?? '',
+                    hint: Text(
+                        (question.keyQuestion ?? '').length > maxTextSize
+                            ? (question.keyQuestion ?? '')
+                                    .substring(0, maxTextSize) +
+                                '...'
+                            : (question.keyQuestion ?? ''),
                         style: TextStyle(fontSize: 16)),
                     underline: Container(
                       height: 1,
@@ -1167,8 +1177,13 @@ class _EditFormState extends State<EditForm> {
                         (QuestionaryFieldType value) {
                       return DropdownMenuItem<String>(
                         value: value.questionController.text,
-                        child: Text(
-                            value.name + " - " + value.questionController.text),
+                        child: Text(value.name +
+                            " - " +
+                            (value.questionController.text.length > maxTextSize
+                                ? value.questionController.text
+                                        .substring(0, maxTextSize) +
+                                    '...'
+                                : value.questionController.text)),
                       );
                     }).toList(),
                   ))
@@ -1180,14 +1195,21 @@ class _EditFormState extends State<EditForm> {
                     child: Row(children: [
                       Text(ProjectStrings.selectKeyAnswer,
                           style: TextStyle(fontSize: 16)),
-                      Expanded(
+                      Flexible(
                           child: DropdownButton<String>(
                         iconSize: 0.0,
                         iconDisabledColor: Colors.grey[200],
                         iconEnabledColor: Colors.grey[200],
                         style:
                             TextStyle(color: Colors.deepPurple, fontSize: 16),
-                        hint: Text(question.keyQuestionOption ?? '',
+                        hint: Text(
+                            (question.keyQuestionOption ?? '').length >
+                                    maxTextSize
+                                ? (question.keyQuestionOption ?? '')
+                                        .substring(0, maxTextSize) +
+                                    '...'
+                                : (question.keyQuestionOption ?? ''),
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 16)),
                         underline: Container(
                           height: 1,
@@ -1224,6 +1246,7 @@ class _EditFormState extends State<EditForm> {
               iconEnabledColor: Colors.grey[200],
               style: TextStyle(color: Colors.deepPurple, fontSize: 16),
               hint: Text(field.questionValidationType ?? '',
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 16)),
               underline: Container(
                 height: 1,
