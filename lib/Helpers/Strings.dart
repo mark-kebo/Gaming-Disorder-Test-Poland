@@ -88,4 +88,5 @@ class ProjectStrings {
   static const copyQuestion = "Skopiuj pytanie";
   static const instructions = "Instrukcja";
   static const selectImage = "Dodaj zdjęcie";
+  static const otherOption = "Opcja “Inne”";
 }

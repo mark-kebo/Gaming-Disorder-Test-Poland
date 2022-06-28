@@ -82,7 +82,7 @@ abstract class QuestionaryFieldType {
   TextEditingController instructionsController = TextEditingController();
   TextEditingController questionController = TextEditingController();
   List<TextEditingController> optionsControllers = <TextEditingController>[];
-  Uint8List image;
+  Uint8List image = Uint8List(0);
   Map itemsList();
   Icon icon;
   String keyQuestion = "";
@@ -330,8 +330,9 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
     Icons.check_box_outlined,
     color: Colors.deepPurple,
   );
+  bool isHasOtherOption = false;
 
-  MultipleChoiseFormField.copy(QuestionaryFieldType questionaryFieldType) {
+  MultipleChoiseFormField.copy(MultipleChoiseFormField questionaryFieldType) {
     this.type = questionaryFieldType.type;
     this.key = questionaryFieldType.key;
     this.name = questionaryFieldType.name;
@@ -347,6 +348,7 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
+    this.isHasOtherOption = questionaryFieldType.isHasOtherOption;
   }
 
   MultipleChoiseFormField(dynamic item) {
@@ -359,6 +361,7 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
       questionController.text = item["question"];
       keyQuestion = item['keyQuestion'];
       keyQuestionOption = item['keyQuestionOption'];
+      this.isHasOtherOption = item['isHasOtherOption'];
       minQuestionTimeController =
           TextEditingController(text: item["minTime"].toString());
       instructionsController =
@@ -373,6 +376,7 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
 
   Map itemsList() {
     return {
+      "isHasOtherOption": isHasOtherOption,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,

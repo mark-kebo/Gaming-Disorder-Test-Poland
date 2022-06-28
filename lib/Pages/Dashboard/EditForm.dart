@@ -348,6 +348,20 @@ class _EditFormState extends State<EditForm> {
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
+        Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+                width: 170,
+                child: CheckboxListTile(
+                  title: Text(ProjectStrings.otherOption),
+                  onChanged: (bool val) {
+                    setState(() {
+                      fieldType.isHasOtherOption = !fieldType.isHasOtherOption;
+                    });
+                    print(fieldType.isHasOtherOption);
+                  },
+                  value: fieldType.isHasOtherOption,
+                ))),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _addFieldElementdButton(fieldType),
           _deleteFieldButton(fieldType)
