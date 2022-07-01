@@ -230,6 +230,10 @@ class _EditFormState extends State<EditForm> {
         var element = fieldType as MatrixFormField;
         return _matrixField(element, index);
         break;
+      case QuestionaryFieldAbstract.dragAndDrop:
+        var element = fieldType as DragAndDropFormField;
+        return _dragAndDropField(element, index);
+        break;
     }
     return Text(ProjectStrings.emptyElement);
   }
@@ -332,6 +336,26 @@ class _EditFormState extends State<EditForm> {
         _validationFields(fieldType),
         _inset,
         _deleteFieldButton(fieldType),
+        _inset,
+        _keyFields(fieldType),
+      ],
+    );
+  }
+
+  Widget _dragAndDropField(DragAndDropFormField fieldType, int index) {
+    return new Column(
+      children: [
+        _questionTextField(fieldType, index),
+        _questionMinTimeTextField(fieldType, index),
+        _questionInstructionsTextField(fieldType, index),
+        _questionImage(fieldType, index),
+        _inset,
+        for (var item in _optionsList(fieldType)) item,
+        _inset,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          _addFieldElementdButton(fieldType),
+          _deleteFieldButton(fieldType)
+        ]),
         _inset,
         _keyFields(fieldType),
       ],
@@ -591,6 +615,9 @@ class _EditFormState extends State<EditForm> {
                     break;
                   case QuestionaryFieldAbstract.matrix:
                     _addField(MatrixFormField.copy(fieldType));
+                    break;
+                  case QuestionaryFieldAbstract.dragAndDrop:
+                    _addField(DragAndDropFormField.copy(fieldType));
                     break;
                 }
               });
@@ -983,6 +1010,10 @@ class _EditFormState extends State<EditForm> {
           var element = fieldType as MatrixFormField;
           element.optionsControllers.add(TextEditingController());
           break;
+        case QuestionaryFieldAbstract.dragAndDrop:
+          var element = fieldType as DragAndDropFormField;
+          element.optionsControllers.add(TextEditingController());
+          break;
         default:
           break;
       }
@@ -1025,6 +1056,10 @@ class _EditFormState extends State<EditForm> {
           break;
         case QuestionaryFieldAbstract.matrix:
           var element = fieldType as MatrixFormField;
+          element.optionsControllers.remove(element.optionsControllers[index]);
+          break;
+        case QuestionaryFieldAbstract.dragAndDrop:
+          var element = fieldType as DragAndDropFormField;
           element.optionsControllers.remove(element.optionsControllers[index]);
           break;
         default:
@@ -1300,7 +1335,8 @@ class _EditFormState extends State<EditForm> {
       MultipleChoiseFormField(null),
       ParagraphFormField(null),
       LikertScaleFormField(null),
-      MatrixFormField(null)
+      MatrixFormField(null),
+      DragAndDropFormField(null)
     ];
 
     Widget okButton = FlatButton(
