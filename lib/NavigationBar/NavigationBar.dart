@@ -13,16 +13,16 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 class NavigationCustomBar extends StatefulWidget {
   final Function mainTouched;
   final Function formsTouched;
+  final Function researchProgrammesTouched;
   final Function statisticsTouched;
   final Function settingsTouched;
 
-
-  NavigationCustomBar({
-    this.mainTouched,
-    this.formsTouched,
-    this.settingsTouched,
-    this.statisticsTouched
-  });
+  NavigationCustomBar(
+      {this.mainTouched,
+      this.formsTouched,
+      this.researchProgrammesTouched,
+      this.settingsTouched,
+      this.statisticsTouched});
 
   @override
   State<StatefulWidget> createState() => _NavigationBarState();
@@ -40,44 +40,50 @@ class _NavigationBarState extends State<NavigationCustomBar> {
         width: 100.0,
         color: Colors.grey[850],
         child: Stack(
-        children: [
-          CompanyName(),
-          Align(
-            alignment: Alignment.center,
-            child: NavBar(
-              formsTouched: () {
-                widget.formsTouched();
-              },
-              mainTouched: () {
-                widget.mainTouched();
-              },
-              statisticsTouched: () {
-                widget.statisticsTouched();
-              },
-              settingsTouched: () {
-                widget.settingsTouched();
-              },)
-            ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: NavBarItem(
-              icon: Icons.logout,
-              active: false,
-              touched: () {
-                alertController.showMessageDialogWithAction(context, 
-                ProjectStrings.logout, 
-                ProjectStrings.logoutQuestion, 
-                () async {
-                  _auth.signOut();
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.remove(ProjectConstants.prefsEmail);
-                  prefs.remove(ProjectConstants.prefsPassword);
-                  Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (BuildContext ctx) => Login()));
-                });
-              },
-            ),
-          )
+          children: [
+            CompanyName(),
+            Align(
+                alignment: Alignment.center,
+                child: NavBar(
+                  formsTouched: () {
+                    widget.formsTouched();
+                  },
+                  mainTouched: () {
+                    widget.mainTouched();
+                  },
+                  researchProgrammesTouched: () {
+                    widget.researchProgrammesTouched();
+                  },
+                  statisticsTouched: () {
+                    widget.statisticsTouched();
+                  },
+                  settingsTouched: () {
+                    widget.settingsTouched();
+                  },
+                )),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: NavBarItem(
+                icon: Icons.logout,
+                active: false,
+                touched: () {
+                  alertController.showMessageDialogWithAction(
+                      context,
+                      ProjectStrings.logout,
+                      ProjectStrings.logoutQuestion, () async {
+                    _auth.signOut();
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.remove(ProjectConstants.prefsEmail);
+                    prefs.remove(ProjectConstants.prefsPassword);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext ctx) => Login()));
+                  });
+                },
+              ),
+            )
           ],
         ),
       ),

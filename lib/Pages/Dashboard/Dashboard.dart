@@ -8,10 +8,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/Pages/Dashboard/EditForm.dart';
 import 'package:myapp/Pages/Dashboard/EditGroup.dart';
 import 'package:myapp/Helpers/Alert.dart';
+import 'package:myapp/Pages/Dashboard/EditResearchProgram.dart';
 import 'package:myapp/Pages/Dashboard/FormStatistics.dart';
 import 'package:myapp/Pages/Dashboard/UserStatistics.dart';
 
-enum DashboardState { main, forms, statistics, settings }
+enum DashboardState { main, forms, researchProgrammes, statistics, settings }
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -32,6 +33,9 @@ class _DashboardState extends State<Dashboard> {
       firestore.collection(ProjectConstants.usersCollectionName);
   CollectionReference _settings =
       firestore.collection(ProjectConstants.settingsCollectionName);
+  CollectionReference _researchProgrammes =
+      firestore.collection(ProjectConstants.researchProgrammesCollectionName);
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -71,16 +75,21 @@ class _DashboardState extends State<Dashboard> {
         ),
         home: Scaffold(
           floatingActionButton: state == DashboardState.forms ||
-                  state == DashboardState.settings
+                  state == DashboardState.settings ||
+                  state == DashboardState.researchProgrammes
               ? FloatingActionButton(
-                  child: Icon(
-                      state == DashboardState.forms ? Icons.add : Icons.done),
+                  child: Icon(state == DashboardState.forms ||
+                          state == DashboardState.researchProgrammes
+                      ? Icons.add
+                      : Icons.done),
                   backgroundColor: Colors.deepPurple,
                   onPressed: () {
                     if (state == DashboardState.forms) {
                       print("new form pressed");
                       _editForm("");
-                    } else {
+                    } else if (state == DashboardState.researchProgrammes) {
+                      _editResearchProgram("");
+                    } else if (state == DashboardState.settings) {
                       _saveSettings();
                     }
                   },
@@ -96,6 +105,10 @@ class _DashboardState extends State<Dashboard> {
               }, formsTouched: () {
                 setState(() {
                   state = DashboardState.forms;
+                });
+              }, researchProgrammesTouched: () {
+                setState(() {
+                  state = DashboardState.researchProgrammes;
                 });
               }, statisticsTouched: () {
                 setState(() {
@@ -121,6 +134,11 @@ class _DashboardState extends State<Dashboard> {
       case DashboardState.forms:
         {
           return formsStack();
+        }
+        break;
+      case DashboardState.researchProgrammes:
+        {
+          return researchProgrammesStack();
         }
         break;
       case DashboardState.statistics:
@@ -247,6 +265,35 @@ class _DashboardState extends State<Dashboard> {
                   return Center(child: CircularProgressIndicator());
                 }
                 return formsList(snapshot);
+              },
+            )),
+      ],
+    );
+  }
+
+  Stack researchProgrammesStack() {
+    return Stack(
+      children: [
+        Text(ProjectStrings.researchProgrammes, style: _titleTextStyle),
+        Positioned(
+            top: contentPadding * 2,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _researchProgrammes.snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text(ProjectStrings.anyError,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.red)));
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return _researchProgrammesList(snapshot);
               },
             )),
       ],
@@ -392,6 +439,27 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  ListView _researchProgrammesList(AsyncSnapshot<QuerySnapshot> snapshot) {
+    return new ListView(
+      children: snapshot.data.docs.map((DocumentSnapshot document) {
+        return new GestureDetector(
+          child: new Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: new Container(
+              decoration: new BoxDecoration(
+                  color: Colors.grey[200], borderRadius: _borderRadius),
+              child: ListTile(
+                  title: new Text(document.data()['name']),
+                  trailing: dropdownCellMenu(
+                      onDelete: () => {_deleteResearchProgram(document.id)},
+                      onEdit: () => {_editResearchProgram(document.id)})),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
   ListView _groupsList(AsyncSnapshot<QuerySnapshot> snapshot) {
     return new ListView(
       children: snapshot.data.docs.map((DocumentSnapshot document) {
@@ -494,6 +562,13 @@ class _DashboardState extends State<Dashboard> {
         MaterialPageRoute(builder: (BuildContext ctx) => EditGroup(id)));
   }
 
+  void _editResearchProgram(String id) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext ctx) => EditResearchProgram(id)));
+  }
+
   void _copyForm(String id) {
     var questionary;
     List newforms = [];
@@ -537,9 +612,23 @@ class _DashboardState extends State<Dashboard> {
     _alertController.showMessageDialogWithAction(
         context, ProjectStrings.deleteForm, ProjectStrings.deleteFormQuestion,
         () async {
-      forms.doc(id).delete().then((value) => print("User Deleted")).catchError(
+      forms.doc(id).delete().then((value) => print("Form Deleted")).catchError(
           (error) => _alertController.showMessageDialog(
               context, ProjectStrings.deleteFormError, error));
+    });
+  }
+
+  void _deleteResearchProgram(String id) {
+    _alertController.showMessageDialogWithAction(
+        context,
+        ProjectStrings.deleteResearchProgram,
+        ProjectStrings.deleteResearchProgramQuestion, () async {
+      _researchProgrammes
+          .doc(id)
+          .delete()
+          .then((value) => print("ResearchProgram Deleted"))
+          .catchError((error) => _alertController.showMessageDialog(
+              context, ProjectStrings.deleteResearchProgramError, error));
     });
   }
 

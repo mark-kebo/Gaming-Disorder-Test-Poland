@@ -41,8 +41,13 @@ class ProjectStrings {
   static const edit = "Edytuj";
   static const delete = "Usuń";
   static const deleteForm = "Usuń ankietę";
+  static const deleteResearchProgram = "Usuń program badawczy";
   static const deleteFormQuestion = "Czy na pewno chcesz usunąć tę ankietę?";
+  static const deleteResearchProgramQuestion =
+      "Czy na pewno chcesz usunąć ten program badawczy?";
   static const deleteFormError = "Nie udało się usunąć ankiety";
+  static const deleteResearchProgramError =
+      "Nie udało się usunąć program badawczy";
   static const deleteGroup = "Usuń grupę";
   static const deleteGroupQuestion = "Czy na pewno chcesz usunąć tę grupę?";
   static const deleteGroupError = "Nie udało się usunąć grupy";
@@ -60,6 +65,7 @@ class ProjectStrings {
   static const option = "Opcja ";
   static const nameRequired = "Imię jest wymagane";
   static const formName = "Wpisz nazwę ankiety";
+  static const researchProgramName = "Wpisz nazwę";
   static const descriptionRequired = "Wymagany jest opis";
   static const formDescription = "Wpisz opis ankiety";
   static const selectedGroup = "Wybrana grupa:   ";
@@ -89,4 +95,9 @@ class ProjectStrings {
   static const instructions = "Instrukcja";
   static const selectImage = "Dodaj zdjęcie";
   static const otherOption = "Opcja “Inne”";
+  static const researchProgrammes = "Budowanie programów badawczych";
+  static const researchProgram = "Program badawczy";
+  static const formsList = "Lista ankiet";
+  static const dateFrom = "Ważna od:  ";
+  static const dateTo = "Ważna do:  ";
 }

@@ -7,6 +7,7 @@ class ProjectConstants {
   static const settingsCollectionName = 'settings';
   static const settingsContactCollectionName = 'contact';
   static const formsCollectionName = 'forms';
+  static const researchProgrammesCollectionName = 'researchProgrammes';
   static const groupsCollectionName = 'user_groups';
   static const completedFormsCollectionName = 'completedForms';
   static const selectedUsersCollectionName = 'selectedUsers';

@@ -5,18 +5,20 @@ class NavBar extends StatefulWidget {
   State<StatefulWidget> createState() => _NavBarState();
   final Function mainTouched;
   final Function formsTouched;
+  final Function researchProgrammesTouched;
   final Function statisticsTouched;
   final Function settingsTouched;
 
   NavBar(
       {this.mainTouched,
       this.formsTouched,
+      this.researchProgrammesTouched,
       this.settingsTouched,
       this.statisticsTouched});
 }
 
 class _NavBarState extends State<NavBar> {
-  List<bool> selected = [true, false, false, false];
+  List<bool> selected = [true, false, false, false, false];
 
   void select(int n) {
     for (int i = 0; i < selected.length; i++) {
@@ -56,20 +58,30 @@ class _NavBarState extends State<NavBar> {
           ),
           NavBarItem(
             active: selected[2],
-            icon: Icons.bar_chart,
+            icon: Icons.access_time_filled_rounded,
             touched: () {
               setState(() {
                 select(2);
-                widget.statisticsTouched();
+                widget.researchProgrammesTouched();
               });
             },
           ),
           NavBarItem(
             active: selected[3],
-            icon: Icons.settings,
+            icon: Icons.bar_chart,
             touched: () {
               setState(() {
                 select(3);
+                widget.statisticsTouched();
+              });
+            },
+          ),
+          NavBarItem(
+            active: selected[4],
+            icon: Icons.settings,
+            touched: () {
+              setState(() {
+                select(4);
                 widget.settingsTouched();
               });
             },
