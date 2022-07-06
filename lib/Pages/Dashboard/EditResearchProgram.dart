@@ -141,28 +141,27 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
   Widget _fieldsList() {
     if (_researchProgramModel.forms != null &&
         _researchProgramModel.forms.length > 0) {
-      return ListView.builder(
-          primary: false,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _researchProgramModel.forms.length,
-          itemBuilder: (BuildContext context, int index) {
-            return new Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 8),
-              child: new Container(
-                  decoration: new BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: new BorderRadius.only(
-                          topLeft: _listElementCornerRadius,
-                          topRight: _listElementCornerRadius,
-                          bottomLeft: _listElementCornerRadius,
-                          bottomRight: _listElementCornerRadius)),
-                  child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: _listElement(
-                          _researchProgramModel.forms[index], index))),
-            );
-          });
+      return Expanded(
+          child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: _researchProgramModel.forms.length,
+              itemBuilder: (BuildContext context, int index) {
+                return new Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                  child: new Container(
+                      decoration: new BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: new BorderRadius.only(
+                              topLeft: _listElementCornerRadius,
+                              topRight: _listElementCornerRadius,
+                              bottomLeft: _listElementCornerRadius,
+                              bottomRight: _listElementCornerRadius)),
+                      child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: _listElement(
+                              _researchProgramModel.forms[index], index))),
+                );
+              }));
     } else {
       return Text(ProjectStrings.noFields, style: TextStyle(color: Colors.red));
     }
