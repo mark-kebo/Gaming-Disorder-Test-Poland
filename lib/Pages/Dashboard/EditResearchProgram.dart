@@ -325,9 +325,11 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
   }
 
   void _addNewField() {
-    setState(() {
-      _researchProgramModel.forms.add(ResearchProgramForm(null));
-    });
+    if (_researchProgramModel.forms.length < _allForms.length) {
+      setState(() {
+        _researchProgramModel.forms.add(ResearchProgramForm(null));
+      });
+    }
   }
 
   void _updateAction() async {
@@ -352,10 +354,10 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
                     _isShowLoading = false;
                   }))
               .catchError((error) => Center(
-                  child: Text(error,
+                  child: Text(error.toString(),
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.red))))
-          : _formsCollection
+          : _researchProgrammesCollection
               .doc(id)
               .update({
                 'name': _researchProgramModel.name,
@@ -366,10 +368,13 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
                     Navigator.pop(context);
                     _isShowLoading = false;
                   }))
-              .catchError((error) => Center(
-                  child: Text(error,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.red))));
+              .catchError((error) => {
+                    Center(
+                        child: Text(error.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red)))
+                  });
     }
   }
 }
