@@ -353,10 +353,13 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
                     Navigator.pop(context);
                     _isShowLoading = false;
                   }))
-              .catchError((error) => Center(
-                  child: Text(error.toString(),
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.red))))
+              .catchError((error) {
+                alertController.showMessageDialog(
+                    context, ProjectStrings.error, error.message);
+                setState(() {
+                  _isShowLoading = false;
+                });
+              })
           : _researchProgrammesCollection
               .doc(id)
               .update({
@@ -368,13 +371,13 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
                     Navigator.pop(context);
                     _isShowLoading = false;
                   }))
-              .catchError((error) => {
-                    Center(
-                        child: Text(error.toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red)))
-                  });
+              .catchError((error) {
+                alertController.showMessageDialog(
+                    context, ProjectStrings.error, error.message);
+                setState(() {
+                  _isShowLoading = false;
+                });
+              });
     }
   }
 }

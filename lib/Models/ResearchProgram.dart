@@ -48,10 +48,14 @@ class ResearchProgramForm {
     if (object != null) {
       formId = object["formId"];
       formName = object["formName"];
-      dateTimeFrom =
-          DateTime.fromMillisecondsSinceEpoch(object["dateTimeFrom"] as int);
-      dateTimeTo =
-          DateTime.fromMillisecondsSinceEpoch(object["dateTimeTo"] as int);
+      if (object["dateTimeFrom"] != null) {
+        dateTimeFrom =
+            DateTime.fromMillisecondsSinceEpoch(object["dateTimeFrom"] as int);
+      }
+      if (object["dateTimeTo"] != null) {
+        dateTimeTo =
+            DateTime.fromMillisecondsSinceEpoch(object["dateTimeTo"] as int);
+      }
     }
   }
 
@@ -65,8 +69,8 @@ class ResearchProgramForm {
     return {
       "formId": this.formId,
       "formName": this.formName,
-      "dateTimeFrom": this.dateTimeFrom.millisecondsSinceEpoch,
-      "dateTimeTo": this.dateTimeTo.millisecondsSinceEpoch
+      "dateTimeFrom": this.dateTimeFrom?.millisecondsSinceEpoch,
+      "dateTimeTo": this.dateTimeTo?.millisecondsSinceEpoch
     };
   }
 }

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker_web/image_picker_web.dart';
+import 'package:myapp/Helpers/Alert.dart';
 import 'package:myapp/Helpers/Constants.dart';
 import 'package:myapp/Helpers/Strings.dart';
 import 'package:myapp/Models/Questionary.dart';
@@ -49,6 +50,7 @@ class _EditFormState extends State<EditForm> {
       fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple);
   SizedBox _inset = SizedBox(height: 16, width: 16);
   Map<String, String> groupItems = Map<String, String>();
+  final AlertController alertController = AlertController();
 
   @override
   Widget build(BuildContext context) {
@@ -1120,10 +1122,13 @@ class _EditFormState extends State<EditForm> {
                     Navigator.pop(context);
                     _isShowLoading = false;
                   }))
-              .catchError((error) => Center(
-                  child: Text(error,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.red))))
+              .catchError((error) {
+                alertController.showMessageDialog(
+                    context, ProjectStrings.error, error.message);
+                setState(() {
+                  _isShowLoading = false;
+                });
+              })
           : _formsCollection
               .doc(id)
               .update({
@@ -1145,10 +1150,13 @@ class _EditFormState extends State<EditForm> {
                     Navigator.pop(context);
                     _isShowLoading = false;
                   }))
-              .catchError((error) => Center(
-                  child: Text(error,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.red))));
+              .catchError((error) {
+                alertController.showMessageDialog(
+                    context, ProjectStrings.error, error.message);
+                setState(() {
+                  _isShowLoading = false;
+                });
+              });
     }
   }
 
