@@ -232,8 +232,11 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
                 .name;
           });
         },
-        items:
-            _allForms.map<DropdownMenuItem<String>>((QuestionaryModel value) {
+        items: _allForms
+            .where((formObject) => !_researchProgramModel.forms
+                .map((e) => e.formId)
+                .contains(formObject.id))
+            .map<DropdownMenuItem<String>>((QuestionaryModel value) {
           return DropdownMenuItem<String>(
             value: value.id,
             child: Text(value.name),
@@ -248,12 +251,17 @@ class _EditResearchProgramState extends State<EditResearchProgram> {
     DateTime selectedDate = (isFrom
             ? researchProgramForm.dateTimeFrom
             : researchProgramForm.dateTimeTo) ??
+        researchProgramForm.dateTimeFrom ??
         DateTime.now();
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2000),
-        lastDate: DateTime(3000));
+        firstDate: isFrom
+            ? DateTime(2000)
+            : (researchProgramForm.dateTimeFrom ?? DateTime(2000)),
+        lastDate: isFrom
+            ? (researchProgramForm.dateTimeTo ?? DateTime(3000))
+            : DateTime(3000));
     if (picked != null && picked != selectedDate) {
       print("new date: $picked");
       setState(() {
