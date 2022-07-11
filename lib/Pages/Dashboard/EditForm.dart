@@ -647,7 +647,8 @@ class _EditFormState extends State<EditForm> {
     return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       GestureDetector(
           onTap: () async {
-            fieldType.image = await ImagePickerWeb.getImageAsBytes();
+            fieldType.image =
+                await ImagePickerWeb.getImageAsBytes() ?? Uint8List(0);
             setState(() {});
           },
           child: Container(
@@ -740,7 +741,7 @@ class _EditFormState extends State<EditForm> {
           onChanged: (text) {
             setState(() {});
           },
-          controller: fieldType.optionsControllers[index],
+          controller: fieldType.optionsControllers[index].textController,
           decoration: InputDecoration(
               hintText: ProjectStrings.option + (index + 1).toString()),
         ),
@@ -999,23 +1000,23 @@ class _EditFormState extends State<EditForm> {
       switch (fieldType.type) {
         case QuestionaryFieldAbstract.likertScale:
           var element = fieldType as LikertScaleFormField;
-          element.optionsControllers.add(TextEditingController());
+          element.optionsControllers.add(QuestionaryFieldOption("", ""));
           break;
         case QuestionaryFieldAbstract.multipleChoise:
           var element = fieldType as MultipleChoiseFormField;
-          element.optionsControllers.add(TextEditingController());
+          element.optionsControllers.add(QuestionaryFieldOption("", ""));
           break;
         case QuestionaryFieldAbstract.singleChoise:
           var element = fieldType as SingleChoiseFormField;
-          element.optionsControllers.add(TextEditingController());
+          element.optionsControllers.add(QuestionaryFieldOption("", ""));
           break;
         case QuestionaryFieldAbstract.matrix:
           var element = fieldType as MatrixFormField;
-          element.optionsControllers.add(TextEditingController());
+          element.optionsControllers.add(QuestionaryFieldOption("", ""));
           break;
         case QuestionaryFieldAbstract.dragAndDrop:
           var element = fieldType as DragAndDropFormField;
-          element.optionsControllers.add(TextEditingController());
+          element.optionsControllers.add(QuestionaryFieldOption("", ""));
           break;
         default:
           break;
@@ -1104,60 +1105,33 @@ class _EditFormState extends State<EditForm> {
         forms.add(_questionary.questions[i].itemsList());
       this.id.isEmpty
           ? _formsCollection
-              .add({
-                'name': _questionary.name,
-                'isHasCheckList':
-                    _questionary.checkList.nameController.text.isNotEmpty
-                        ? _questionary.isHasCheckList
-                        : false,
-                'checkList':
-                    _questionary.checkList.nameController.text.isNotEmpty
-                        ? _questionary.checkList.itemsList()
-                        : null,
-                'description': _questionary.description,
-                'questions': forms,
-                'groupId': _questionary.groupId,
-                'groupName': _questionary.groupName
-              })
+              .add(_questionary.itemsList(forms))
+              
               .then((value) => setState(() {
                     Navigator.pop(context);
                     _isShowLoading = false;
                   }))
               .catchError((error) {
-                alertController.showMessageDialog(
-                    context, ProjectStrings.error, error.message);
-                setState(() {
-                  _isShowLoading = false;
-                });
-              })
+              alertController.showMessageDialog(
+                  context, ProjectStrings.error, error.message);
+              setState(() {
+                _isShowLoading = false;
+              });
+            })
           : _formsCollection
               .doc(id)
-              .update({
-                'name': _questionary.name,
-                'isHasCheckList':
-                    _questionary.checkList.nameController.text.isNotEmpty
-                        ? _questionary.isHasCheckList
-                        : false,
-                'checkList':
-                    _questionary.checkList.nameController.text.isNotEmpty
-                        ? _questionary.checkList.itemsList()
-                        : null,
-                'description': _questionary.description,
-                'questions': forms,
-                'groupId': _questionary.groupId,
-                'groupName': _questionary.groupName
-              })
+              .update(_questionary.itemsList(forms))
               .then((value) => setState(() {
                     Navigator.pop(context);
                     _isShowLoading = false;
                   }))
               .catchError((error) {
-                alertController.showMessageDialog(
-                    context, ProjectStrings.error, error.message);
-                setState(() {
-                  _isShowLoading = false;
-                });
+              alertController.showMessageDialog(
+                  context, ProjectStrings.error, error.message);
+              setState(() {
+                _isShowLoading = false;
               });
+            });
     }
   }
 
@@ -1180,8 +1154,8 @@ class _EditFormState extends State<EditForm> {
       var optionsControllers = selectedQuestion.optionsControllers;
       if (optionsControllers.isNotEmpty && optionsControllers != null) {
         options = optionsControllers
-            .where((element) => element.text.isNotEmpty)
-            .map((e) => e.text)
+            .where((element) => element.textController.text.isNotEmpty)
+            .map((e) => e.textController.text)
             .toList();
       }
     }
