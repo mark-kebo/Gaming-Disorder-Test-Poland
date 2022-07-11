@@ -566,7 +566,7 @@ class _EditFormState extends State<EditForm> {
                   hintText: ProjectStrings.question),
             ),
           );
-
+    print("Index: $index;");
     return Container(
         padding: EdgeInsets.only(
             top: _fieldPadding * 2,
@@ -584,13 +584,36 @@ class _EditFormState extends State<EditForm> {
           Text((index + 1).toString() + ". ", style: _listTitleStyle),
           questionWidget,
           Expanded(
-              flex: 2,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(fieldType.name, style: _listTitleStyle))),
           _inset,
           fieldType.icon,
           _inset,
+          index == _questionary.questions.length - 1
+              ? SizedBox()
+              : IconButton(
+                  icon: const Icon(Icons.arrow_downward),
+                  color: Colors.blueGrey,
+                  onPressed: () {
+                    setState(() {
+                      print("To down question");
+                      _toDownQuestion(fieldType, index);
+                    });
+                  },
+                ),
+          index == 0
+              ? SizedBox()
+              : IconButton(
+                  icon: const Icon(Icons.arrow_upward),
+                  color: Colors.blueGrey,
+                  onPressed: () {
+                    setState(() {
+                      print("To top question");
+                      _toTopQuestion(fieldType, index);
+                    });
+                  },
+                ),
           _inset,
           IconButton(
             icon: const Icon(Icons.content_copy),
@@ -599,29 +622,7 @@ class _EditFormState extends State<EditForm> {
             onPressed: () {
               setState(() {
                 print("Copy question");
-                switch (fieldType.type) {
-                  case QuestionaryFieldAbstract.likertScale:
-                    _addField(LikertScaleFormField.copy(fieldType));
-                    break;
-                  case QuestionaryFieldAbstract.paragraph:
-                    _addField(ParagraphFormField.copy(fieldType));
-                    break;
-                  case QuestionaryFieldAbstract.multipleChoise:
-                    _addField(MultipleChoiseFormField.copy(fieldType));
-                    break;
-                  case QuestionaryFieldAbstract.singleChoise:
-                    _addField(SingleChoiseFormField.copy(fieldType));
-                    break;
-                  case QuestionaryFieldAbstract.slider:
-                    _addField(SliderFormField.copy(fieldType));
-                    break;
-                  case QuestionaryFieldAbstract.matrix:
-                    _addField(MatrixFormField.copy(fieldType));
-                    break;
-                  case QuestionaryFieldAbstract.dragAndDrop:
-                    _addField(DragAndDropFormField.copy(fieldType));
-                    break;
-                }
+                _copyQuestion(fieldType);
               });
             },
           )
@@ -1333,6 +1334,22 @@ class _EditFormState extends State<EditForm> {
                 hintText: ProjectStrings.selectValidationSymbols),
           ))
     ]);
+  }
+
+  void _copyQuestion(QuestionaryFieldType fieldType) {
+    _addField(fieldType.createCopy());
+  }
+
+  void _toTopQuestion(QuestionaryFieldType fieldType, int index) {
+    var prewQuestion = _questionary.questions[index - 1].createCopy();
+    _questionary.questions[index - 1] = _questionary.questions[index];
+    _questionary.questions[index] = prewQuestion;
+  }
+
+  void _toDownQuestion(QuestionaryFieldType fieldType, int index) {
+    var nextQuestion = _questionary.questions[index + 1].createCopy();
+    _questionary.questions[index + 1] = _questionary.questions[index];
+    _questionary.questions[index] = nextQuestion;
   }
 
   void _showFieldTypeDialog() {

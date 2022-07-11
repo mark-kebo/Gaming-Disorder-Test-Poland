@@ -92,6 +92,33 @@ abstract class QuestionaryFieldType {
   String keyQuestion = "";
   String keyQuestionOption = "";
   TextEditingController minQuestionTimeController = TextEditingController();
+
+  QuestionaryFieldType createCopy() {
+    switch (this.type) {
+      case QuestionaryFieldAbstract.likertScale:
+        return LikertScaleFormField.copy(this);
+        break;
+      case QuestionaryFieldAbstract.paragraph:
+        return ParagraphFormField.copy(this);
+        break;
+      case QuestionaryFieldAbstract.multipleChoise:
+        return MultipleChoiseFormField.copy(this);
+        break;
+      case QuestionaryFieldAbstract.singleChoise:
+        return SingleChoiseFormField.copy(this);
+        break;
+      case QuestionaryFieldAbstract.slider:
+        return SliderFormField.copy(this);
+        break;
+      case QuestionaryFieldAbstract.matrix:
+        return MatrixFormField.copy(this);
+        break;
+      case QuestionaryFieldAbstract.dragAndDrop:
+        return DragAndDropFormField.copy(this);
+        break;
+    }
+    return this;
+  }
 }
 
 class MatrixFormField extends QuestionaryFieldType {
@@ -262,6 +289,9 @@ class ParagraphFormField extends QuestionaryFieldType {
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
+    this.questionValidationType = questionaryFieldType.questionValidationType;
+    this.questionValidationSymbols.text =
+        questionaryFieldType.questionValidationSymbols.text;
   }
 
   ParagraphFormField(dynamic item) {
@@ -544,7 +574,7 @@ class SliderFormField extends QuestionaryFieldType {
   );
   List<TextEditingController> optionsControllers = <TextEditingController>[];
 
-  SliderFormField.copy(QuestionaryFieldType questionaryFieldType) {
+  SliderFormField.copy(SliderFormField questionaryFieldType) {
     this.type = questionaryFieldType.type;
     this.key = questionaryFieldType.key;
     this.name = questionaryFieldType.name;
@@ -560,6 +590,12 @@ class SliderFormField extends QuestionaryFieldType {
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
+    this.maxValueController.text = questionaryFieldType.maxValueController.text;
+    this.maxValueController.text = questionaryFieldType.maxValueController.text;
+    this.minValueController.text = questionaryFieldType.minValueController.text;
+    this.digitStepController.text =
+        questionaryFieldType.digitStepController.text;
+    this.maxDigitController.text = questionaryFieldType.maxDigitController.text;
   }
 
   SliderFormField(dynamic item) {
