@@ -35,6 +35,8 @@ class _EditFormState extends State<EditForm> {
   double _elementsHeight = 64.0;
   Color _elementBackgroundColor = Colors.grey[200];
   final _nameController = TextEditingController();
+  final _messageController = TextEditingController();
+  final _minPointsController = TextEditingController();
   final _descriptionController = TextEditingController();
   CollectionReference _formsCollection =
       firestore.collection(ProjectConstants.formsCollectionName);
@@ -122,6 +124,8 @@ class _EditFormState extends State<EditForm> {
                       children: [
                         _nameField(),
                         _descriptionField(),
+                        _messageField(),
+                        _messagePointsField(),
                         _groupField(),
                         _questionary.isHasCheckList
                             ? _checkListField()
@@ -139,6 +143,8 @@ class _EditFormState extends State<EditForm> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
+    _minPointsController.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -156,9 +162,41 @@ class _EditFormState extends State<EditForm> {
               _questionary = QuestionaryModel(id, doc);
               _nameController.text = _questionary.name;
               _descriptionController.text = _questionary.description;
+              _minPointsController.text = _questionary.minPointsToMessage;
+              _messageController.text = _questionary.message;
             })
           });
     }
+  }
+
+  Widget _messageField() {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: TextFormField(
+        onChanged: (text) {
+          setState(() {});
+        },
+        controller: _messageController,
+        decoration: InputDecoration(
+            helperText: ProjectStrings.feedbackMessage,
+            hintText: ProjectStrings.feedbackMessage),
+      ),
+    );
+  }
+
+  Widget _messagePointsField() {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: TextFormField(
+        onChanged: (text) {
+          setState(() {});
+        },
+        controller: _minPointsController,
+        decoration: InputDecoration(
+            helperText: ProjectStrings.feedbackMessagePoints,
+            hintText: ProjectStrings.feedbackMessagePoints),
+      ),
+    );
   }
 
   Widget _checkListField() {
@@ -746,8 +784,16 @@ class _EditFormState extends State<EditForm> {
               hintText: ProjectStrings.option + (index + 1).toString()),
         ),
       ),
+    SizedBox(height: _elementsHeight, width: _elementsHeight, child: TextFormField(
+            onChanged: (text) {
+              setState(() {});
+            },
+            controller: fieldType.optionsControllers[index].pointsController,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(), hintText: ProjectStrings.points),
+          )),
       Expanded(
-          flex: 1,
+        flex: 1,
           child: Align(
               alignment: Alignment.centerRight,
               child: IconButton(
@@ -1097,6 +1143,8 @@ class _EditFormState extends State<EditForm> {
     if (_questionary.questions != null && _questionary.questions.length > 0) {
       _questionary.name = _nameController.text ?? "";
       _questionary.description = _descriptionController.text ?? "";
+      _questionary.message = _messageController.text ?? "";
+      _questionary.minPointsToMessage = _minPointsController.text ?? "";
       setState(() {
         _isShowLoading = true;
       });
@@ -1106,7 +1154,6 @@ class _EditFormState extends State<EditForm> {
       this.id.isEmpty
           ? _formsCollection
               .add(_questionary.itemsList(forms))
-              
               .then((value) => setState(() {
                     Navigator.pop(context);
                     _isShowLoading = false;

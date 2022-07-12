@@ -100,4 +100,7 @@ class ProjectStrings {
   static const formsList = "Lista ankiet";
   static const dateFrom = "Ważna od:  ";
   static const dateTo = "Ważna do:  ";
+  static const feedbackMessage = "Feedback OB";
+  static const feedbackMessagePoints = "Próg uznawany za zagrożenie (punktów)";
+  static const points = "pt.";
 }

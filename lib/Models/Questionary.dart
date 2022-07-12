@@ -21,7 +21,7 @@ class QuestionaryModel {
       this.id = id;
       name = snapshot.data()["name"];
       message = snapshot.data()["message"];
-      minPointsToMessage = snapshot.data()["minPointsToMessage"];
+      minPointsToMessage = snapshot.data()["minPointsToMessage"].toString();
       isHasCheckList = snapshot.data()["isHasCheckList"];
       description = snapshot.data()["description"];
       groupId = snapshot.data()["groupId"];
