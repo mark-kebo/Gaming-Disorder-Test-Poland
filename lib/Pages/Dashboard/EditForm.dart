@@ -784,16 +784,23 @@ class _EditFormState extends State<EditForm> {
               hintText: ProjectStrings.option + (index + 1).toString()),
         ),
       ),
-    SizedBox(height: _elementsHeight, width: _elementsHeight, child: TextFormField(
-            onChanged: (text) {
-              setState(() {});
-            },
-            controller: fieldType.optionsControllers[index].pointsController,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(), hintText: ProjectStrings.points),
-          )),
+      fieldType.type != QuestionaryFieldAbstract.dragAndDrop
+          ? SizedBox(
+              height: _elementsHeight,
+              width: _elementsHeight,
+              child: TextFormField(
+                onChanged: (text) {
+                  setState(() {});
+                },
+                controller:
+                    fieldType.optionsControllers[index].pointsController,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: ProjectStrings.points),
+              ))
+          : SizedBox(),
       Expanded(
-        flex: 1,
+          flex: 1,
           child: Align(
               alignment: Alignment.centerRight,
               child: IconButton(
@@ -1242,13 +1249,12 @@ class _EditFormState extends State<EditForm> {
                         (QuestionaryFieldType value) {
                       return DropdownMenuItem<String>(
                         value: value.questionController.text,
-                        child: Text(value.name +
-                            " - " +
-                            (value.questionController.text.length > maxTextSize
+                        child: Text(
+                            value.questionController.text.length > maxTextSize
                                 ? value.questionController.text
                                         .substring(0, maxTextSize) +
                                     '...'
-                                : value.questionController.text)),
+                                : value.questionController.text),
                       );
                     }).toList(),
                   ))
