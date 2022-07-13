@@ -156,7 +156,7 @@ class _FormStatisticsState extends State<FormStatistics> {
     Map<String, int> options = {};
     questions[questions.keys.elementAt(index)].forEach((quest) {
       quest.selectedOptions.forEach((i) =>
-          options['$i'] = options.containsKey('$i') ? options['$i'] + 1 : 1);
+          options[i.text] = options.containsKey(i.text) ? options[i.text] + 1 : 1);
     });
     options.forEach((key, value) {
       var selectedOption = SelectedOption();

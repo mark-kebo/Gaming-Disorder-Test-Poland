@@ -1,16 +1,19 @@
 import 'package:myapp/Models/Questionary.dart';
+import 'package:intl/intl.dart';
 
 class CompletedFormModel {
   String id = "";
   String name = "";
   bool isSuspicious = false;
   String message = "";
+  int minPoints = 0;
   CompletedCheckList checkList;
   List<CompletedFormQuestion> questions = <CompletedFormQuestion>[];
 
   CompletedFormModel(dynamic object) {
     id = object["id"];
     name = object["name"];
+    minPoints = object["minPoints"];
     message = object["message"];
     isSuspicious = object["isSuspicious"];
     checkList = CompletedCheckList(object["checkList"]);
@@ -23,6 +26,7 @@ class CompletedFormModel {
     this.id = questionary.id;
     this.name = questionary.name;
     this.message = questionary.message;
+    this.minPoints = int.tryParse(questionary.minPointsToMessage) ?? 0;
     this.checkList =
         CompletedCheckList.fromQuestionaryModel(questionary.checkList);
     this.questions = questionary.questions
@@ -35,6 +39,7 @@ class CompletedFormModel {
       "id": this.id,
       "name": this.name,
       "message": this.message,
+      "minPoints": this.minPoints,
       "isSuspicious": this.isSuspicious,
       "checkList": this.checkList.itemsList(),
       "questions": this.questions.map((e) => e.itemsList()).toList()
@@ -86,14 +91,16 @@ class CompletedFormQuestion {
   String name = "";
   bool isSoFast = true;
   String points = "";
-  List<String> selectedOptions = <String>[];
+  List<CompletedFormSelectedOptionQuestion> selectedOptions =
+      <CompletedFormSelectedOptionQuestion>[];
 
   CompletedFormQuestion(dynamic object) {
     name = object["name"];
-    points = object["points"];
     isSoFast = object["isSoFast"];
-    selectedOptions =
-        (object["selectedOptions"] as List).map((e) => e as String).toList();
+    points = object["points"].toString();
+    selectedOptions = (object["selectedOptions"] as List)
+        .map((e) => CompletedFormSelectedOptionQuestion.json(e))
+        .toList();
   }
 
   CompletedFormQuestion.fromQuestionaryFieldType(QuestionaryFieldType field) {
@@ -101,11 +108,63 @@ class CompletedFormQuestion {
   }
 
   Map itemsList() {
+    int optionsPointCount = 0;
+    selectedOptions.forEach((element) {
+      optionsPointCount += element.points;
+    });
     return {
-      "points": int.tryParse(this.points) ?? "",
+      "points": optionsPointCount,
       "name": this.name,
       "isSoFast": this.isSoFast,
-      "selectedOptions": this.selectedOptions.map((e) => e).toList()
+      "selectedOptions": this.selectedOptions.map((e) => e.itemsList()).toList()
+    };
+  }
+}
+
+class CompletedFormSelectedOptionQuestion {
+  String text = "";
+  int points = 0;
+  DateTime date;
+  int timeSec = 0;
+  bool isOther = false;
+
+  String getFullText() {
+    return text +
+        "        (" +
+        DateFormat('dd.MM.yyyy HH:mm:ss').format(date) +
+        "  -  " +
+        timeSec.toString() +
+        "sec)";
+  }
+
+  CompletedFormSelectedOptionQuestion(String text, String points) {
+    this.text = text;
+    this.points = int.tryParse(points) ?? 0;
+  }
+
+  CompletedFormSelectedOptionQuestion.other(
+      String text, String points, bool isOther) {
+    this.text = text;
+    this.points = int.tryParse(points) ?? 0;
+    this.isOther = isOther;
+  }
+
+  CompletedFormSelectedOptionQuestion.json(dynamic object) {
+    text = object["text"];
+    date = DateTime.fromMillisecondsSinceEpoch(object["date"] as int);
+    timeSec = object["timeSec"];
+  }
+
+  void setTime(int timeSec) {
+    this.timeSec = timeSec;
+    this.date = DateTime.now();
+  }
+
+  Map itemsList() {
+    return {
+      "text": this.text,
+      "date": this.date.millisecondsSinceEpoch,
+      "timeSec": this.timeSec
     };
   }
 }

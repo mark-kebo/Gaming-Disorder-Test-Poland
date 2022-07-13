@@ -93,7 +93,8 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
                 : Padding(
                     padding: EdgeInsets.all(_formPadding),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      _suspiciousCheckBox(),
+                      _messageTextField(),
+                      _suspiciousTextField(),
                       _checkList(),
                       _questionsList()
                     ])),
@@ -115,10 +116,19 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
             )));
   }
 
-  Widget _suspiciousCheckBox() {
+  Widget _suspiciousTextField() {
     return _formModel.isSuspicious
         ? Text(ProjectStrings.isSuspicious,
             style: TextStyle(color: Colors.redAccent))
+        : SizedBox();
+  }
+
+  Widget _messageTextField() {
+    bool isNeedMessage = _formModel.message.isNotEmpty &&
+        _formModel.message != "null" &&
+        _formModel.isSuspicious;
+    return isNeedMessage
+        ? Text(_formModel.message + "  (" + _formModel.getPoints().toString() + ProjectStrings.points + ")", style: TextStyle(color: Colors.redAccent))
         : SizedBox();
   }
 
@@ -132,7 +142,10 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
               return ListTile(
                   title: Text(
                       (index + 1).toString() + ". " + questions[index].name),
-                  subtitle: Text(questions[index].selectedOptions.join(", ")));
+                  subtitle: Text(questions[index]
+                      .selectedOptions
+                      .map((e) => e.getFullText())
+                      .join(",\n")));
             }));
   }
 

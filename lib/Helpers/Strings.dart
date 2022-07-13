@@ -90,7 +90,7 @@ class ProjectStrings {
   static const minTimeForAnswer =
       "Przybliżony minimalny czas na odpowiedź na pytanie (sek):   ";
   static const isSuspicious =
-      "Ta ankieta została oznaczona jako podejrzana. (Na przykład z powodu zbyt szybkiej odpowiedzi na pytania)";
+      "Ta ankieta została oznaczona jako podejrzana. (Na przykład z powodu zbyt szybkiej odpowiedzi na pytania lub brak punktów)";
   static const copyQuestion = "Skopiuj pytanie";
   static const instructions = "Instrukcja";
   static const selectImage = "Dodaj zdjęcie";
