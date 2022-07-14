@@ -46,11 +46,7 @@ class _DashboardState extends State<Dashboard> {
   TextStyle _subtitleTextStyle = TextStyle(
       fontWeight: FontWeight.normal, fontSize: 24, color: Colors.deepPurple);
   final AlertController _alertController = AlertController();
-  BorderRadius _borderRadius = BorderRadius.only(
-      topLeft: Radius.circular(16.0),
-      topRight: Radius.circular(16.0),
-      bottomLeft: Radius.circular(16.0),
-      bottomRight: Radius.circular(16.0));
+  BorderRadius _borderRadius = BorderRadius.all(Radius.circular(16.0));
   EdgeInsets _boxPadding =
       EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16);
 
