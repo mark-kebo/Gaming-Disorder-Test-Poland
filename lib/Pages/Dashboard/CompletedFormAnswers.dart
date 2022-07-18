@@ -171,6 +171,10 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
                       ProjectStrings.fromPush +
                           (_formModel.isOpenFromPush ? "tak" : "nie"),
                       style: TextStyle(color: Colors.black)),
+                  Text(
+                      ProjectStrings.timeFromStartToAnswer +
+                          _formModel.startToAnswerTime,
+                      style: TextStyle(color: Colors.black)),
                   Text(ProjectStrings.timeInApp + _formModel.dateLogToApp,
                       style: TextStyle(color: Colors.black))
                 ])));

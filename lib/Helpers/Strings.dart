@@ -106,4 +106,5 @@ class ProjectStrings {
   static const userLocation = "Lokalizacja użytkownika: ";
   static const fromPush = "Czy aplikacja otwarta z powiadomień push: ";
   static const timeInApp = "Czas spędzony w aplikacji: ";
+  static const timeFromStartToAnswer = "Rozpoczęcia odpowiedzi od momentu otwarcia aplikacji: ";
 }

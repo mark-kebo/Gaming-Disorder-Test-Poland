@@ -10,6 +10,7 @@ class CompletedFormModel {
   String dateLogToApp = "";
   bool isOpenFromPush = false;
   String locationData = "";
+  String startToAnswerTime;
   CompletedCheckList checkList;
   List<CompletedFormQuestion> questions = <CompletedFormQuestion>[];
 
@@ -23,6 +24,7 @@ class CompletedFormModel {
     dateLogToApp = object["dateLogToApp"];
     isOpenFromPush = object["isOpenFromPush"];
     locationData = object["locationData"];
+    startToAnswerTime = object["startToAnswerTime"];
     questions = (object["questions"] as List)
         .map((e) => CompletedFormQuestion(e))
         .toList();
@@ -50,6 +52,7 @@ class CompletedFormModel {
       "dateLogToApp": this.dateLogToApp,
       "isOpenFromPush": this.isOpenFromPush,
       "locationData": this.locationData,
+      "startToAnswerTime": this.startToAnswerTime,
       "checkList": this.checkList.itemsList(),
       "questions": this.questions.map((e) => e.itemsList()).toList()
     };
