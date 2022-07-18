@@ -95,6 +95,7 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       _messageTextField(),
                       _suspiciousTextField(),
+                      _otherDataList(),
                       _checkList(),
                       _questionsList()
                     ])),
@@ -128,7 +129,13 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
         _formModel.message != "null" &&
         _formModel.isSuspicious;
     return isNeedMessage
-        ? Text(_formModel.message + "  (" + _formModel.getPoints().toString() + ProjectStrings.points + ")", style: TextStyle(color: Colors.redAccent))
+        ? Text(
+            _formModel.message +
+                "  (" +
+                _formModel.getPoints().toString() +
+                ProjectStrings.points +
+                ")",
+            style: TextStyle(color: Colors.redAccent))
         : SizedBox();
   }
 
@@ -147,6 +154,26 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
                       .map((e) => e.getFullText())
                       .join(",\n")));
             }));
+  }
+
+  Widget _otherDataList() {
+    return Align(
+        alignment: Alignment.topLeft,
+        child: Padding(
+            padding: EdgeInsets.only(top: _formPadding, bottom: _formPadding),
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(ProjectStrings.userLocation + _formModel.locationData,
+                      style: TextStyle(color: Colors.black)),
+                  Text(
+                      ProjectStrings.fromPush +
+                          (_formModel.isOpenFromPush ? "tak" : "nie"),
+                      style: TextStyle(color: Colors.black)),
+                  Text(ProjectStrings.timeInApp + _formModel.dateLogToApp,
+                      style: TextStyle(color: Colors.black))
+                ])));
   }
 
   Widget _checkList() {

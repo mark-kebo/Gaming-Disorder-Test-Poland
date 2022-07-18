@@ -103,4 +103,7 @@ class ProjectStrings {
   static const feedbackMessage = "Feedback OB";
   static const feedbackMessagePoints = "Próg uznawany za zagrożenie (punktów)";
   static const points = "pt.";
+  static const userLocation = "Lokalizacja użytkownika: ";
+  static const fromPush = "Czy aplikacja otwarta z powiadomień push: ";
+  static const timeInApp = "Czas spędzony w aplikacji: ";
 }

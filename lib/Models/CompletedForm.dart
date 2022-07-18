@@ -7,6 +7,9 @@ class CompletedFormModel {
   bool isSuspicious = false;
   String message = "";
   int minPoints = 0;
+  String dateLogToApp = "";
+  bool isOpenFromPush = false;
+  String locationData = "";
   CompletedCheckList checkList;
   List<CompletedFormQuestion> questions = <CompletedFormQuestion>[];
 
@@ -17,6 +20,9 @@ class CompletedFormModel {
     message = object["message"];
     isSuspicious = object["isSuspicious"];
     checkList = CompletedCheckList(object["checkList"]);
+    dateLogToApp = object["dateLogToApp"];
+    isOpenFromPush = object["isOpenFromPush"];
+    locationData = object["locationData"];
     questions = (object["questions"] as List)
         .map((e) => CompletedFormQuestion(e))
         .toList();
@@ -41,6 +47,9 @@ class CompletedFormModel {
       "message": this.message,
       "minPoints": this.minPoints,
       "isSuspicious": this.isSuspicious,
+      "dateLogToApp": this.dateLogToApp,
+      "isOpenFromPush": this.isOpenFromPush,
+      "locationData": this.locationData,
       "checkList": this.checkList.itemsList(),
       "questions": this.questions.map((e) => e.itemsList()).toList()
     };
