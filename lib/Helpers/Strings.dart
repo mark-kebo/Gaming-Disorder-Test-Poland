@@ -76,6 +76,7 @@ class ProjectStrings {
   static const selectFieldType = "Proszę wybrać rodzaj pola";
   static const group = "Grupa";
   static const users = "Użytkownicy";
+  static const formCSV = "Pobieranie pliku CSV";
   static const groupExists = "Taka grupa już istnieje";
   static const emptyStatistycs = "Brak statystyk dla tej ankiety";
   static const emptyUserStatistycs = "Brak statystyk dla tego użytkownika";

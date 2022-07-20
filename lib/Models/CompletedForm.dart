@@ -1,6 +1,19 @@
 import 'package:myapp/Models/Questionary.dart';
 import 'package:intl/intl.dart';
 
+class CSVCompletedFormModel {
+  String userName;
+  String userId;
+  CompletedFormModel completedFormModel;
+
+  CSVCompletedFormModel(
+      CompletedFormModel model, String userName, String userId) {
+    this.completedFormModel = model;
+    this.userId = userId;
+    this.userName = userName;
+  }
+}
+
 class CompletedFormModel {
   String id = "";
   String name = "";
@@ -103,11 +116,13 @@ class CompletedFormQuestion {
   String name = "";
   bool isSoFast = true;
   String points = "";
+  String uuid = "";
   List<CompletedFormSelectedOptionQuestion> selectedOptions =
       <CompletedFormSelectedOptionQuestion>[];
 
   CompletedFormQuestion(dynamic object) {
     name = object["name"];
+    uuid = object["uuid"];
     isSoFast = object["isSoFast"];
     points = object["points"].toString();
     selectedOptions = (object["selectedOptions"] as List)
@@ -125,6 +140,7 @@ class CompletedFormQuestion {
       optionsPointCount += element.points;
     });
     return {
+      "uuid": uuid,
       "points": optionsPointCount,
       "name": this.name,
       "isSoFast": this.isSoFast,
@@ -141,8 +157,11 @@ class CompletedFormSelectedOptionQuestion {
   bool isOther = false;
 
   String getFullText() {
-    return text +
-        "        (" +
+    return text + "        " + getOptionData();
+  }
+
+  String getOptionData() {
+    return "(" +
         DateFormat('dd.MM.yyyy HH:mm:ss').format(date) +
         "  -  " +
         timeSec.toString() +

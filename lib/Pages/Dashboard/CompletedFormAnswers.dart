@@ -147,8 +147,11 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
             itemCount: questions.length,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
-                  title: Text(
-                      (index + 1).toString() + ". " + questions[index].name),
+                  title: Text((index + 1).toString() +
+                      ". " +
+                      (questions[index].name.isNotEmpty
+                          ? questions[index].name
+                          : questions[index].uuid)),
                   subtitle: Text(questions[index]
                       .selectedOptions
                       .map((e) => e.getFullText())

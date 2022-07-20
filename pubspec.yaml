@@ -31,6 +31,7 @@ dependencies:
   cupertino_icons: ^1.0.1
   syncfusion_flutter_charts: "18.4.46"
   image_picker_web: ^2.1.1
+  csv: ^4.1.0
 
 dev_dependencies:
   flutter_test:
