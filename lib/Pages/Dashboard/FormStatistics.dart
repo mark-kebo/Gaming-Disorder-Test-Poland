@@ -57,7 +57,11 @@ class _FormStatisticsState extends State<FormStatistics> {
                         .toList()
                         .forEach((element) {
                       _completedFormsModels.add(CSVCompletedFormModel(
-                          element, doc.data()["name"], doc.data()["id"]));
+                          element,
+                          doc.data()["name"],
+                          doc.data()["id"],
+                          doc.data()["stopTimerDate"],
+                          doc.data()["startTimerDate"]));
                       _name = element.name;
                       quest.addAll(element.questions);
                     });
@@ -127,6 +131,8 @@ class _FormStatisticsState extends State<FormStatistics> {
     List<dynamic> titleRow = [];
     titleRow.add(ProjectStrings.users); //USER NAME
     titleRow.add("ID"); //USER ID
+    titleRow.add(ProjectStrings.startTimer); //START TIMER
+    titleRow.add(ProjectStrings.stopTimer); //STOP TIMER
     titleRow.add(ProjectStrings.form); //FORM NAME
     titleRow.add(ProjectStrings.timeInApp); //DATE LOG TO APP
     titleRow.add(ProjectStrings.userLocation); //LOCATION DATA
@@ -148,16 +154,19 @@ class _FormStatisticsState extends State<FormStatistics> {
 
     for (var item in _completedFormsModels) {
       List<dynamic> userRow = [];
-      userRow.add(item.userName); //USER NAME
-      userRow.add(item.userId); //USER ID
-      userRow.add(item.completedFormModel.name); //FORM NAME
-      userRow.add(item.completedFormModel.dateLogToApp); //DATE LOG TO APP
-      userRow.add(item.completedFormModel.locationData); //LOCATION DATA
+      userRow.add(item.userName ?? ''); //USER NAME
+      userRow.add(item.userId ?? ''); //USER ID
+      userRow.add(item.startTimerDate ?? ''); //START TIMER
+      userRow.add(item.stopTimerDate ?? ''); //STOP TIMER
+      userRow.add(item.completedFormModel.name ?? ''); //FORM NAME
+      userRow.add(item.completedFormModel.dateLogToApp ?? ''); //DATE LOG TO APP
+      userRow.add(item.completedFormModel.locationData ?? ''); //LOCATION DATA
+      userRow.add(item.completedFormModel.startToAnswerTime ??
+          ''); //START TO ANSWER TIME
       userRow.add(
-          item.completedFormModel.startToAnswerTime); //START TO ANSWER TIME
-      userRow.add(item.completedFormModel.isOpenFromPush); //IS OPEN FROM PUSH
-      userRow.add(item.completedFormModel.isSuspicious); //IS SUSPICIOUS
-      userRow.add(item.completedFormModel.getPoints()); //POINTS
+          item.completedFormModel.isOpenFromPush ?? ''); //IS OPEN FROM PUSH
+      userRow.add(item.completedFormModel.isSuspicious ?? ''); //IS SUSPICIOUS
+      userRow.add(item.completedFormModel.getPoints() ?? ''); //POINTS
       for (var element in item.completedFormModel.questions) {
         String questionOptions = element.selectedOptions
             .map((e) => e.text)
@@ -165,14 +174,14 @@ class _FormStatisticsState extends State<FormStatistics> {
             .replaceAll('[', '')
             .replaceAll(']', '')
             .replaceAll('#', '');
-        userRow.add(questionOptions); //QUESTION NAME
+        userRow.add(questionOptions ?? ''); //QUESTION NAME
         String questionOptionsData = element.selectedOptions
             .map((e) => e.getOptionData())
             .join(",\n")
             .replaceAll('[', '')
             .replaceAll(']', '')
             .replaceAll('#', '');
-        userRow.add(questionOptionsData); //QUESTION NAME
+        userRow.add(questionOptionsData ?? ''); //QUESTION NAME
       }
       rows.add(userRow);
     }

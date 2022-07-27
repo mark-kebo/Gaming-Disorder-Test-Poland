@@ -4,13 +4,17 @@ import 'package:intl/intl.dart';
 class CSVCompletedFormModel {
   String userName;
   String userId;
+  String stopTimerDate;
+  String startTimerDate;
   CompletedFormModel completedFormModel;
 
-  CSVCompletedFormModel(
-      CompletedFormModel model, String userName, String userId) {
+  CSVCompletedFormModel(CompletedFormModel model, String userName,
+      String userId, String stopTimerDate, String startTimerDate) {
     this.completedFormModel = model;
     this.userId = userId;
     this.userName = userName;
+    this.stopTimerDate = stopTimerDate;
+    this.startTimerDate = startTimerDate;
   }
 }
 

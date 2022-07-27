@@ -25,8 +25,10 @@ class _EditGroupState extends State<EditGroup> {
   double _elementsHeight = 64.0;
   Color _elementBackgroundColor = Colors.grey[200];
   final _nameController = TextEditingController();
-  CollectionReference _usersCollection = firestore.collection(ProjectConstants.usersCollectionName);
-  CollectionReference _userGroups = firestore.collection(ProjectConstants.groupsCollectionName);
+  CollectionReference _usersCollection =
+      firestore.collection(ProjectConstants.usersCollectionName);
+  CollectionReference _userGroups =
+      firestore.collection(ProjectConstants.groupsCollectionName);
   TextStyle _titleTextStyle = TextStyle(
       fontWeight: FontWeight.bold, fontSize: 32, color: Colors.deepPurple);
   Radius _listElementCornerRadius = const Radius.circular(16.0);
@@ -196,7 +198,8 @@ class _EditGroupState extends State<EditGroup> {
             return null;
           },
           decoration: InputDecoration(
-              border: InputBorder.none, hintText: ProjectStrings.formName),
+              border: InputBorder.none,
+              hintText: ProjectStrings.researchProgramName),
         ));
   }
 
@@ -210,8 +213,7 @@ class _EditGroupState extends State<EditGroup> {
         .get()
         .then((value) => value.docs.forEach((element) => {
               print(element),
-              if (element["name"] == _nameController.text)
-                {isHasGroup = true}
+              if (element["name"] == _nameController.text) {isHasGroup = true}
             }))
         .whenComplete(() => {
               this.id.isEmpty
@@ -245,7 +247,8 @@ class _EditGroupState extends State<EditGroup> {
                 _isShowLoading = false;
               }))
           .catchError((error) => {
-                alertController.showMessageDialog(context, ProjectStrings.error, error),
+                alertController.showMessageDialog(
+                    context, ProjectStrings.error, error),
                 setState(() {
                   _isShowLoading = false;
                 })

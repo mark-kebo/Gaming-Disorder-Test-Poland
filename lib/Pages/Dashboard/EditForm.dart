@@ -125,6 +125,22 @@ class _EditFormState extends State<EditForm> {
                         _nameField(),
                         _descriptionField(),
                         _messageField(),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                                width: 400,
+                                child: CheckboxListTile(
+                                  title:
+                                      Text(ProjectStrings.isAlwaysNeedMessage),
+                                  onChanged: (bool val) {
+                                    setState(() {
+                                      _questionary.isMessageNeedAlways =
+                                          !_questionary.isMessageNeedAlways;
+                                    });
+                                    print(_questionary.isMessageNeedAlways);
+                                  },
+                                  value: _questionary.isMessageNeedAlways,
+                                ))),
                         _messagePointsField(),
                         _groupField(),
                         _questionary.isHasCheckList
@@ -285,6 +301,7 @@ class _EditFormState extends State<EditForm> {
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
         _questionImage(fieldType, index),
+        _availableBackOption(fieldType, index),
         _inset,
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Expanded(
@@ -352,6 +369,7 @@ class _EditFormState extends State<EditForm> {
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
         _questionImage(fieldType, index),
+        _availableBackOption(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -372,6 +390,7 @@ class _EditFormState extends State<EditForm> {
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
         _questionImage(fieldType, index),
+        _availableBackOption(fieldType, index),
         _inset,
         _validationFields(fieldType),
         _inset,
@@ -389,6 +408,7 @@ class _EditFormState extends State<EditForm> {
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
         _questionImage(fieldType, index),
+        _availableBackOption(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -409,6 +429,7 @@ class _EditFormState extends State<EditForm> {
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
         _questionImage(fieldType, index),
+        _availableBackOption(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -444,6 +465,7 @@ class _EditFormState extends State<EditForm> {
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
         _questionImage(fieldType, index),
+        _availableBackOption(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -466,6 +488,7 @@ class _EditFormState extends State<EditForm> {
         _questionMinTimeTextField(fieldType, index),
         _questionInstructionsTextField(fieldType, index),
         _questionImage(fieldType, index),
+        _availableBackOption(fieldType, index),
         _inset,
         for (var item in _optionsList(fieldType)) item,
         _inset,
@@ -679,6 +702,24 @@ class _EditFormState extends State<EditForm> {
       ),
       _inset,
     ]);
+  }
+
+  Widget _availableBackOption(QuestionaryFieldType fieldType, int index) {
+    return Align(
+        alignment: Alignment.centerLeft,
+        child: SizedBox(
+            width: 330,
+            child: CheckboxListTile(
+              title: Text(ProjectStrings.backButtonAvailable),
+              onChanged: (bool val) {
+                setState(() {
+                  fieldType.isBackButtonAvailable =
+                      !fieldType.isBackButtonAvailable;
+                });
+                print(fieldType.isBackButtonAvailable);
+              },
+              value: fieldType.isBackButtonAvailable,
+            )));
   }
 
   Widget _questionImage(QuestionaryFieldType fieldType, int index) {

@@ -11,6 +11,7 @@ class QuestionaryModel {
   String groupName = "";
   String message = "";
   String minPointsToMessage = "";
+  bool isMessageNeedAlways = false;
   bool isHasCheckList = false;
 
   CheckListQuestionaryField checkList = CheckListQuestionaryField.newModel();
@@ -27,6 +28,7 @@ class QuestionaryModel {
       groupId = snapshot.data()["groupId"];
       groupName = snapshot.data()["groupName"];
       checkList = CheckListQuestionaryField(snapshot.data()["checkList"]);
+      isMessageNeedAlways = snapshot.data()["isMessageNeedAlways"] ?? false;
       initQuestions(snapshot);
     }
   }
@@ -41,6 +43,7 @@ class QuestionaryModel {
     this.groupName = questionary.groupName;
     this.checkList = questionary.checkList;
     this.isHasCheckList = questionary.isHasCheckList;
+    this.isMessageNeedAlways = questionary.isMessageNeedAlways;
     this.questions = questionary.questions.map((e) => e).toList();
   }
 
@@ -88,6 +91,7 @@ class QuestionaryModel {
       'groupId': this.groupId,
       'groupName': this.groupName,
       'message': this.message,
+      'isMessageNeedAlways': this.isMessageNeedAlways ?? false,
       'minPointsToMessage': int.tryParse(this.minPointsToMessage ?? "") ?? ""
     };
   }
@@ -107,6 +111,7 @@ abstract class QuestionaryFieldType {
   QuestionaryFieldAbstract type;
   String key;
   String name;
+  bool isBackButtonAvailable = true;
   TextEditingController instructionsController = TextEditingController();
   TextEditingController questionController = TextEditingController();
   List<QuestionaryFieldOption> optionsControllers = <QuestionaryFieldOption>[];
@@ -194,6 +199,7 @@ class MatrixFormField extends QuestionaryFieldType {
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
+    this.isBackButtonAvailable = questionaryFieldType.isBackButtonAvailable;
   }
 
   MatrixFormField(dynamic item) {
@@ -219,11 +225,13 @@ class MatrixFormField extends QuestionaryFieldType {
       } else {
         image = Uint8List(0);
       }
+      isBackButtonAvailable = item['isBackButtonAvailable'] ?? true;
     }
   }
 
   Map itemsList() {
     return {
+      "isBackButtonAvailable": isBackButtonAvailable,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
@@ -265,6 +273,7 @@ class LikertScaleFormField extends QuestionaryFieldType {
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
+    this.isBackButtonAvailable = questionaryFieldType.isBackButtonAvailable;
   }
 
   LikertScaleFormField(dynamic item) {
@@ -286,11 +295,13 @@ class LikertScaleFormField extends QuestionaryFieldType {
       } else {
         image = Uint8List(0);
       }
+      isBackButtonAvailable = item['isBackButtonAvailable'] ?? true;
     }
   }
 
   Map itemsList() {
     return {
+      "isBackButtonAvailable": isBackButtonAvailable,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
@@ -340,6 +351,7 @@ class ParagraphFormField extends QuestionaryFieldType {
     this.questionValidationType = questionaryFieldType.questionValidationType;
     this.questionValidationSymbols.text =
         questionaryFieldType.questionValidationSymbols.text;
+    this.isBackButtonAvailable = questionaryFieldType.isBackButtonAvailable;
   }
 
   ParagraphFormField(dynamic item) {
@@ -361,11 +373,13 @@ class ParagraphFormField extends QuestionaryFieldType {
       } else {
         image = Uint8List(0);
       }
+      isBackButtonAvailable = item['isBackButtonAvailable'] ?? true;
     }
   }
 
   Map itemsList() {
     return {
+      "isBackButtonAvailable": isBackButtonAvailable,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
@@ -429,6 +443,7 @@ class DragAndDropFormField extends QuestionaryFieldType {
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
+    this.isBackButtonAvailable = questionaryFieldType.isBackButtonAvailable;
   }
 
   DragAndDropFormField(dynamic item) {
@@ -450,11 +465,13 @@ class DragAndDropFormField extends QuestionaryFieldType {
       } else {
         image = Uint8List(0);
       }
+      isBackButtonAvailable = item['isBackButtonAvailable'] ?? true;
     }
   }
 
   Map itemsList() {
     return {
+      "isBackButtonAvailable": isBackButtonAvailable,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
@@ -497,6 +514,7 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
     this.isHasOtherOption = questionaryFieldType.isHasOtherOption;
+    this.isBackButtonAvailable = questionaryFieldType.isBackButtonAvailable;
   }
 
   MultipleChoiseFormField(dynamic item) {
@@ -519,11 +537,13 @@ class MultipleChoiseFormField extends QuestionaryFieldType {
       } else {
         image = Uint8List(0);
       }
+      isBackButtonAvailable = item['isBackButtonAvailable'] ?? true;
     }
   }
 
   Map itemsList() {
     return {
+      "isBackButtonAvailable": isBackButtonAvailable,
       "isHasOtherOption": isHasOtherOption,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
@@ -566,6 +586,7 @@ class SingleChoiseFormField extends QuestionaryFieldType {
     this.instructionsController.text =
         questionaryFieldType.instructionsController.text;
     this.image = questionaryFieldType.image;
+    this.isBackButtonAvailable = questionaryFieldType.isBackButtonAvailable;
   }
 
   SingleChoiseFormField(dynamic item) {
@@ -588,11 +609,13 @@ class SingleChoiseFormField extends QuestionaryFieldType {
       } else {
         image = Uint8List(0);
       }
+      isBackButtonAvailable = item['isBackButtonAvailable'] ?? true;
     }
   }
 
   Map itemsList() {
     return {
+      "isBackButtonAvailable": isBackButtonAvailable,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,
@@ -644,6 +667,7 @@ class SliderFormField extends QuestionaryFieldType {
     this.digitStepController.text =
         questionaryFieldType.digitStepController.text;
     this.maxDigitController.text = questionaryFieldType.maxDigitController.text;
+    this.isBackButtonAvailable = questionaryFieldType.isBackButtonAvailable;
   }
 
   SliderFormField(dynamic item) {
@@ -667,11 +691,13 @@ class SliderFormField extends QuestionaryFieldType {
       } else {
         image = Uint8List(0);
       }
+      isBackButtonAvailable = item['isBackButtonAvailable'] ?? true;
     }
   }
 
   Map itemsList() {
     return {
+      "isBackButtonAvailable": isBackButtonAvailable,
       "image": String.fromCharCodes(this.image),
       "instructions": this.instructionsController.text,
       "key": this.key,

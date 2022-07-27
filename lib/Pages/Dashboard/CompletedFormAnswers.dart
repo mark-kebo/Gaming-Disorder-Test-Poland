@@ -149,9 +149,9 @@ class _CompletedFormAnswersState extends State<CompletedFormAnswers> {
               return ListTile(
                   title: Text((index + 1).toString() +
                       ". " +
-                      (questions[index].name.isNotEmpty
-                          ? questions[index].name
-                          : questions[index].uuid)),
+                      ((questions[index].name ?? "").isNotEmpty
+                          ? questions[index].name ?? ""
+                          : questions[index].uuid ?? "")),
                   subtitle: Text(questions[index]
                       .selectedOptions
                       .map((e) => e.getFullText())

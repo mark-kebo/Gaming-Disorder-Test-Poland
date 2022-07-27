@@ -36,7 +36,7 @@ class ProjectStrings {
   static const statistics = "Statystyki";
   static const anyError = "Coś poszło nie tak";
   static const allForms = "Wszystkie Ankiety";
-  static const userGroups = "Grupy użytkowników";
+  static const userGroups = "Badania";
   static const allUsers = "Wszyscy użytkownicy";
   static const edit = "Edytuj";
   static const delete = "Usuń";
@@ -48,9 +48,9 @@ class ProjectStrings {
   static const deleteFormError = "Nie udało się usunąć ankiety";
   static const deleteResearchProgramError =
       "Nie udało się usunąć program badawczy";
-  static const deleteGroup = "Usuń grupę";
-  static const deleteGroupQuestion = "Czy na pewno chcesz usunąć tę grupę?";
-  static const deleteGroupError = "Nie udało się usunąć grupy";
+  static const deleteGroup = "Usuń badanie";
+  static const deleteGroupQuestion = "Czy na pewno chcesz usunąć badanie?";
+  static const deleteGroupError = "Nie udało się usunąć badanie";
   static const form = "Ankieta";
   static const addNewField = "Dodaj nowe pole";
   static const noFields = "Nie dodano jeszcze żadnych pól";
@@ -68,16 +68,16 @@ class ProjectStrings {
   static const researchProgramName = "Wpisz nazwę";
   static const descriptionRequired = "Wymagany jest opis";
   static const formDescription = "Wpisz opis ankiety";
-  static const selectedGroup = "Wybrana grupa:   ";
+  static const selectedGroup = "Wybrane badanie:   ";
   static const selectKeyQuestion = "Wybierz kluczowe pytanie:   ";
   static const selectValidationType = "Wybierz typ walidacji:   ";
   static const selectValidationSymbols = "Wpisz dopuszczalne symbole";
   static const selectKeyAnswer = "Wybierz kluczową odpowiedź:   ";
   static const selectFieldType = "Proszę wybrać rodzaj pola";
-  static const group = "Grupa";
+  static const group = "Badanie";
   static const users = "Użytkownicy";
   static const formCSV = "Pobieranie pliku CSV";
-  static const groupExists = "Taka grupa już istnieje";
+  static const groupExists = "Badanie już istnieje";
   static const emptyStatistycs = "Brak statystyk dla tej ankiety";
   static const emptyUserStatistycs = "Brak statystyk dla tego użytkownika";
   static const contact = "Dane kontaktowe:";
@@ -107,5 +107,10 @@ class ProjectStrings {
   static const userLocation = "Lokalizacja użytkownika: ";
   static const fromPush = "Czy aplikacja otwarta z powiadomień push: ";
   static const timeInApp = "Czas spędzony w aplikacji: ";
-  static const timeFromStartToAnswer = "Rozpoczęcia odpowiedzi od momentu otwarcia aplikacji: ";
+  static const timeFromStartToAnswer =
+      "Rozpoczęcia odpowiedzi od momentu otwarcia aplikacji: ";
+  static const backButtonAvailable = "Czy przycisk Wstecz jest dostępny?";
+  static const isAlwaysNeedMessage = "Czy zawsze potrzebny jest Feedback OB?";
+  static const startTimer = "Uruchamianie stopera";
+  static const stopTimer = "Zatrzymanie stopera";
 }
